@@ -32,6 +32,7 @@ option(NCNN_VULKAN "vulkan compute support" ON)
 option(NCNN_REQUANT "auto merge int8 quant and dequant" OFF)
 option(NCNN_AVX2 "optimize x86 platform with avx2" OFF)
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Ox /GS-")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Ox /GS-")
 
