@@ -21,20 +21,8 @@ build_script:
 skip_commits:
   message: '/.*\[skip appveyor\].*/'
 after_build:
-  - '7z a bina.zip %APPVEYOR_BUILD_FOLDER%\'
+  - '7z a bina.zip %APPVEYOR_BUILD_FOLDER%\build-vs2017'
 artifacts:
   -
     path: bina.zip
     name: Binari
-  -
-    path: '**\*.dll'
-  -
-    path: '**\*.exe'
-  -
-    path: '**\*.lib'
-  -
-    path: '**\*.pdb'
-  -
-    path: '**\*.sln'
-  -
-    path: '**\*.vcxproj'
