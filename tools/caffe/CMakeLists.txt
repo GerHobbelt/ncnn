@@ -1,5 +1,8 @@
+add_definitions(-DPROTOBUF_USE_DLLS)
 
 find_package(Protobuf)
+
+
 
 if(PROTOBUF_FOUND)
     include_directories(${PROTOBUF_INCLUDE_DIR})
