@@ -16,6 +16,7 @@ before_build:
   - 'set vcplatform=x64'
 build_script:
   - 'CALL zbu.bat'
+  - 'CALL zbu2.bat'
 skip_commits:
   message: '/.*\[skip appveyor\].*/'
 after_build:
