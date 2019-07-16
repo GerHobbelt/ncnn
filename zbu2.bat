@@ -1,5 +1,8 @@
 echo buildncc
 
+curl -L --silent --show-error --output VulkanSDK.exe https://vulkan.lunarg.com/sdk/download/1.1.108.0/windows/VulkanSDK-1.1.108.0-Installer.exe?Human=true
+.\VulkanSDK.exe /S
+
 cd %APPVEYOR_BUILD_FOLDER%
 md build-vs2017
 cd build-vs2017
