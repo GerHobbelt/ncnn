@@ -1,0 +1,35 @@
+platform:
+  - x64
+configuration:
+  - Release
+image:
+  - 'Visual Studio 2017'
+environment:
+  VCVAR2017: 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat'
+test: off
+
+before_build:
+  - 'set generator=Visual Studio 14 Win64'
+  - 'set vcplatform=x64'
+build_script:
+  - 'CALL zbu.bat'
+skip_commits:
+  message: '/.*\[skip appveyor\].*/'
+after_build:
+  - '7z a bina.zip %APPVEYOR_BUILD_FOLDER%\'
+artifacts:
+  -
+    path: bina.zip
+    name: Binari
+  -
+    path: '**\*.dll'
+  -
+    path: '**\*.exe'
+  -
+    path: '**\*.lib'
+  -
+    path: '**\*.pdb'
+  -
+    path: '**\*.sln'
+  -
+    path: '**\*.vcxproj'
