@@ -11,3 +11,7 @@ cmake -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%cd%
 
 nmake
 nmake install
+
+cd %APPVEYOR_BUILD_FOLDER%
+del VulkanSDK.exe
+rd /s /q ap
