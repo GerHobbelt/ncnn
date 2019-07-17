@@ -16,8 +16,8 @@ before_build:
   - 'set generator=Visual Studio 14 Win64'
   - 'set vcplatform=x64'
 build_script:
-  - 'CALL zbu.bat'
-  - 'CALL zbu2.bat'
+  - 'CALL zbu4.bat'
+  - 'CALL zbu5.bat'
 skip_commits:
   message: '/.*\[skip appveyor\].*/'
 after_build:
