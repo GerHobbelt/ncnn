@@ -2,6 +2,9 @@ syntax = "proto2";
 
 package caffe;
 
+
+option optimize_for = LITE_RUNTIME;
+
 // Specifies the shape (dimensions) of a Blob.
 message BlobShape {
   repeated int64 dim = 1 [packed = true];
