@@ -1,0 +1,84 @@
+<html><head><meta charset="UTF-8" /><title>MODEL PAGE</title>
+    <style>
+        table, th, td {
+            border: solid 3px #ddd;
+            border-collapse: separate;
+            padding: 2px 3px;
+            text-align: center;
+        }
+        th {
+            font-weight:bold;
+        }
+    </style>
+
+<script type="text/javascript">
+var tblarea;
+var skript;
+
+
+function init() {
+tblarea = document.getElementById('team');
+}
+
+function DrawTBL(ydx) {
+if (skript)
+{document.head.removeChild(skript);}
+
+skript = document.createElement('script');
+skript.onload = doDrawTBL;
+skript.src = "toto"+ydx+".js";
+document.head.appendChild(skript);
+}
+function doDrawTBL()
+{
+tblarea.innerHTML = "";
+var lines = csv.split("@");
+var rw = lines.length;
+
+          for (var i = 1; i < rw; i++) {
+            items = lines[i].split("\t");
+            var newRow = tblarea.insertRow(-1);
+            for (var j = 0; j < items.length; j++) {
+	var newCell = newRow.insertCell(j);
+	newCell.innerHTML = items[j];
+            }
+          }
+          
+          var items = lines[0].split("\t");
+          var header = tblarea.createTHead();
+          var newRow = header.insertRow(0);
+          for (var j = 0; j < items.length; j++) {
+	var newCell = newRow.insertCell(j);
+	newCell.innerHTML = items[j];
+            }
+/*
+var tbl = "<table><thead><tr>";
+var items = lines[0].split("\t");
+for (var j = 0; j < items.length; j++)
+{tbl= tbl+"<th>" + items[j] + "</th>";}
+
+tbl= tbl+"</tr></thead><tbody>";
+for (var i = 1; i < rw; i++) {
+items = lines[i].split("\t");
+
+tbl = tbl + "<tr>";
+for (var j = 0; j < items.length; j++)
+{tbl = tbl + "<td>" + items[j] + "</td>";}
+tbl = tbl + "</tr>";
+}
+tbl = tbl + "</tbody></table>";
+tblarea.innerHTML = tbl;
+*/
+            
+csv="";
+}
+window.onload = init;
+</script></head>
+<body><table id="team" style=float:right></table>
+
+
+
+<br><button type="button" id="convert" onclick="DrawTBL(0)">Load 0</button><br>
+<br><button type="button" id="convert" onclick="DrawTBL(1)">Load 1</button><br>
+</body>
+</html>
