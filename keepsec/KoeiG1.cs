@@ -126,7 +126,7 @@ namespace KT
 				if (curB.Trash)
 					continue;
 				
-				
+				curB.fmt.main = i;
 				FVF[] vtxfmt = curB.fmt.fmt;
 				int nDecl = vtxfmt.Length;
 				
@@ -180,7 +180,7 @@ namespace KT
 			n = map.s8.Length;
 			for (int i = 0; i < n; i++) {
 				var tuse = map.s8[i];
-				vtx2grp.AddToList(tuse.Info.vtx_id, i);
+				vtx2grp.AddToList(tuse.Info.vtx_fmt_id, i);
 				
 				tuse.Skinning = map.s6[tuse.Info.BoneSkin_id];
 				tuse.Idx = map.s7[tuse.Info.idx_id];
@@ -196,7 +196,7 @@ namespace KT
 					gp[i] = map.s8[pp[i]];
 				}
 				
-				objB[kp.Key].Renders = gp;
+				objB[map.s5[kp.Key].main].Renders = gp;
 			}
 		}
 		
@@ -334,7 +334,7 @@ namespace KT
 							
 					}
 				}
-				
+				tuse.BaseOffset = tmpcur1;
 				tuse.map = mapp;
 				ause[i] = tuse;
 				tmpcur1 += 0xC * cot;
@@ -541,6 +541,7 @@ namespace KT
 	{
 		public MGs6[] map;
 		public int ord;
+		public int BaseOffset;
 		public MG_BoneSkin(int o)
 		{
 			ord = o;
@@ -563,6 +564,7 @@ namespace KT
 			ord = o;
 		}
 		
+		public int main;
 		public int ord;
 		public int BaseOffset;
 		public int[] Srcs;
@@ -618,7 +620,7 @@ namespace KT
 		{
 			ord = o;
 		}
-		
+		public int BaseOffset;
 		
 		
 		public int ord;
@@ -634,7 +636,7 @@ namespace KT
 		}
 		
 		
-		
+		public int BaseOffset;
 		public int ord;
 	}
 	
@@ -668,7 +670,7 @@ namespace KT
 		public Varray[] byOrd;
 		public int[][] byDataType = new int[18][];
 		public int[][] byUsage = new int[14][];
-		public int[][] byIdx = new int[3][];
+		public int[][] byIdx = new int[6][];
 		
 		public void BuildBoneWeight()
 		{
@@ -758,6 +760,9 @@ namespace KT
 		
 		public string ToJSON()
 		{
+			if(Trash)
+				return string.Empty;
+			
 			StringBuilder sb = new StringBuilder(fast_size * fast_count * 4);
 			sb.Append('[');
 			int vlen = byOrd.Length;
@@ -780,6 +785,9 @@ namespace KT
 		
 		public string ToCSV(bool insideJS)
 		{
+			if(Trash)
+				return string.Empty;
+			
 			StringBuilder sb = new StringBuilder(fast_size * fast_count * 4);
 			
 			string begg = "Offset\t";
@@ -821,6 +829,9 @@ namespace KT
 		
 		public string RealBlendMappingCSV(bool insideJS)
 		{
+			if(Trash)
+				return string.Empty;
+			
 			if(RealBlendMapping==null)
 				BuildBoneWeight();
 			
@@ -1754,9 +1765,8 @@ public struct MGs1
 
 public struct MGs8
 {
-	public uint flag;
-	public int vtx_id;
-	//s4
+	public uint flag;	// if 3D, not /3, but-0xE
+	public int vtx_fmt_id;	//s5
 	public int BoneSkin_id;
 	//s6
 	public int Color_id;
