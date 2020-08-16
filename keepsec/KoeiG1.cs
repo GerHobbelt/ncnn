@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.IO;
 using System.Text;
@@ -24,7 +24,10 @@ namespace KT
 	}
 	 */
 	
-	
+	public class TMC
+	{
+		
+	}
 	
 	
 	public abstract class G1Mtagged
@@ -281,10 +284,12 @@ namespace KT
 				if (G1pkg.isBE) {
 
 					fixed(byte* srcbb = &buff[tmpcur1]) {
-						uint* f = (uint*)srcbb;
+						bswap* f = (bswap*)srcbb;
 						for (int i1 = 0; i1 < nDecl; i1++) {
-							f[i * 2] = G1pkg.bswapy._2fix(f[i * 2]);
-							f[i * 2 + 1] = G1pkg.bswapy._1(f[i * 2 + 1]);
+							f[i1 * 2]._2fix();
+							f[i1 * 2 + 1]._1();
+							
+							
 						}
 						
 						
@@ -452,8 +457,8 @@ namespace KT
 							
 							fixed(byte* srcbb = &buff[tmpcur1+tfvf.offset]) {
 								bswap* xx = (bswap*)srcbb;
-								for (int i1 = 0; i < cot; i1++) {
-									xx[0 * bsz]._1();
+								for (int i1 = 0; i1 < cot; i1++) {
+									xx[i1 * bsz]._1();
 								}
 							}
 						}
@@ -1258,7 +1263,7 @@ namespace KT
 			m_listl = null;
 			
 			
-			
+			isBE=false;
 			
 			return buf;
 		}
@@ -1385,16 +1390,18 @@ namespace KT
 		public static unsafe uint ru4(this byte[] src, int offset)
 		{
 			fixed(byte* srcbb = &src[offset]) {
-				uint* f = (uint*)srcbb;
-				return f[0];
+				//uint* f = (uint*)srcbb;
+				//return f[0];
+				return *(uint*)srcbb;
 			}
 		}
 		
 		public static unsafe int ri4(this byte[] src, int offset)
 		{
 			fixed(byte* srcbb = &src[offset]) {
-				int* f = (int*)srcbb;
-				return f[0];
+				//int* f = (int*)srcbb;
+				//return f[0];
+				return *(int*)srcbb;
 			}
 		}
 		
@@ -1708,6 +1715,16 @@ namespace KT
 }
 
 namespace U3D
+{
+	
+}
+
+namespace DAZ
+{
+	
+}
+
+namespace UE
 {
 	
 }
@@ -2273,6 +2290,24 @@ public unsafe struct bswap
 		ty = b;
 		b = c;
 		c = ty;
+		
+	}
+	
+	public void _s1()
+	{
+		
+		byte ty = c;
+		c=d;
+		d=ty;
+		
+	}
+	
+	public void _s0()
+	{
+		
+		byte ty = a;
+		a=b;
+		b=ty;
 		
 	}
 
