@@ -404,7 +404,10 @@ namespace KT
 					if (G1pkg.isBE) {
 						//var ut = f[i].flag >> 2;
 						//f[i].flag._1();
-						f[i].flag._ROL(29,1); // (ut | (ut >> 29))&0xFF;		//200003d???
+						// (ut | (ut >> 29))&0xFF;		//200003d???
+						
+						
+						f[i].flag._ROLfast3_1(); //_ROL(3,1);
 					}
 					
 					tuse.Info = f[i];
@@ -2229,12 +2232,22 @@ public unsafe struct bswap
 	}
 	
 	[MethodImpl((MethodImplOptions)0x200)]
-	public void _ROL(int bs, int ro)
+	public void _ROL(int UnusedBits, int ro)
 	{
 		
 		
    		
-		thewhole = ((thewhole<<ro)|(thewhole>>(bs-ro)))>>(-bs);
+		thewhole = ((thewhole<<ro)|(thewhole>>(-UnusedBits-ro)))>>UnusedBits;
+		
+	}
+	
+	[MethodImpl((MethodImplOptions)0x200)]
+	public void _ROLfast3_1()
+	{
+		
+		
+   		
+		thewhole = (thewhole & 0x7FFFFFFC | (thewhole >> -3)) >> 2;
 		
 	}
 	
