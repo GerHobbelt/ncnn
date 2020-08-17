@@ -32,12 +32,29 @@ namespace KT
 	}
 	
 	
+	
+	
 	public abstract class G1Mtagged
 	{
 		public abstract byte[] dump();
 		public abstract unsafe void Load(byte[] buff);
 		public G1Mtagged next;
 	}
+	
+
+	
+	public class MS_Bone
+	{
+		public MS_Bone Parent;
+		public MS_Element info;
+		public ushort ord;
+		public ushort id_TBL;
+		public MS_Bone(int o)
+		{
+			ord = (ushort)o;
+		}
+	}
+	
 	
 	public class MG : G1Mtagged
 	{
@@ -58,7 +75,7 @@ namespace KT
 		}
 		
 		/*
-		public unsafe void Load(byte[] buff,int offset)
+		public override unsafe void Load(byte[] buff)
 		{
 			
 		}
@@ -69,8 +86,7 @@ namespace KT
 				buff.fIX4charN(BaseOffset + 0xC, 2);
 			
 			fixed(byte* srcbb = &buff[BaseOffset]) {
-				G1MGH* f = (G1MGH*)srcbb;
-				Header = f[0];
+				Header = *(G1MGH*)srcbb;
 			}
 			
 			int nSub = Header.nSection;
@@ -79,8 +95,7 @@ namespace KT
 			for (int vvv = 0; vvv < nSub; vvv++) {
 				G1MGH_C tmpHD;
 				fixed(byte* srcbb = &buff[cur]) {
-					G1MGH_C* f = (G1MGH_C*)srcbb;
-					tmpHD = f[0];
+					tmpHD = *(G1MGH_C*)srcbb;
 				}
 				uint sig = tmpHD.sig & 0xFF;
 				int tmpcur1 = cur + 0xC;
@@ -727,17 +742,17 @@ namespace KT
 				if (dyk == 3) {
 					for (int i = 0; i < cot; i++) {
 						var nyubw = new BoneWeight();
-						int sv= sta+i;
+						int sv = sta + i;
 						bswap vulu = Varr_idx.arr[sv];
 						
-						if(vulu.thewhole%3==0)
-						{
-						nyubw.boneIndex0 = skm.map[vulu.a / 3].MSid;
-						nyubw.boneIndex1 = skm.map[vulu.b / 3].MSid;
-						nyubw.boneIndex2 = skm.map[vulu.c / 3].MSid;
+						if (vulu.thewhole % 3 == 0) {
+							nyubw.boneIndex0 = skm.map[vulu.a / 3].MSid;
+							nyubw.boneIndex1 = skm.map[vulu.b / 3].MSid;
+							nyubw.boneIndex2 = skm.map[vulu.c / 3].MSid;
+						} else {
+							NotMod3(i);
+							break;
 						}
-						else
-							UnityEngine.Debug.Log("Bone not mod3: RenN="+Renders[0].ord+", Flag= "+Renders[0].Info.flag.thewhole.ToString("X"));
 						
 					
 						Vector3 v4 = Varr_wgt3F.arr[sv];
@@ -751,18 +766,19 @@ namespace KT
 				} else {
 					for (int i = 0; i < cot; i++) {
 						var nyubw = new BoneWeight();
-						int sv= sta+i;
+						int sv = sta + i;
 						bswap vulu = Varr_idx.arr[sv];
 						
-						if(vulu.thewhole%3==0)
-						{
-						nyubw.boneIndex0 = skm.map[vulu.a / 3].MSid;
-						nyubw.boneIndex1 = skm.map[vulu.b / 3].MSid;
-						nyubw.boneIndex2 = skm.map[vulu.c / 3].MSid;
-						nyubw.boneIndex3 = skm.map[vulu.d / 3].MSid;
+						if (vulu.thewhole % 3 == 0) {
+							nyubw.boneIndex0 = skm.map[vulu.a / 3].MSid;
+							nyubw.boneIndex1 = skm.map[vulu.b / 3].MSid;
+							nyubw.boneIndex2 = skm.map[vulu.c / 3].MSid;
+							nyubw.boneIndex3 = skm.map[vulu.d / 3].MSid;
+						} else {
+							NotMod3(i);
+							break;
 						}
-						else
-							UnityEngine.Debug.Log("Bone not mod3: RenN="+Renders[0].ord+", Flag= "+Renders[0].Info.flag.thewhole.ToString("X"));
+							
 					
 						Vector4 v4 = Varr_wgt4F.arr[sv].v4;
 						nyubw.weight0 = v4.x;
@@ -777,9 +793,14 @@ namespace KT
 			}
 		}
 		
+		void NotMod3(int idxx)
+		{
+			UnityEngine.Debug.Log("Bone not mod3: vtxN=" + ord + " RenN=" + Renders[0].ord + ", Flag= " + Renders[0].Info.flag.thewhole.ToString("X") + " at " + idxx);
+		}
+		
 		public string ToJSON()
 		{
-			if(Trash)
+			if (Trash)
 				return string.Empty;
 			
 			StringBuilder sb = new StringBuilder(fast_size * fast_count * 4);
@@ -804,7 +825,7 @@ namespace KT
 		
 		public string ToCSV(bool insideJS)
 		{
-			if(Trash)
+			if (Trash)
 				return string.Empty;
 			
 			StringBuilder sb = new StringBuilder(fast_size * fast_count * 4);
@@ -848,10 +869,10 @@ namespace KT
 		
 		public string RealBlendMappingCSV(bool insideJS)
 		{
-			if(Trash)
+			if (Trash)
 				return string.Empty;
 			
-			if(RealBlendMapping==null)
+			if (RealBlendMapping == null)
 				BuildBoneWeight();
 			
 			StringBuilder sb = new StringBuilder(fast_size * fast_count);
@@ -897,8 +918,7 @@ namespace KT
 		{
 			
 			fixed(byte* srcbb = &buff[BaseOffset]) {
-				G1MFH* f = (G1MFH*)srcbb;
-				Header = f[0];
+				Header = *(G1MFH*)srcbb;
 			}
 			
 			
@@ -915,19 +935,88 @@ namespace KT
 		
 		public G1MSH Header;
 		
+		public short[] Xtra;
+		public MS_Bone[] Bone;
+		//public Dictionary<int,MS_Bone> ORD2Bone = new Dictionary<int, MS_Bone>();
+		
 		public int BaseOffset;
+		
+		
 		public MS(int offset)
 		{
 			BaseOffset = offset;
 		}
 		
 		
+		
+		
+		
+		
 		public override unsafe void Load(byte[] buff)
 		{
+			
+			
+			
 			fixed(byte* srcbb = &buff[BaseOffset]) {
+				
 				G1MSH* f = (G1MSH*)srcbb;
+				
+				if (G1pkg.isBE) {
+					
+					f[0].unkflag._ROLfast0_1();
+					buff.fIX2wordN(BaseOffset + 0x14, 2 + ((f[0].toElements - 0x1C) / 4));
+				}
+				
 				Header = f[0];
+				
 			}
+			int cur = BaseOffset + 0x1C;
+			int nAlB = Header.nAllBone;
+			//ushort[] ORD2ID = new ushort[nAlB];
+			Xtra = new short[Header.nXtraBone];
+			
+			
+			Dictionary<short,ushort> ID2ORD = new Dictionary<short,ushort>();
+			
+			fixed(byte* srcbb = &buff[cur]) {
+				short* f = (short*)srcbb;
+				for (int i = 0; i < nAlB; i++) {
+					var yrd = f[i];
+					if (yrd >= 0)
+						ID2ORD[yrd] = (ushort)i;
+				}
+				for (int i = 0; i < Header.nXtraBone; i++) {
+					Xtra[i] = f[nAlB + i];
+				}
+			}
+			
+			nAlB = Header.nUseBone;
+			
+			Bone = new MS_Bone[nAlB];
+			
+			
+			cur = BaseOffset + Header.toElements;
+			fixed(byte* srcbb = &buff[cur]) {
+				MS_Element* f = (MS_Element*)srcbb;
+				for (int i = 0; i < nAlB; i++) {
+					var bb = new MS_Bone(i);
+					bb.info = f[i];
+					bb.id_TBL = ID2ORD[(short)i];
+					//IDtoBone[bb.id] = bb;
+					Bone[i] = bb;
+				}
+			}
+			
+			for (int i = 0; i < nAlB; i++) {
+				int prnt = Bone[i].info.Parent;
+				if (prnt >= 0) {
+					
+					Bone[i].Parent = Bone[prnt];//IDtoBone[prnt];
+					
+					
+				}
+			}
+			
 		}
 		
 		public override byte[] dump()
@@ -951,8 +1040,8 @@ namespace KT
 		public override unsafe void Load(byte[] buff)
 		{
 			fixed(byte* srcbb = &buff[BaseOffset]) {
-				G1MMH* f = (G1MMH*)srcbb;
-				Header = f[0];
+				Header = *(G1MMH*)srcbb;
+				
 			}
 		}
 		
@@ -977,8 +1066,8 @@ namespace KT
 		public override unsafe void Load(byte[] buff)
 		{
 			fixed(byte* srcbb = &buff[BaseOffset]) {
-				G1MMH* f = (G1MMH*)srcbb;
-				Header = f[0];
+				Header = *(G1MMH*)srcbb;
+				
 			}
 		}
 		
@@ -1003,8 +1092,8 @@ namespace KT
 		public override unsafe void Load(byte[] buff)
 		{
 			fixed(byte* srcbb = &buff[BaseOffset]) {
-				G1MMH* f = (G1MMH*)srcbb;
-				Header = f[0];
+				Header = *(G1MMH*)srcbb;
+				
 			}
 		}
 		
@@ -1029,8 +1118,8 @@ namespace KT
 		public override unsafe void Load(byte[] buff)
 		{
 			fixed(byte* srcbb = &buff[BaseOffset]) {
-				G1MMH* f = (G1MMH*)srcbb;
-				Header = f[0];
+				Header = *(G1MMH*)srcbb;
+				
 			}
 		}
 		
@@ -1058,8 +1147,8 @@ namespace KT
 				return;
 			
 			fixed(byte* srcbb = &buff[BaseOffset]) {
-				G1MMH* f = (G1MMH*)srcbb;
-				Header = f[0];
+				Header = *(G1MMH*)srcbb;
+				
 			}
 		}
 		
@@ -1105,8 +1194,8 @@ namespace KT
 			
 			
 			fixed(byte* srcbb = &buff[BaseOffset]) {
-				G1MH* f = (G1MH*)srcbb;
-				Header = f[0];
+				Header = *(G1MH*)srcbb;
+				
 			}
 			
 			int cur = BaseOffset + Header.HeaderLen;
@@ -1119,8 +1208,8 @@ namespace KT
 			while (cur < end && nCompo_parsed < nCompo) {
 				G1H_C tmpHD;
 				fixed(byte* srcbb = &buff[cur]) {
-					G1H_C* f = (G1H_C*)srcbb;
-					tmpHD = f[0];
+					tmpHD = *(G1H_C*)srcbb;
+					
 				}
 				
 				bool doLoad = true;
@@ -1293,7 +1382,7 @@ namespace KT
 			m_listl = null;
 			
 			
-			isBE=false;
+			isBE = false;
 			
 			return buf;
 		}
@@ -1355,9 +1444,9 @@ namespace KT
 		public static unsafe void fIX2wordN(this byte[] src, int offset, int n)
 		{
 			fixed(byte* srcbb = &src[offset]) {
-				uint* f = (uint*)srcbb;
+				bswap* f = (bswap*)srcbb;
 				for (int i = 0; i < n; i++) {
-					f[i] = bswapy._2fix(f[i]);
+					f[i]._2fix();
 				}
 			}
 		}
@@ -1368,9 +1457,9 @@ namespace KT
 		{
 			mul /= 4;
 			fixed(byte* srcbb = &src[offset]) {
-				uint* f = (uint*)srcbb;
+				bswap* f = (bswap*)srcbb;
 				for (int i = 0; i < n; i++) {
-					f[mul * i] = bswapy._2fix(f[mul * i]);
+					f[mul * i]._2fix();
 				}
 			}
 		}
@@ -1378,9 +1467,9 @@ namespace KT
 		public static unsafe void fIX2word(this byte[] src, int offset)
 		{
 			fixed(byte* srcbb = &src[offset]) {
-				uint* f = (uint*)srcbb;
+				(*(bswap*)srcbb)._2fix();
 				
-				f[0] = bswapy._2fix(f[0]);
+				
 				
 			}
 		}
@@ -1388,9 +1477,9 @@ namespace KT
 		public static unsafe void fIX4charN(this byte[] src, int offset, int n)
 		{
 			fixed(byte* srcbb = &src[offset]) {
-				uint* f = (uint*)srcbb;
+				bswap* f = (bswap*)srcbb;
 				for (int i = 0; i < n; i++) {
-					f[i] = bswapy._1(f[i]);
+					f[i]._1();
 				}
 			}
 		}
@@ -1399,9 +1488,9 @@ namespace KT
 		{
 			mul /= 4;
 			fixed(byte* srcbb = &src[offset]) {
-				uint* f = (uint*)srcbb;
+				bswap* f = (bswap*)srcbb;
 				for (int i = 0; i < n; i++) {
-					f[mul * i] = bswapy._1(f[mul * i]);
+					f[mul * i]._1();
 				}
 			}
 		}
@@ -1409,13 +1498,18 @@ namespace KT
 		public static unsafe void fIX4char(this byte[] src, int offset)
 		{
 			fixed(byte* srcbb = &src[offset]) {
-				uint* f = (uint*)srcbb;
-				
-				f[0] = bswapy._1(f[0]);
-				
+				(*(bswap*)srcbb)._1();
 			}
 		}
 		
+		
+		public static unsafe bswap rbs(this byte[] src, int offset)
+		{
+			fixed(byte* srcbb = &src[offset]) {
+				
+				return *(bswap*)srcbb;
+			}
+		}
 		
 		public static unsafe uint ru4(this byte[] src, int offset)
 		{
@@ -1429,8 +1523,6 @@ namespace KT
 		public static unsafe int ri4(this byte[] src, int offset)
 		{
 			fixed(byte* srcbb = &src[offset]) {
-				//int* f = (int*)srcbb;
-				//return f[0];
 				return *(int*)srcbb;
 			}
 		}
@@ -1478,7 +1570,7 @@ namespace KT
 		public static string GetStr(this BoneWeight bw)
 		{
 			
-			return $"{bw.weight0}, {bw.weight1}, {bw.weight2}, {bw.weight3}\t{bw.boneIndex0:X2}, {bw.boneIndex1:X2}, {bw.boneIndex2:X2}, {bw.boneIndex3:X2}";
+			return $"{bw.weight0}, {bw.weight1}, {bw.weight2}, {bw.weight3}\t{bw.boneIndex0:X2}; {bw.boneIndex1:X2}; {bw.boneIndex2:X2}; {bw.boneIndex3:X2}";
 		}
 		
 		#region dics
@@ -1784,8 +1876,10 @@ public struct MGs1
 
 public struct MGs8
 {
-	public bswap flag;	// if 3D, not /3, but-0xE
-	public int vtx_fmt_id;	//s5
+	public bswap flag;
+	// if 3D, not /3, but-0xE
+	public int vtx_fmt_id;
+	//s5
 	public int BoneSkin_id;
 	//s6
 	public int Color_id;
@@ -1873,12 +1967,22 @@ public struct MGs9_Element
 	}
 }
 
+public struct MS_Element
+{
+	public Vector3 Scale;
+	public int Parent;
+	public Quaternion Rotation;
+	public Vector3 Position;
+	public float pos_w;
+			
+}
+
 public struct G1MSH
 {
 	public G1H_C hd;
 
-	public int HeaderLen;
-	public uint unkflag;
+	public int toElements;
+	public bswap unkflag;
 	public ushort nUseBone;
 	public ushort nAllBone;
 	public ushort nXtraBone;
@@ -1888,8 +1992,8 @@ public struct G1MSH
 public struct G1MGH
 {
 	public G1H_C hd;
-	public uint graphsig;
-	public uint graphsig2;
+	public bswap graphsig;
+	public bswap graphsig2;
 	public Vector3 innBound;
 	public Vector3 outBound;
 	public int nSection;
@@ -2237,16 +2341,26 @@ public unsafe struct bswap
 		
 		
    		
-		thewhole = ((thewhole<<ro)|(thewhole>>(-UnusedBits-ro)))>>UnusedBits;
+		thewhole = ((thewhole << ro) | (thewhole >> (-UnusedBits - ro))) >> UnusedBits;
 		
+	}
+	
+	[MethodImpl((MethodImplOptions)0x200)]
+	public void _ROR(int UnusedBits, int ro)
+	{
+		thewhole = ((thewhole >> ro) | (thewhole << (-UnusedBits - ro))) >> UnusedBits;	
+	}
+	
+	[MethodImpl((MethodImplOptions)0x200)]
+	public void _ROLfast0_1()
+	{
+		thewhole = ((thewhole << 1) | (thewhole >> -1));
 	}
 	
 	[MethodImpl((MethodImplOptions)0x200)]
 	public void _ROLfast3_1()
 	{
-		
-		
-   		
+
 		thewhole = (thewhole & 0x7FFFFFFC | (thewhole >> -3)) >> 2;
 		
 	}
@@ -2367,8 +2481,8 @@ public unsafe struct bswap
 	{
 		
 		var ty = c;
-		c=d;
-		d=ty;
+		c = d;
+		d = ty;
 		
 	}
 	
@@ -2377,8 +2491,8 @@ public unsafe struct bswap
 	{
 		
 		var ty = a;
-		a=b;
-		b=ty;
+		a = b;
+		b = ty;
 		
 	}
 
@@ -2407,7 +2521,7 @@ public unsafe struct bswap
 	{
 		thewhole = i;
 		fixed(byte* hyy = Text) {
-			return Encoding.ASCII.GetString(hyy, 4);
+			return Encoding.ASCII.GetString(hyy, 4).Replace("\0", string.Empty);
 		}
 	}
 
