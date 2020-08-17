@@ -2229,12 +2229,12 @@ public unsafe struct bswap
 	}
 	
 	[MethodImpl((MethodImplOptions)0x200)]
-	public void _ROL(int b, int r)
+	public void _ROL(int bs, int ro)
 	{
 		
 		
    		
-		thewhole = ((thewhole<<r)|(thewhole>>(b-r)))>>(-b);
+		thewhole = ((thewhole<<ro)|(thewhole>>(bs-ro)))>>(-bs);
 		
 	}
 	
