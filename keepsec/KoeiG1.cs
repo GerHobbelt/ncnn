@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using System.Security;
 using UnityEngine;
 
 
@@ -400,8 +402,9 @@ namespace KT
 				for (int i = 0; i < HDnum; i++) {
 					MG_Grp tuse = new MG_Grp(i);
 					if (G1pkg.isBE) {
-						var ut = f[i].flag >> 2;
-						f[i].flag = ut | (ut >> 29);
+						//var ut = f[i].flag >> 2;
+						//f[i].flag._1();
+						f[i].flag._ROT(29,1); // (ut | (ut >> 29))&0xFF;		//200003d???
 					}
 					
 					tuse.Info = f[i];
@@ -672,6 +675,7 @@ namespace KT
 		public int[][] byUsage = new int[14][];
 		public int[][] byIdx = new int[6][];
 		
+		[MethodImpl((MethodImplOptions)0x200)]
 		public void BuildBoneWeight()
 		{
 			if (byUsage[2] == null)
@@ -722,9 +726,15 @@ namespace KT
 						var nyubw = new BoneWeight();
 						int sv= sta+i;
 						bswap vulu = Varr_idx.arr[sv];
+						
+						if(vulu.thewhole%3==0)
+						{
 						nyubw.boneIndex0 = skm.map[vulu.a / 3].MSid;
 						nyubw.boneIndex1 = skm.map[vulu.b / 3].MSid;
 						nyubw.boneIndex2 = skm.map[vulu.c / 3].MSid;
+						}
+						else
+							UnityEngine.Debug.Log("Bone not mod3: RenN="+Renders[0].ord+", Flag= "+Renders[0].Info.flag.thewhole.ToString("X"));
 						
 					
 						Vector3 v4 = Varr_wgt3F.arr[sv];
@@ -740,10 +750,16 @@ namespace KT
 						var nyubw = new BoneWeight();
 						int sv= sta+i;
 						bswap vulu = Varr_idx.arr[sv];
+						
+						if(vulu.thewhole%3==0)
+						{
 						nyubw.boneIndex0 = skm.map[vulu.a / 3].MSid;
 						nyubw.boneIndex1 = skm.map[vulu.b / 3].MSid;
 						nyubw.boneIndex2 = skm.map[vulu.c / 3].MSid;
 						nyubw.boneIndex3 = skm.map[vulu.d / 3].MSid;
+						}
+						else
+							UnityEngine.Debug.Log("Bone not mod3: RenN="+Renders[0].ord+", Flag= "+Renders[0].Info.flag.thewhole.ToString("X"));
 					
 						Vector4 v4 = Varr_wgt4F.arr[sv].v4;
 						nyubw.weight0 = v4.x;
@@ -1765,7 +1781,7 @@ public struct MGs1
 
 public struct MGs8
 {
-	public uint flag;	// if 3D, not /3, but-0xE
+	public bswap flag;	// if 3D, not /3, but-0xE
 	public int vtx_fmt_id;	//s5
 	public int BoneSkin_id;
 	//s6
@@ -2157,15 +2173,10 @@ public unsafe struct bswap
 
 	public override string ToString()
 	{
-		return String.Format("{0}, {1}, {2}, {3}", new object[] {
-			a,
-			b,
-			c,
-			d,
-		});
+		return $"{a}, {b}, {c}, {d}";
 	}
 	
-	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public int _1(int i)
 	{
 		thewholeS = i;
@@ -2179,7 +2190,7 @@ public unsafe struct bswap
 		}
 		 */
 		
-		byte ty = a;
+		var ty = a;
 		a = d;
 		d = ty;
 		ty = b;
@@ -2191,12 +2202,49 @@ public unsafe struct bswap
 
 	}
 	
+	/*
+	[SuppressUnmanagedCodeSecurity]
+	[MethodImpl((MethodImplOptions)0x200,MethodCodeType=MethodCodeType.Native)]
+	public unsafe static uint xadd1(uint x,int y)
+	{
+		return (x<<y)|(x>>(32-y));
+	}
+	*/
+
+	
+	
+	//.AggressiveInlining
+	
+	[MethodImpl((MethodImplOptions)0x200)]
+	public void _1()
+	{
+		
+		var ty = a;
+		a = d;
+		d = ty;
+		ty = b;
+		b = c;
+		c = ty;
+		
+	}
+	
+	[MethodImpl((MethodImplOptions)0x200)]
+	public void _ROT(int b, int r)
+	{
+		
+		
+   		var p = (thewhole<<r)|(thewhole>>(b-r));
+   		thewhole = p>>(32-b);
+		
+	}
+	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public uint _1(uint i)
 	{
 		thewhole = i;
 		
 		
-		byte ty = a;
+		var ty = a;
 		a = d;
 		d = ty;
 		ty = b;
@@ -2208,12 +2256,13 @@ public unsafe struct bswap
 
 	}
 	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public int _2(int i)
 	{
 		thewholeS = i;
 		
 		
-		byte ty = a;
+		var ty = a;
 		a = b;
 		b = ty;
 		ty = c;
@@ -2225,12 +2274,13 @@ public unsafe struct bswap
 
 	}
 	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public uint _2(uint i)
 	{
 		thewhole = i;
 		
 		
-		byte ty = a;
+		var ty = a;
 		a = b;
 		b = ty;
 		ty = c;
@@ -2243,12 +2293,14 @@ public unsafe struct bswap
 
 	}
 	
+	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public int _2fix(int i)
 	{
 		thewholeS = i;
 		
 		
-		ushort ty = s0;
+		var ty = s0;
 		s0 = s1;
 		s1 = ty;
 
@@ -2257,12 +2309,14 @@ public unsafe struct bswap
 
 	}
 	
+	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public uint _2fix(uint i)
 	{
 		thewhole = i;
 		
 		
-		ushort ty = s0;
+		var ty = s0;
 		s0 = s1;
 		s1 = ty;
 
@@ -2272,17 +2326,20 @@ public unsafe struct bswap
 
 	}
 	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public void _2fix()
 	{
-		ushort ty = s0;
+		var ty = s0;
 		s0 = s1;
 		s1 = ty;
 	}
 	
+	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public float _1(float f)
 	{
 		thewholef = f;
-		byte ty = a;
+		var ty = a;
 		a = d;
 		d = ty;
 		ty = b;
@@ -2291,49 +2348,43 @@ public unsafe struct bswap
 		return thewholef;
 	}
 
-	public void _1()
-	{
-		
-		byte ty = a;
-		a = d;
-		d = ty;
-		ty = b;
-		b = c;
-		c = ty;
-		
-	}
 	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public void _s1()
 	{
 		
-		byte ty = c;
+		var ty = c;
 		c=d;
 		d=ty;
 		
 	}
 	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public void _s0()
 	{
 		
-		byte ty = a;
+		var ty = a;
 		a=b;
 		b=ty;
 		
 	}
 
+	[MethodImpl((MethodImplOptions)0x200)]
 	public ushort _1(ushort us)
 	{
 		s0 = us;
-		byte ty = a;
+		var ty = a;
 		a = b;
 		b = ty;
 		return s0;
 	}
 	
+	
+	[MethodImpl((MethodImplOptions)0x200)]
 	public short _1(short s)
 	{
 		s0S = s;
-		byte ty = a;
+		var ty = a;
 		a = b;
 		b = ty;
 		return s0S;
