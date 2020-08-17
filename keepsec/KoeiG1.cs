@@ -404,7 +404,7 @@ namespace KT
 					if (G1pkg.isBE) {
 						//var ut = f[i].flag >> 2;
 						//f[i].flag._1();
-						f[i].flag._ROT(29,1); // (ut | (ut >> 29))&0xFF;		//200003d???
+						f[i].flag._ROL(29,1); // (ut | (ut >> 29))&0xFF;		//200003d???
 					}
 					
 					tuse.Info = f[i];
@@ -2229,12 +2229,12 @@ public unsafe struct bswap
 	}
 	
 	[MethodImpl((MethodImplOptions)0x200)]
-	public void _ROT(int b, int r)
+	public void _ROL(int b, int r)
 	{
 		
 		
-   		var p = (thewhole<<r)|(thewhole>>(b-r));
-   		thewhole = p>>(32-b);
+   		
+		thewhole = ((thewhole<<r)|(thewhole>>(b-r)))>>(-b);
 		
 	}
 	
