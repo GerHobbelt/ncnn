@@ -1,4 +1,4 @@
-﻿
+
 
 using System;
 using System.IO;
@@ -162,7 +162,7 @@ namespace U3D
 			
 			if(!LookUp.TryGetValue(fid,out yy))
 			{
-				yy= new yBlock();
+				yy= new yBlock(string.Empty);
 				LookUp[fid] = yy;
 				
 			}
@@ -691,6 +691,20 @@ namespace U3D
 			usage = int.Parse(info[5]);
 		}
 		
+		public YAMLfile(string metapath,yElement metain,string Dummy)
+		{
+			
+			LoadnonYAML(metapath,metain,Dummy);
+		}
+		
+		public void LoadnonYAML(string metapath,yElement metain,string Dummy)
+		{
+			yType = yObjType.File;
+			int len=UnityYAMLAsset.GameBase.Length+1;
+			Path = metapath.Substring(len,metapath.Length-len-5);
+			meta = metain;
+			Blocks[0xFFFFFFFFFFFFFFFF] = new yBlock(Dummy);
+		}
 		
 		public YAMLfile(string metapath,yElement metain,string[] txt)
 		{
@@ -742,6 +756,8 @@ namespace U3D
 		}
 		
 		
+		public static string[] nonYAML = {".png",".jpg",".tga",".shader",".cginc",".cg",".fbx",".cs"};
+		
 		public static YAMLfile Create(string path)
 		{
 			if(!File.Exists(path))
@@ -749,35 +765,69 @@ namespace U3D
 			
 			string azet = path.Substring(0,path.Length-5).ToLower();
 			
-			if(azet.EndsWith(".png")||azet.EndsWith(".jpg")||azet.EndsWith(".tga")||azet.EndsWith(".shader")||azet.EndsWith(".cginc")||azet.EndsWith(".cg")||azet.EndsWith(".fbx")||azet.EndsWith(".cs"))
-				return null;
 			if(!File.Exists(azet))
 				return null;
 			
 			
+			var tmpmeta = new yElement(StringGroup.Parse(File.ReadAllLines(path),0,-1).substr,null,null,0);
+			bool isDm = false;
+			string rtig = null;
+			
+			string[] txt = null;
+			
+			foreach(var tig in nonYAML)
+			{
+				if(azet.EndsWith(tig))
+				{
+					isDm=true;
+					rtig = tig;
+					goto aftalo;
+				}
+			}
 			
 			
 			
-			string[] txt = File.ReadAllLines(azet);
+			
+			
+			
+			txt = File.ReadAllLines(azet);
 			
 			if(!txt[0].StartsWith("%YAML"))
 				return null;
 			
 			
 			
-			var tmpmeta = new yElement(StringGroup.Parse(File.ReadAllLines(path),0,-1).substr,null,null,0);
+		aftalo:
 			
 			azet = ((yValue)tmpmeta.Fields["guid"]).ToString();
 			
 			YAMLfile yaoi;
 			if(!UnityYAMLAsset.Guid2File.TryGetValue(azet,out yaoi))
 			{
-				yaoi = new YAMLfile(path,tmpmeta,txt);
+				if(isDm)
+				{
+					yaoi =  new YAMLfile(path,tmpmeta,rtig);
+				}
+				else
+				{
+					yaoi = new YAMLfile(path,tmpmeta,txt);
+				}
+				
 				UnityYAMLAsset.Guid2File[azet] = yaoi;
 			}
 			
 			if(yaoi.isDummy)
-				yaoi.Load(path,tmpmeta,txt);
+			{
+				if(isDm)
+				{
+					yaoi.LoadnonYAML(path,tmpmeta,rtig);
+				}
+				else
+				{
+					yaoi.Load(path,tmpmeta,txt);
+				}
+			}
+				
 			
 			return yaoi;
 			
@@ -791,7 +841,7 @@ namespace U3D
 	public class yBlock : yKlass
 	{
 		public YAMLfile BaseFile;
-		public static yBlock fZero = new yBlock();
+		public static yBlock fZero = new yBlock(string.Empty);
 		
 		public string ClassStr;
 		public ClassIDType ClassID;
@@ -806,8 +856,9 @@ namespace U3D
 			LocalID = Lid;
 		}
 		
-		public yBlock()
+		public yBlock(string dummyStr)
 		{
+			ClassStr = dummyStr;
 			yType = yObjType.Block;
 			LocalID=0xFFFFFFFFFFFFFFFF;
 			isDummy = true;
