@@ -1,0 +1,12 @@
+vo=gpu
+gpu-api=vulkan
+gpu-context=winvk
+#vo=direct3d
+#gpu-api=d3d11
+#gpu-context=d3d11
+#gpu-api=opengl
+#gpu-context=dxinterop
+spirv-compiler=auto
+#fbo-format=rgba16hf
+keep-open
+glsl-shaders="~~/shaders/Anime4K_Adaptive.glsl"
