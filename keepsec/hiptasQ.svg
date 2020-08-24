@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="5000" height="5000">
+<style>
+.ployG {fill: #00FF00; fill-opacity: 0.25}
+.ployR {fill: #FF0000; fill-opacity: 0.25}
+.ployB {fill: #0000FF; fill-opacity: 0.25}
+.liii {stroke: #000000; stroke-width:10}
+</style>
+<g class="ployR">
+<path d="M 1713 0058 L 0979 0978 L 2302 1615 L 3036 0695"/>
+<path d="M 2628 1205 L 1713 2353 L 2447 3274 L 3362 2126"/>
+<path d="M 0064 2126 L 0979 3274 L 2040 2763 L 1124 1615"/>
+</g>
+
+<g class="ployG">
+<path d="M 1859 0695 L 2185 2126 L 3362 2126 L 3036 0695"/>
+<path d="M 0391 0695 L 0064 2126 L 1125 2637 L 1451 1206"/>
+<path d="M 1241 2126 L 0979 3274 L 2447 3274 L 2709 2126"/>
+</g>
+</svg>
