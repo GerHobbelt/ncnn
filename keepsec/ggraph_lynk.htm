@@ -70,6 +70,7 @@
 <circle cx=610 cy=710 r=3 />
 <circle cx=710 cy=710 r=3 />
 </g>
+
 </svg>
 <input id=txt0 type="number" onchange=mkpath(this) /><br>
 <input id=txt1 type="number" onchange=mkpath(this) /><br>
@@ -104,6 +105,85 @@ var guaname = [
 //56
 	"否", "妄", "訟", "履", "遯", "同", "姤", "乾"];
 
+
+var gualink_2 = [
+[63, 00],
+[31, 16],
+[15, 48],
+[47, 32],
+[39, 36],
+[07, 52],
+[23, 20],
+[55, 04],
+[51, 12],
+[19, 28],
+[03, 60],
+[35, 44],
+[43, 40],
+[11, 56],
+[27, 24],
+[59, 08],
+[57, 09],
+[25, 25],
+[17, 29],
+[49, 13],
+[33, 45],
+[01, 61],
+[05, 53],
+[37, 37],
+[21, 21],
+[41, 41],
+[58, 10],
+[26, 26],
+[18, 30],
+[50, 14],
+[34, 46],
+[02, 62],
+[06, 54],
+[38, 38],
+[22, 22],
+[42, 42]
+
+];
+
+var gualink_3 = [	
+[63, 00],
+[31, 01],
+[15, 03],
+[47, 02],
+[39, 06],
+[07, 07],
+[23, 05],
+[55, 04],
+[51, 12],
+[19, 13],
+[27, 09],
+[59, 08],
+[43, 10],
+[11, 11],
+[35, 14],
+[33, 30],
+[49, 28],
+[17, 29],
+[25, 25],
+[57, 24],
+[41, 26],
+[45, 18],
+[61, 16],
+[53, 20],
+[21, 21],
+[37, 22],
+[36, 54],
+[52, 52],
+[60, 48],
+[44, 50],
+[40, 58],
+[56, 56],
+[32, 62],
+[34, 46],
+[42, 42],
+[38, 38]
+];
 
 var guapath = [
 [55,47,31,62,61,59],
@@ -265,12 +345,58 @@ if(textavalue<0)
 infoi.innerHTML = "";
 return;
 }
-	
-el= document.createElementNS('http://www.w3.org/2000/svg', 'path');
-el.setAttribute('d', mklyn(textavalue));
 
-linearea.appendChild(el);
-infoi.innerHTML = outnfo;
+infoi.innerHTML = "";
+
+var sellink = gualink_3;
+
+for(var pairp in sellink)
+{
+var pairz = sellink[pairp];
+if(pairz[0]!=pairz[1])
+{
+
+var zel= document.createElementNS('http://www.w3.org/2000/svg', 'line');
+
+var nn = parseInt(pairz[0]);
+var xx = 10+parseInt(nn / 8)*100;
+var yy = 10+(nn % 8)*100;
+
+zel.setAttribute('x1', xx);
+zel.setAttribute('y1', yy);
+
+infoi.innerHTML += guaname[nn]+'--------------';
+
+nn = parseInt(pairz[1]);
+xx = 10+parseInt(nn / 8)*100;
+yy = 10+(nn % 8)*100;
+
+zel.setAttribute('x2', xx);
+zel.setAttribute('y2', yy);
+
+linearea.appendChild(zel);
+
+infoi.innerHTML += guaname[nn]+'<br>';
+
+}
+else
+{
+var zel= document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+
+var nn = parseInt(pairz[0]);
+var xx = 10+parseInt(nn / 8)*100;
+var yy = 10+(nn % 8)*100;
+zel.setAttribute('cx', xx);
+zel.setAttribute('cy', yy);
+zel.setAttribute('r', 8);
+linearea.appendChild(zel);
+
+infoi.innerHTML +='!!'+guaname[nn]+'!!<br>';
+
+}
+
+}
+
 eldict[ele.id] = el;
 }
 
