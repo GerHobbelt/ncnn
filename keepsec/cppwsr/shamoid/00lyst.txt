@@ -1,0 +1,16 @@
+cain_postproc
+cain_preproc
+dain_postproc
+dain_preproc
+realsr_postproc
+realsr_postproc_tta
+realsr_preproc
+realsr_preproc_tta
+srmd_postproc
+srmd_postproc_tta
+srmd_preproc
+srmd_preproc_tta
+waifu2x_postproc
+waifu2x_postproc_tta
+waifu2x_preproc
+waifu2x_preproc_tta

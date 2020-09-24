@@ -1,0 +1,1 @@
+"D:\TDDOWNLOAD\koai\Bin32\glslangValidator.exe" -DNCNN_fp16_storage=1 -DNCNN_int8_storage=1 -V -Os -o %1_%2s.spv %1.comp
