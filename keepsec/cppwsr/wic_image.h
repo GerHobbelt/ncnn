@@ -34,7 +34,7 @@ unsigned char* wic_decode_imageXXX(const wchar_t* filepath, int* w, int* h, int*
 }
 */
 
-unsigned char* wic_decode_image(const wchar_t* filepath, int* w, int* h, int* c)
+extern "C" __declspec(dllexport) unsigned char* wic_decode_image(const wchar_t* filepath, int* w, int* h, int* c)
 {
     IWICImagingFactory* factory = 0;
     IWICBitmapDecoder* decoder = 0;

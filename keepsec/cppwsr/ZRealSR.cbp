@@ -20,6 +20,15 @@
 				<Option compiler="microsoft_visual_c_2019" />
 				<Option use_console_runner="0" />
 			</Target>
+			<Target title="W2XDLL">
+				<Option output="bin/Release/W2XLIB" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="3" />
+				<Option compiler="microsoft_visual_c_2019" />
+				<Compiler>
+					<Add option="/DBuildDLL" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="/D_MBCS" />
@@ -29,6 +38,7 @@
 			<Add option="/fp:except-" />
 			<Add option="/GS-" />
 			<Add option="/Ox" />
+			<Add option="/Os" />
 			<Add option="/W3" />
 			<Add option="/openmp" />
 			<Add option="/Zc:wchar_t" />
@@ -78,9 +88,11 @@
 		<Unit filename="simptool.h" />
 		<Unit filename="w2xmain.cpp">
 			<Option target="W2X" />
+			<Option target="W2XDLL" />
 		</Unit>
 		<Unit filename="waifu2x.cpp">
 			<Option target="W2X" />
+			<Option target="W2XDLL" />
 		</Unit>
 		<Unit filename="waifu2x.h" />
 		<Unit filename="wic_image.h" />

@@ -22,9 +22,8 @@ enum
 
 };
 
-extern int stepinit;
+extern int stepinit_fixed;
 extern ScaleParam ScaleSteps[8];
-extern char FillScaleParam(ScaleParam* dst, float skale);
 
 
 #include <stdio.h>
@@ -40,11 +39,7 @@ extern char FillScaleParam(ScaleParam* dst, float skale);
 
 #include "webp_image.h"
 
-#if _WIN32
-#define Sleep_1024_ Sleep(1024)
-#else
-#define Sleep_1024_ sleep(1)
-#endif
+
 
 
 #include <wchar.h>
@@ -102,8 +97,20 @@ static std::vector<int> parse_optarg_int_array(const wchar_t* optarg)
 
 #include "filesystem_utils.h"
 
-
+bool ExternalLoad = false;
+bool ExternalSave = false;
 bool i16out = false;
+
+
+
+typedef int(*FindFileFunc)(const path_t inputpath, const path_t outputpath, const path_t format, std::vector<path_t>* inout);
+FindFileFunc FillPathListFunc = FillPathList;
+
+typedef void(*EncodeFunc)(int IOid, int w, int h,int channel,int is16bit, unsigned char* data);
+EncodeFunc ImgEncFunc;
+
+typedef unsigned char* (*DecodeFunc)(int IOid, int* w, int* h, int* channel, int* is16bit,int* ScaleParamLen, ScaleParam** data);
+DecodeFunc ImgDecFunc;
 
 static void print_usage()
 {
@@ -129,11 +136,13 @@ class Task
 public:
     int id;
     int webp;
+	int IOid;
 
     path_t inpath;
     path_t outpath;
 
 	int StepRem;
+	int stepinit;
 	ScaleParam* param;
 
 
@@ -190,7 +199,7 @@ public:
 
 	int taskcount()
 	{
-	
+
 
 		return tasks.size();
 	}
@@ -228,85 +237,106 @@ void* load(void* args)
     const LoadThreadParams* ltp = (const LoadThreadParams*)args;
     const int count = ltp->input_files.size();
     const int scale = ltp->scale;
-	
+
 
     #pragma omp parallel for schedule(static,1) num_threads(ltp->jobs_load)
-    for (int i=0; i<count; i++)
-    {
-        const path_t& imagepath = ltp->input_files[i];
+	for (int i = 0; i < count; i++)
+	{
+		const path_t& imagepath = ltp->input_files[i];
 
-        int webp = 0;
+		int webp = 0;
 
-        unsigned char* pixeldata = 0;
-        int w;
-        int h;
-        int c;
+		unsigned char* pixeldata = 0;
+		int w;
+		int h;
+		int c;
+		int config;
+		int ScaleParamLen=0;
+		ScaleParam* mkscaleparam;
 
+		if (ExternalLoad)
+		{
+			pixeldata = ImgDecFunc(i, &w, &h, &c, &config, &ScaleParamLen, &mkscaleparam);
 
-        FILE* fp = _wfopen(imagepath.c_str(), L"rb");
+			//printf("\nw=%d,h=%d\n", w, h);
 
-        if (fp)
-        {
-            // read whole file
-            unsigned char* filedata = 0;
-            int length = 0;
-            {
-                fseek(fp, 0, SEEK_END);
-                length = ftell(fp);
-                rewind(fp);
-                filedata = (unsigned char*)malloc(length);
-                if (filedata)
-                {
-                    fread(filedata, 1, length, fp);
-                }
-                fclose(fp);
-            }
+		}
+		else
+		{
+			FILE* fp = _wfopen(imagepath.c_str(), L"rb");
 
-            if (filedata)
-            {
-                pixeldata = webp_load(filedata, length, &w, &h, &c);
-                if (pixeldata)
-                {
-                    webp = 1;
-                }
-                else
-                {
-                    // not webp, try jpg png etc.
+		if (fp)
+		{
+			// read whole file
+			unsigned char* filedata = 0;
+			int length = 0;
+			{
+				fseek(fp, 0, SEEK_END);
+				length = ftell(fp);
+				rewind(fp);
+				filedata = (unsigned char*)malloc(length);
+				if (filedata)
+				{
+					fread(filedata, 1, length, fp);
+				}
+				fclose(fp);
+			}
 
-                    pixeldata = wic_decode_image(imagepath.c_str(), &w, &h, &c);
+			if (filedata)
+			{
+				pixeldata = webp_load(filedata, length, &w, &h, &c);
+				if (pixeldata)
+				{
+					webp = 1;
+				}
+				else
+				{
+					// not webp, try jpg png etc.
 
-                }
+					pixeldata = wic_decode_image(imagepath.c_str(), &w, &h, &c);
 
-                free(filedata);
-            }
-        }
+				}
 
+				free(filedata);
+			}
+		}
+	}
 		//printf("\n%ls_onread?=%d\n", imagepath.c_str(), c);
 
         if (pixeldata)
         {
             Task v;
+			v.IOid = i;
             v.id = tskcot+i*4;
             v.webp = webp;
             v.inpath = imagepath;
             v.outpath = ltp->output_files[i];
 
 
-			
+
             v.inimage = ncnn::Mat(w, h, (void*)pixeldata, (size_t)c,c);
 
 
 
-           
+
 
 			//printf("onload, elepack=%d", v.outimage.elempack);
-
-			v.StepRem = stepinit;
-			v.param = ScaleSteps;
+			if (ExternalLoad&&ScaleParamLen!=0)
+			{
+				v.stepinit = ScaleParamLen;
+				v.StepRem = ScaleParamLen;
+				v.param = mkscaleparam;
+			}
+			else
+			{
+				v.stepinit = stepinit_fixed;
+				v.StepRem = stepinit_fixed;
+				v.param = ScaleSteps;
+			}
 
 			//========
-			
-			if (stepinit == 1)
+
+			if (v.StepRem == 1)
 			{
 				if (i16out)
 				{
@@ -316,24 +346,30 @@ void* load(void* args)
 				{
 					v.outimage = ncnn::Mat(w * scale, h * scale, (size_t)c, c);
 				}
-				
+
 			}
 			else
 			{
-				float dstsk = ScaleSteps[0].DstSize;
+				WHpack whsrc;
+				whsrc.w = w;
+				whsrc.h = h;
+				WHpack whdst = multipwh(whsrc, v.param[0].DstSize, scale);
+				/*
+				float dstsk = v.param[0].DstSize;
 				float wji = w * scale;
 				float hji = h * scale;
 				wji = wji * dstsk+0.5f;
 				hji = hji * dstsk + 0.5f;
-				v.outimage = ncnn::Mat((int)wji, (int)hji, (int)c, (size_t)2);
+				*/
+				v.outimage = ncnn::Mat(whdst.w, whdst.h, (int)c, (size_t)2);
 			}
-			
+
 
 			// in.create(in_tile_w, in_tile_h, RGB_CHANNELS, sizeof(float));
 			//========
 
 
-			
+
 
 			//v.outimage.c = 3;
 			//v.inimage.c = 3;
@@ -342,7 +378,17 @@ void* load(void* args)
             path_t ext = get_file_extension(v.outpath);
             if (c == 4 && (ext == PATHSTR("jpg") || ext == PATHSTR("JPG") || ext == PATHSTR("jpeg") || ext == PATHSTR("JPEG")))
             {
-                path_t output_filename2 = ltp->output_files[i] + PATHSTR(".png");
+				path_t output_filename2;
+
+				if (i16out)
+				{
+					output_filename2 = ltp->output_files[i] + PATHSTR(".ppm");
+				}
+				else
+				{
+					output_filename2 = ltp->output_files[i] + PATHSTR(".png");
+				}
+
                 v.outpath = output_filename2;
 
                 fwprintf(stderr, L"image %ls has alpha channel ! %ls will output %ls\n", imagepath.c_str(), imagepath.c_str(), output_filename2.c_str());
@@ -351,7 +397,7 @@ void* load(void* args)
 
             toproc.put(v);
 
-			
+
         }
         else
         {
@@ -372,23 +418,25 @@ public:
 };
 
 
-void putback(Task v_orig, ncnnNetPack* modelscale)
+void putback(Task v_orig,const ncnnNetPack* modelscale)
 {
 	Task v;
 	v.id = v_orig.id + 1;
+	v.IOid = v_orig.IOid;
 	v.webp = v_orig.webp;
 	v.inpath = v_orig.inpath;
 	v.outpath = v_orig.outpath;
+	v.stepinit = v_orig.stepinit;
 	v.StepRem = v_orig.StepRem - 1;
 	v.param = v_orig.param + 1;
 
 	int ow = v_orig.outimage.w;
 	int oh = v_orig.outimage.h;
-	int oc = v_orig.outimage.dims;
+	int oc = v_orig.outimage.c;
 	size_t oelep = v_orig.outimage.elempack;
-	
 
-	
+
+
 
 
 
@@ -397,8 +445,8 @@ void putback(Task v_orig, ncnnNetPack* modelscale)
 	int mdskal = modelscale[v.param->model].scale;
 
 
-	
-	
+
+
 
 	if (v.StepRem < 2)
 	{
@@ -412,18 +460,27 @@ void putback(Task v_orig, ncnnNetPack* modelscale)
 		{
 			v.outimage = ncnn::Mat(ow*mdskal, oh*mdskal, (size_t)oc, (int)oc);
 		}
-			
-		
+
+
 	}
 	else
 	{
+		/*
 		float dstsk = v.param->DstSize;
 		float wji = ow * mdskal;
 		float hji = oh * mdskal;
 		wji = wji * dstsk + 0.5f;
 		hji = hji * dstsk + 0.5f;
-		//printf("\nstep%d, out=fp16\n", v.StepRem);
-		v.outimage = ncnn::Mat((int)(wji), (int)(hji), v_orig.outimage.c, (size_t)2);
+		*/
+		WHpack whsrc;
+		whsrc.w = ow;
+		whsrc.h = oh;
+		WHpack whdst = multipwh(whsrc, v.param->DstSize, mdskal);
+		
+
+		//printf("\nrate=%f,scaleto%f\n", dstsk,wji);
+
+		v.outimage = ncnn::Mat(whdst.w, whdst.h, v_orig.outimage.c, (size_t)2);
 	}
 
 
@@ -439,9 +496,9 @@ void putback(Task v_orig, ncnnNetPack* modelscale)
 
 void* proc(void* args)
 {
-	//puts("manyproc?");
+
     const ProcThreadParams* ptp = (const ProcThreadParams*)args;
-    Waifu2x* waifu2x = ptp->waifu2x;
+    const Waifu2x* waifu2x = ptp->waifu2x;
 
 
 
@@ -452,21 +509,19 @@ void* proc(void* args)
         toproc.get(v);
 
 		if (v.id == -233)
-		{
-			
-				break;
-			
-		}
-		
-			
+            break;
+
+
+
+
 
 
 		auto tup = _mid32to32_;
-		if (stepinit == 1)
+		if (v.stepinit == 1)
 		{
 			tup = _simp8to8_;
 		}
-		else if (v.StepRem == stepinit)
+		else if (v.StepRem == v.stepinit)
 		{
 			tup = _first8to32_;
 		}
@@ -475,14 +530,14 @@ void* proc(void* args)
 			tup = _end32to8_;
 		}
 
-		
-		
 
-	
+
+
+
         waifu2x->process(v.inimage, v.outimage,v.param[0], tup);
 
 
-		
+
 
 		if (v.StepRem > 1)
 		{
@@ -494,7 +549,7 @@ void* proc(void* args)
 			tosave.put(v);
 		}
 
-        
+
     }
 
     return 0;
@@ -510,7 +565,7 @@ void* save(void* args)
 {
     const SaveThreadParams* stp = (const SaveThreadParams*)args;
     const int verbose = stp->verbose;
-	
+
 
 	for (;;)
 	{
@@ -519,12 +574,7 @@ void* save(void* args)
 		tosave.get(v);
 
 		if (v.id == -233)
-		{
-
-
 			break;
-
-		}
 
 
 
@@ -544,64 +594,124 @@ void* save(void* args)
 
 			}
 		}
-
-
-		if (i16out)
+		if (ExternalSave)
 		{
-			
-			PGM16save((v.outpath+ PATHSTR(".ppm")).c_str(), v.outimage.w, v.outimage.h, v.outimage.c, (const unsigned char*)v.outimage.data);
+			ImgEncFunc(v.IOid, v.outimage.w, v.outimage.h, v.outimage.c, i16out ? 1 : 2, (unsigned char*)v.outimage.data);
 		}
 		else
 		{
-		int success = 0;
-
-		path_t ext = get_file_extension(v.outpath);
-
-		if (ext == PATHSTR("webp") || ext == PATHSTR("WEBP"))
-		{
-			success = webp_save(v.outpath.c_str(), v.outimage.w, v.outimage.h, v.outimage.elempack, (const unsigned char*)v.outimage.data);
-		}
-		else if (ext == PATHSTR("png") || ext == PATHSTR("PNG"))
-		{
-
-			success = wic_encode_image(v.outpath.c_str(), v.outimage.w, v.outimage.h, v.outimage.elempack, v.outimage.data);
-
-		}
-		else if (ext == PATHSTR("jpg") || ext == PATHSTR("JPG") || ext == PATHSTR("jpeg") || ext == PATHSTR("JPEG"))
-		{
-
-			success = wic_encode_jpeg_image(v.outpath.c_str(), v.outimage.w, v.outimage.h, v.outimage.elempack, v.outimage.data);
-
-		}
-		if (success)
-		{
-			if (verbose)
+			if (i16out)
 			{
 
-				fwprintf(stdout, L"%ls -> %ls done\n", v.inpath.c_str(), v.outpath.c_str());
+				PGM16save(v.outpath.c_str(), v.outimage.w, v.outimage.h, v.outimage.c, (const unsigned char*)v.outimage.data);
+			}
+			else
+			{
+				int success = 0;
 
+				path_t ext = get_file_extension(v.outpath);
+
+				if (ext == PATHSTR("webp") || ext == PATHSTR("WEBP"))
+				{
+					success = webp_save(v.outpath.c_str(), v.outimage.w, v.outimage.h, v.outimage.elempack, (const unsigned char*)v.outimage.data);
+				}
+				else if (ext == PATHSTR("png") || ext == PATHSTR("PNG"))
+				{
+
+					success = wic_encode_image(v.outpath.c_str(), v.outimage.w, v.outimage.h, v.outimage.elempack, v.outimage.data);
+
+				}
+				else if (ext == PATHSTR("jpg") || ext == PATHSTR("JPG") || ext == PATHSTR("jpeg") || ext == PATHSTR("JPEG"))
+				{
+
+					success = wic_encode_jpeg_image(v.outpath.c_str(), v.outimage.w, v.outimage.h, v.outimage.elempack, v.outimage.data);
+
+				}
+				if (success)
+				{
+					if (verbose)
+					{
+
+						fwprintf(stdout, L"%ls -> %ls done\n", v.inpath.c_str(), v.outpath.c_str());
+
+					}
+				}
+				else
+				{
+
+					fwprintf(stderr, L"encode image %ls failed\n", v.outpath.c_str());
+
+				}
 			}
 		}
-		else
-		{
-
-			fwprintf(stderr, L"encode image %ls failed\n", v.outpath.c_str());
-
-		}
 	}
-    }
 
     return 0;
 }
 
+
+
+
+
 std::vector<path_t> inout_files[2];
 
-int wmain(int argc, wchar_t** argv)
+
+DLL_EXPORT void InOutList(const int count, wchar_t** in_paths, wchar_t** out_paths)
 {
+	std::vector<path_t>().swap(inout_files[0]);
+	std::vector<path_t>().swap(inout_files[1]);
+
+	for (int i = 0; i < count; i++)
+	{
+		inout_files[0].push_back(in_paths[i]);
+		inout_files[1].push_back(out_paths[i]);
+
+		//printf("\nC#inout=%ls\n", inout_files[0][0].c_str());
+	}
+}
+
+
+bool isExternelFind = false;
+DLL_EXPORT void SetFindFileFunc(FindFileFunc func,bool setisDir)
+{
+	isExternelFind = true;
+	isDIR = setisDir;
+	FillPathListFunc = func;
+}
+
+DLL_EXPORT void SetEncodeFunc(EncodeFunc func)
+{
+	if (isExternelFind)
+	{
+		ExternalSave = true;
+		ImgEncFunc = func;
+	}
+
+}
+
+DLL_EXPORT int SetDecodeFunc(DecodeFunc func)
+{
+	if (isExternelFind)
+	{
+		ExternalLoad = true;
+		ImgDecFunc = func;
+		
+	}
+	return 2;
+}
+
+
+#ifdef BuildDLL
+DLL_EXPORT int runW2X(int argc, wchar_t** argv)
+#else
+int wmain(int argc, wchar_t** argv)
+#endif
+{
+
     path_t inputpath=PATHSTR(".\\tibr_o.jpg");;
     path_t outputpath=PATHSTR(".\\output.png");;
     int noise = 1;
-   
+
     std::vector<int> tilesize;
 	int model = 1;//PATHSTR("models-cunet");
     std::vector<int> gpuid;
@@ -611,7 +721,7 @@ int wmain(int argc, wchar_t** argv)
     int verbose = 0;
     int tta_mode = 0;
     path_t format = PATHSTR("png");
-	float kscale = 2.0f;
+	int kscale = 7680;
 
     setlocale(LC_ALL, "");
     wchar_t opt;
@@ -626,7 +736,7 @@ int wmain(int argc, wchar_t** argv)
             outputpath = optarg;
             break;
 		case L'k':
-			kscale = (float)_wtoi(optarg);
+			kscale = _wtoi(optarg);
         case L'n':
             noise = _wtof(optarg);
             break;
@@ -659,9 +769,13 @@ int wmain(int argc, wchar_t** argv)
         }
     }
 
-	const bool maxuse=(FillScaleParam(ScaleSteps, kscale)>(char)0);
+#if _WIN32
+	const bool maxuse=(FillScaleParam(ScaleSteps, kscale,".\\spv\\0modelset.w2x")>(char)0);
+#else
+    const bool maxuse=(FillScaleParam(ScaleSteps, kscale,"./spv/0modelset.w2x")>(char)0);
+#endif
 
-	int scale = ScaleSteps[ScaleSteps[0].model].skl;
+	int scale = 2;//ScaleSteps[ScaleSteps[0].model].skl;
 
     if (inputpath.empty() || outputpath.empty())
     {
@@ -748,18 +862,18 @@ int wmain(int argc, wchar_t** argv)
     }
 
     // collect input and output filepath
-    
-    {
-	
 
-		if (FillPathList(inputpath, outputpath,format, inout_files) < 0)
+    {
+
+
+		if (FillPathListpp(inputpath, outputpath,format, inout_files) < 0)
 			return -1;
     }
 
-    
 
 
-    
+
+
 
     //path_t paramfullpath = sanitize_filepath(parampath);
     //path_t modelfullpath = sanitize_filepath(modelpath);
@@ -862,13 +976,13 @@ int wmain(int argc, wchar_t** argv)
 						waifu2x[i]->load(ScaleSteps[jjp].mdl - 0x60, ScaleSteps[jjp].skl, ScaleSteps[jjp].noiz, jjp);
 				}
 			}
-            
 
-		
 
-       
+
+
+
             waifu2x[i]->tilesize = tilesize[i];
-            
+
         }
 
         // main routine
@@ -880,7 +994,7 @@ int wmain(int argc, wchar_t** argv)
             ltp.jobs_load = jobs_load;
             ltp.input_files = inout_files[0];
             ltp.output_files = inout_files[1];
-		
+
 
             ncnn::Thread load_thread(load, (void*)&ltp);
 
@@ -915,34 +1029,13 @@ int wmain(int argc, wchar_t** argv)
 
             // end
             load_thread.join();
-			
-
-			
 
 
-			/*
-			while (true)
-			{
-				slleep:
-				Sleep_1024_;
-				
-				
-				if ((toproc.isEmpty() && tosave.isEmpty()))
-				{
-					Sleep_1024_;
 
-					
-					if (!(toproc.isEmpty() && tosave.isEmpty()))
-					{
-						goto slleep;
-					}
-					
 
-					break;
-				}
-			}
-			*/
-			
+
+
+
 			Task end;
             end.id = -233;
 
@@ -969,16 +1062,16 @@ int wmain(int argc, wchar_t** argv)
             }
         }
 
-		
+
 		if (isDIR)
 		{
-			
+
 			loopwait:
-			int gff = FillPathList(inputpath, outputpath, format, inout_files);
+			int gff = FillPathListpp(inputpath, outputpath, format, inout_files);
 			//printf("\ngetgff=%d\n",gff);
 			if (gff > 0)
 			{
-				//printf("\ndolppodir\n");
+				printf("%dnewproc\n",gff);
 				goto maruta;
 			}
 			else if (gff < 0)
@@ -988,19 +1081,19 @@ int wmain(int argc, wchar_t** argv)
 				Sleep_1024_;
 				goto loopwait;
 			}
-				
 
-			
-		
-		
+
+
+
+
 		}
 		byebye:
 
-			
 
-		
 
-		
+
+
+
 
         for (int i=0; i<use_gpu_count; i++)
         {
@@ -1011,6 +1104,6 @@ int wmain(int argc, wchar_t** argv)
 
     ncnn::destroy_gpu_instance();
 
-	
+
     return 0;
 }

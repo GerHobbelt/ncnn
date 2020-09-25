@@ -15,7 +15,7 @@
 #define _postproc_ 'Z'
 
 
-int stepinit = 0;
+int stepinit_fixed = 0;
 ScaleParam ScaleSteps[8];
 
 
@@ -63,44 +63,6 @@ inline int LoadShaderSimp(uint32_t* dst,char* Name,char proc,char withTTA,char v
 }
 
 
-
-char FillScaleParam(ScaleParam* dst,float skale)
-{
-	FILE* fi = fopen(".\\spv\\0modelset.w2x", "rb");
-	int relrd=fread(dst, 1, 0x40, fi)/8;
-	fclose(fi);
-
-	char maxuse = 0;
-	for (int i = 0; i < relrd; i++)
-	{
-
-
-		if (dst[i].model == (char)0xFF)
-		{
-			stepinit = i;
-			return maxuse;
-		}
-		else if (dst[i].model > maxuse)
-		{
-			maxuse = dst[i].model;
-
-		}
-			
-	}
-
-	stepinit = relrd;
-	return maxuse;
-
-	/*
-	dst[0].DstSize = 0.97766f;
-	dst[0].model = 0;
-	dst[1].DstSize = 0.96677f;
-	dst[1].model = 1;
-	dst[2].DstSize = 1.0f;
-	dst[2].model = 1;
-	stepinit = 3;
-	*/
-}
 
 
 #endif

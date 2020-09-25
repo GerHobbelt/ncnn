@@ -24,7 +24,95 @@ typedef std::string path_t;
 #define PATHSTR(X) X
 #endif
 
+
+#ifdef BuildDLL
+#define FillPathListpp FillPathListFunc
+BOOL WINAPI DllMain(
+	HINSTANCE hinstDLL,  // handle to DLL module
+	DWORD fdwReason,     // reason for calling function
+	LPVOID lpReserved)  // reserved
+{
+
+	return TRUE;  // Successful DLL_PROCESS_ATTACH.
+}
+#else
+#define FillPathListpp FillPathList
+#endif
+
+
+typedef struct whpack
+{
+	unsigned int w;
+	unsigned int h;
+} WHpack;
+
+inline WHpack multipwh(const WHpack src,const float scale,const int mdlskl)
+{
+	WHpack rrtt;
+	/*
+	if (scale > 1.0f)
+	{
+		printf("\nrawwidth=%f\n", scale);
+		rrtt.w = (unsigned int)scale;
+		double rskl = ((double)scale) / ((double)src.w);
+		rrtt.h = (unsigned int)(((double)src.h)*rskl);
+
+		printf("\ndsth=%d\n", rrtt.h);
+	}else
+		*/
+	{
+		
+		float wji = src.w * mdlskl;
+		float hji = src.h * mdlskl;
+		wji = wji * scale + 0.5f;
+		hji = hji * scale + 0.5f;
+
+		rrtt.w = (unsigned int)wji;
+		rrtt.h = (unsigned int)hji;
+
+	}
+
+
+	return rrtt;
+}
+
+inline char FillScaleParam(ScaleParam* dst,float skale,const char* modelset)
+{
+
+	FILE* fi = fopen(modelset, "rb");
+
+	int relrd=fread(dst, 1, 0x40, fi)/8;
+	fclose(fi);
+
+	char maxuse = 0;
+	for (int i = 0; i < relrd; i++)
+	{
+
+
+		if (dst[i].model == (char)0xFF)
+		{
+			stepinit_fixed = i;
+			return maxuse;
+		}
+		else if (dst[i].model > maxuse)
+		{
+			maxuse = dst[i].model;
+
+		}
+
+	}
+
+	stepinit_fixed = relrd;
+	return maxuse;
+
+	
+}
+
+
+
+
 #if _WIN32
+#define Sleep_1024_ Sleep(1024)
 WIN32_FIND_DATA FindFileData;
 static bool FileExist(const path_t& path)
 {
@@ -79,6 +167,7 @@ static int list_directory(const path_t& dirpath, std::vector<path_t>& imagepaths
     return 0;
 }
 #else // _WIN32
+#define Sleep_1024_ sleep(1)
 #include <glob.h>
 glob_t buf;
 static bool FileExist(const path_t& path)
