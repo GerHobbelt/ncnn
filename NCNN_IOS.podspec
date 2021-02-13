@@ -15,9 +15,7 @@ Pod::Spec.new do |spec|
   spec.author             = { "DCTech" => "412200533@qq.com" }
 
   spec.platform     = :ios, "9.0"
-  spec.source       = { :http=> "https://hub.fastgit.org/Tencent/ncnn/releases/download/20210124/ncnn-20210124-ios-vulkan-bitcode.zip" }
-
-  spec.source_files  = "*.framework"
+  spec.source       = { :http=> "https://github.com/Tencent/ncnn/releases/download/20210124/ncnn-20210124-ios-vulkan-bitcode.zip" }
 
 
   spec.public_header_files = "openmp.framework/Headers/*.h", "ncnn.framework/Header/SPIRV/*.h","ncnn.framework/Header/ncnn/*.h","ncnn.framework/Header/glslang/Public/*.h"
