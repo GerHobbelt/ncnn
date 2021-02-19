@@ -12,9 +12,10 @@ jobs:
         run: gem install cocoapods
 
   iOS:
-    runs-on: macos-latest
     needs: [cocoapods]
-    - name: Deploy to Cocoapods
+    runs-on: macos-latest
+    steps:
+      - name: Deploy_to_Cocoapods
         run: |
           pod spec lint --allow-warnings NCNN_IOS.podspec
           pod trunk push --allow-warnings NCNN_IOS.podspec
@@ -22,9 +23,10 @@ jobs:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
   MacOS:
-    runs-on: macos-latest
     needs: [cocoapods]
-    - name: Deploy to Cocoapods
+    runs-on: macos-latest
+    steps:
+      - name: Deploy to Cocoapods
         run: |
           pod spec lint --allow-warnings NCNN_MAC.podspec
           pod trunk push --allow-warnings NCNN_MAC.podspec
