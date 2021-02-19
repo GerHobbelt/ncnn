@@ -3,8 +3,8 @@ name: pod_push
 on:
   workflow_dispatch:
 jobs:
-runs-on: macos-latest
   cocoapods:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
     
@@ -13,6 +13,7 @@ runs-on: macos-latest
 
   iOS:
     needs: [cocoapods]
+    runs-on: macos-latest
     - name: Deploy to Cocoapods
         run: |
           pod spec lint --allow-warnings NCNN_IOS.podspec
@@ -22,6 +23,7 @@ runs-on: macos-latest
 
   MacOS:
     needs: [cocoapods]
+    runs-on: macos-latest
     - name: Deploy to Cocoapods
         run: |
           pod spec lint --allow-warnings NCNN_MAC.podspec
