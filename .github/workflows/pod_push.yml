@@ -3,18 +3,27 @@ name: pod_push
 on:
   workflow_dispatch:
 jobs:
+runs-on: macos-latest
   cocoapods:
-    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
     
       - name: Install Cocoapods
         run: gem install cocoapods
-        
-      - name: Deploy to Cocoapods
+
+  iOS:
+    needs: [cocoapods]
+    - name: Deploy to Cocoapods
         run: |
           pod spec lint --allow-warnings NCNN_IOS.podspec
           pod trunk push --allow-warnings NCNN_IOS.podspec
+        env:
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+
+  MacOS:
+    needs: [cocoapods]
+    - name: Deploy to Cocoapods
+        run: |
           pod spec lint --allow-warnings NCNN_MAC.podspec
           pod trunk push --allow-warnings NCNN_MAC.podspec
         env:
