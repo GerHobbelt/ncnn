@@ -6,8 +6,6 @@ jobs:
   cocoapods:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
-    
       - name: Install Cocoapods
         run: gem install cocoapods
 
@@ -15,6 +13,8 @@ jobs:
     needs: [cocoapods]
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@v2
+      
       - name: Deploy_to_Cocoapods
         run: |
           pod spec lint --allow-warnings NCNN_IOS.podspec
@@ -26,6 +26,8 @@ jobs:
     needs: [cocoapods]
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@v2
+      
       - name: Deploy to Cocoapods
         run: |
           pod spec lint --allow-warnings NCNN_MAC.podspec
