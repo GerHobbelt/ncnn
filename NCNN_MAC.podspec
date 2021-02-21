@@ -14,9 +14,9 @@ Pod::Spec.new do |spec|
 
   spec.author             = { "DCTech" => "412200533@qq.com" }
 
-  spec.platform     = :osx, "10.12"
+  spec.platform     = :osx, "10.15"
 
-  spec.source       = { :http => "https://github.com/Tencent/ncnn/releases/download/20210124/ncnn-20210124-macos-vulkan.zip"}
+  spec.source       = { :http => "https://hub.fastgit.org/Tencent/ncnn/releases/download/20210124/ncnn-20210124-macos-vulkan.zip"}
   spec.public_header_files = "${PODS_ROOT}/NCNN_IOS/openmp.framework/Headers/*.h", "${PODS_ROOT}/NCNN_IOS/ncnn.framework/Header/SPIRV/*.h","${PODS_ROOT}/NCNN_IOS/ncnn.framework/Header/ncnn/*.h","${PODS_ROOT}/NCNN_IOS/ncnn.framework/Header/glslang/Public/*.h"
 
   spec.vendored_frameworks = "openmp.framework", "ncnn.framework","glslang.framework"
