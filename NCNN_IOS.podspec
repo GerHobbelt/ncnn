@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "NCNN_IOS"
-  spec.version      = "20210125"
+  spec.version      = "20210126"
   spec.summary      = "ncnn powerby Tencent"
 
   spec.description  = <<-DESC
