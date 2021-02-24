@@ -117,7 +117,7 @@ jobs:
         cp -r build/install/lib/* Lib/
     - name: package
       run: |
-        zip -9 -y -r ${{ env.PACKAGENAME }}.zip Include Lib ../LICENSE.txt
+        zip -9 -y -r ${{ env.PACKAGENAME }}.zip Include Lib LICENSE.txt
     - name: upload-zip
       uses: actions/upload-artifact@v2.2.2
       with:
