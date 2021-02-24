@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "NCNN_IOS"
-  spec.version      = "20210126"
+  spec.version      = "20200225"
   spec.summary      = "ncnn powerby Tencent"
 
   spec.description  = <<-DESC
@@ -15,9 +15,9 @@ Pod::Spec.new do |spec|
   spec.author             = { "DCTech" => "412200533@qq.com" }
 
   spec.platform     = :ios, "9.0"
-  spec.source       = { :http=> "https://github.com/Tencent/ncnn/releases/download/20210124/ncnn-20210124-ios-vulkan-bitcode.zip" }
+  spec.source       = { :http=> "https://github.com/DaChengTechnology/ncnn/releases/download/20200224/ncnn-20200224-ios-vulkan-bitcode-pod.zip" }
 
-  spec.vendored_libraries = "Lib/*.a"
+  spec.vendored_libraries = "**/libglslang.a","**/libncnn.a","**/libOGLCompiler.a","**/libomp.a","**/libOSDependent.a","**/libSPIRV.a"
 
   spec.xcconfig = { 'HEADER_SEARCH_PATHS' => '**/Include'}
 

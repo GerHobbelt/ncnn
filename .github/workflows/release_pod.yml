@@ -5,7 +5,7 @@ on:
       - '*'
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
   EMSCRIPTEN_VERSION: 2.0.8
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
   openmp-ios-bitcode:
-    runs-on: macos-latest
+    runs-on: macos-11.0
     steps:
     - name: cache-openmp
       id: cache-openmp
@@ -44,10 +44,10 @@ jobs:
         cd openmp-11.0.0.src
         mkdir build && cd build
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/ios.toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install \
-            -DIOS_PLATFORM=OS -DENABLE_BITCODE=1 -DENABLE_ARC=0 -DENABLE_VISIBILITY=0 -DIOS_ARCH="arm64" \
+            -DIOS_PLATFORM=OS -DENABLE_BITCODE=1 -DENABLE_ARC=0 -DENABLE_VISIBILITY=0 -DIOS_ARCH="armv7;arm64" \
             -DPERL_EXECUTABLE=/usr/local/bin/perl \
             -DLIBOMP_ENABLE_SHARED=OFF -DLIBOMP_OMPT_SUPPORT=OFF -DLIBOMP_USE_HWLOC=OFF ..
-        cmake --build . -j 2
+        cmake --build . -j 3
         cmake --build . --target install
         rm -rf $GITHUB_WORKSPACE/openmp-install-pod
         mkdir -p $GITHUB_WORKSPACE/openmp-install-pod
@@ -62,7 +62,7 @@ jobs:
 
   ios-gpu-bitcode:
     needs: [setup, openmp-ios-bitcode]
-    runs-on: macos-latest
+    runs-on: macos-11.0
     env:
       PACKAGENAME: ncnn-${{ needs.setup.outputs.VERSION }}-ios-vulkan-bitcode-pod
     steps:
@@ -96,14 +96,14 @@ jobs:
         export VULKAN_SDK=`pwd`/vulkansdk-macos-1.2.135.0/macOS
         mkdir build && cd build
         cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/ios.toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
-            -DIOS_PLATFORM=OS64 -DENABLE_BITCODE=1 -DENABLE_ARC=0 -DENABLE_VISIBILITY=0 -DIOS_ARCH="arm64" \
+            -DIOS_PLATFORM=OS64 -DENABLE_BITCODE=1 -DENABLE_ARC=0 -DENABLE_VISIBILITY=0 -DIOS_ARCH="armv7;arm64" \
             -DOpenMP_C_FLAGS="-Xclang -fopenmp" -DOpenMP_CXX_FLAGS="-Xclang -fopenmp" \
             -DOpenMP_C_LIB_NAMES="libomp" -DOpenMP_CXX_LIB_NAMES="libomp" \
             -DOpenMP_libomp_LIBRARY="$DEVELOPER_DIR/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/lib/libomp.a" \
             -DVulkan_INCLUDE_DIR=`pwd`/../vulkansdk-macos-1.2.135.0/MoltenVK/include \
             -DVulkan_LIBRARY=`pwd`/../vulkansdk-macos-1.2.135.0/MoltenVK/iOS/dynamic/libMoltenVK.dylib \
             -DNCNN_VULKAN=ON -DNCNN_BUILD_BENCHMARK=OFF ..
-        cmake --build . -j 2
+        cmake --build . -j 3
         cmake --build . --target install
     - name: package-openmp
       run: |
@@ -116,12 +116,148 @@ jobs:
     - name: package-ncnn
       run: |
         cp -r build/install/include/* Include/
-        cp -r build/install/lib/* Lib/
+        cp -r build/install/lib/*.a Lib/
     - name: package
       run: |
         zip -9 -y -r ${{ env.PACKAGENAME }}.zip Include Lib
     - name: upload-zip
       uses: actions/upload-artifact@v2.2.2
+      with:
+        name: ${{ env.PACKAGENAME }}
+        path: ${{ env.PACKAGENAME }}.zip
+
+  openmp-macos:
+    runs-on: macos-11.0
+    steps:
+    - name: cache-openmp
+      id: cache-openmp
+      uses: actions/cache@v1
+      with:
+        path: openmp-install
+        key: openmp-ios-bitcode-release-11.0.0
+    - name: checkout
+      if: steps.cache-openmp.outputs.cache-hit != 'true'
+      uses: actions/checkout@v2
+    - name: openmp
+      if: steps.cache-openmp.outputs.cache-hit != 'true'
+      run: |
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/openmp-11.0.0.src.tar.xz
+        tar -xf openmp-11.0.0.src.tar.xz
+        cd openmp-11.0.0.src
+        sed -i'' -e '/.size __kmp_unnamed_critical_addr/d' runtime/src/z_Linux_asm.S
+        sed -i'' -e 's/__kmp_unnamed_critical_addr/___kmp_unnamed_critical_addr/g' runtime/src/z_Linux_asm.S
+    - name: build-x86_64
+      if: steps.cache-openmp.outputs.cache-hit != 'true'
+      run: |
+        cd openmp-11.0.0.src
+        mkdir build-x86_64 && cd build-x86_64
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DCMAKE_OSX_ARCHITECTURES="x86_64" \
+            -DLIBOMP_ENABLE_SHARED=OFF -DLIBOMP_OMPT_SUPPORT=OFF -DLIBOMP_USE_HWLOC=OFF ..
+        cmake --build . -j 3
+        cmake --build . --target install
+    - name: build-arm64
+      if: steps.cache-openmp.outputs.cache-hit != 'true'
+      run: |
+        cd openmp-11.0.0.src
+        mkdir build-arm64 && cd build-arm64
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DCMAKE_OSX_ARCHITECTURES="arm64" \
+            -DLIBOMP_ENABLE_SHARED=OFF -DLIBOMP_OMPT_SUPPORT=OFF -DLIBOMP_USE_HWLOC=OFF ..
+        cmake --build . -j 3
+        cmake --build . --target install
+    - name: merge-fat-library
+      if: steps.cache-openmp.outputs.cache-hit != 'true'
+      run: |
+        rm -rf $GITHUB_WORKSPACE/openmp-install-mac-pod
+        mkdir -p $GITHUB_WORKSPACE/openmp-install-mac-pod
+        cp -r openmp-11.0.0.src/build-x86_64/install/include $GITHUB_WORKSPACE/openmp-install-mac-pod
+        mkdir -p $GITHUB_WORKSPACE/openmp-install-mac-pod/lib
+        lipo -create openmp-11.0.0.src/build-x86_64/install/lib/libomp.a openmp-11.0.0.src/build-arm64/install/lib/libomp.a -o $GITHUB_WORKSPACE/openmp-install-mac-pod/lib/libomp.a
+    - name: upload
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: openmp-mac-bitcode
+        path: openmp-install-mac-pod
+
+  macos-gpu:
+    needs: [setup, openmp-macos]
+    runs-on: macos-latest
+    env:
+      PACKAGENAME: ncnn-${{ needs.setup.outputs.VERSION }}-macos-vulkan-pod
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: download-openmp-macos
+      uses: actions/download-artifact@v2
+      with:
+        name: openmp-mac-bitcode
+        path: openmp-install-mac-pod
+    - name: install-openmp
+      run: |
+        sudo cp openmp-install-mac-pod/include/* $DEVELOPER_DIR/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+        sudo cp openmp-install-mac-pod/lib/libomp.a $DEVELOPER_DIR/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib
+    - name: cache-vulkansdk
+      id: cache-vulkansdk
+      uses: actions/cache@v1
+      with:
+        path: "vulkansdk-macos-1.2.162.0"
+        key: vulkansdk-macos-1.2.162.0
+    - name: vulkansdk
+      if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+      run: |
+        wget https://sdk.lunarg.com/sdk/download/1.2.162.0/mac/vulkansdk-macos-1.2.162.0.dmg?Human=true -O vulkansdk-macos-1.2.162.0.dmg
+        hdiutil attach vulkansdk-macos-1.2.162.0.dmg
+        cp -r /Volumes/vulkansdk-macos-1.2.162.0 .
+        rm -rf vulkansdk-macos-1.2.162.0/Applications
+        find vulkansdk-macos-1.2.162.0 -type f | grep -v -E 'vulkan|glslang|MoltenVK' | xargs rm
+        hdiutil detach /Volumes/vulkansdk-macos-1.2.162.0
+    - name: build-x86_64
+      run: |
+        export VULKAN_SDK=`pwd`/vulkansdk-macos-1.2.162.0/macOS
+        mkdir build-x86_64 && cd build-x86_64
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" -DCMAKE_OSX_ARCHITECTURES="x86_64" \
+            -DOpenMP_C_FLAGS="-Xclang -fopenmp" -DOpenMP_CXX_FLAGS="-Xclang -fopenmp" \
+            -DOpenMP_C_LIB_NAMES="libomp" -DOpenMP_CXX_LIB_NAMES="libomp" \
+            -DOpenMP_libomp_LIBRARY="$DEVELOPER_DIR/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libomp.a" \
+            -DVulkan_INCLUDE_DIR=`pwd`/../vulkansdk-macos-1.2.162.0/MoltenVK/include \
+            -DVulkan_LIBRARY=`pwd`/../vulkansdk-macos-1.2.162.0/MoltenVK/dylib/macOS/libMoltenVK.dylib \
+            -DNCNN_VULKAN=ON -DNCNN_BUILD_TOOLS=OFF -DNCNN_BUILD_EXAMPLES=OFF -DNCNN_BUILD_BENCHMARK=OFF ..
+        cmake --build . -j 3
+        cmake --build . --target install
+    - name: build-arm64
+      run: |
+        export VULKAN_SDK=`pwd`/vulkansdk-macos-1.2.162.0/macOS
+        mkdir build-arm64 && cd build-arm64
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=install -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" -DCMAKE_OSX_ARCHITECTURES="arm64" \
+            -DCMAKE_CROSSCOMPILING=ON -DCMAKE_SYSTEM_PROCESSOR=arm64 \
+            -DOpenMP_C_FLAGS="-Xclang -fopenmp" -DOpenMP_CXX_FLAGS="-Xclang -fopenmp" \
+            -DOpenMP_C_LIB_NAMES="libomp" -DOpenMP_CXX_LIB_NAMES="libomp" \
+            -DOpenMP_libomp_LIBRARY="$DEVELOPER_DIR/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libomp.a" \
+            -DVulkan_INCLUDE_DIR=`pwd`/../vulkansdk-macos-1.2.162.0/MoltenVK/include \
+            -DVulkan_LIBRARY=`pwd`/../vulkansdk-macos-1.2.162.0/MoltenVK/dylib/macOS/libMoltenVK.dylib \
+            -DNCNN_VULKAN=ON -DNCNN_BUILD_TOOLS=OFF -DNCNN_BUILD_EXAMPLES=OFF -DNCNN_BUILD_BENCHMARK=OFF ..
+        cmake --build . -j 3
+        cmake --build . --target install
+    - name: package-openmp
+      run: |
+        rm -rf mac/Include
+        rm -rf mac/Lib
+        mkdir -p mac/Include
+        mkdir -p mac/Lib
+        cp openmp-install-pod/lib/libomp.a mac/Lib/libomp.a
+        cp -r openmp-install-mac-pod/include/* mac/Include/
+    - name: package-glslang
+      run: |
+        cp -r build/install-x86_64/include/* Include/
+        libtool -static build-x86_64/install/lib/libglslang.a build-arm64/install/lib/libglslang.a -o mac/Lib/libglslang.a
+        libtool -static build-x86_64/install/lib/libSPIRV.a build-arm64/install/lib/libSPIRV.a -o mac/Lib/libSPIRV.a
+        libtool -static build-x86_64/install/lib/libOGLCompiler.a build-arm64/install/lib/libOGLCompiler.a -o mac/Lib/libOGLCompiler.a
+        libtool -static build-x86_64/install/lib/libOSDependent.a build-arm64/install/lib/libOSDependent.a -o mac/Lib/libOSDependent.a
+        libtool -static build-x86_64/install/lib/ncnn.a build-arm64/install/lib/ncnn.a -o mac/Lib/ncnn.a
+        rm -f ${{ env.PACKAGENAME }}.zip
+        zip -9 -y -r ${{ env.PACKAGENAME }}.zip mac/*
+    - name: upload-zip
+      uses: actions/upload-artifact@v2
       with:
         name: ${{ env.PACKAGENAME }}
         path: ${{ env.PACKAGENAME }}.zip

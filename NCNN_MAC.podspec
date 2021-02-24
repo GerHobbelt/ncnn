@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name         = "NCNN_MAC"
-  spec.version      = "20210126"
+  spec.version      = "20210225"
   spec.summary      = "ncnn powerby Tencent."
 
   spec.description  = <<-DESC
@@ -17,9 +17,8 @@ Pod::Spec.new do |spec|
   spec.platform     = :osx, "10.15"
 
   spec.source       = { :http => "https://github.com/Tencent/ncnn/releases/download/20210124/ncnn-20210124-macos-vulkan.zip"}
-  spec.public_header_files = "${PODS_ROOT}/NCNN_IOS/openmp.framework/Headers/*.h", "${PODS_ROOT}/NCNN_IOS/ncnn.framework/Header/SPIRV/*.h","${PODS_ROOT}/NCNN_IOS/ncnn.framework/Header/ncnn/*.h","${PODS_ROOT}/NCNN_IOS/ncnn.framework/Header/glslang/Public/*.h"
 
-  spec.vendored_libraries = "openmp.framework/openmp", "ncnn.framework/ncnn","glslang.framework/glslang"
+  spec.vendored_libraries = "**/libglslang.a","**/libncnn.a","**/libOGLCompiler.a","**/libomp.a","**/libOSDependent.a","**/libSPIRV.a"
 
   spec.xcconfig = { 'HEADER_SEARCH_PATHS' => '${PODS_ROOT}/NCNN_IOS/openmp.framework/Headers/;${PODS_ROOT}/NCNN_IOS/ncnn.framework/Headers/;${PODS_ROOT}/NCNN_IOS/glslang.framework/Headers/'
   }
