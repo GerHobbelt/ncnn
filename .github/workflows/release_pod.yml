@@ -56,7 +56,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.2
       with:
         name: openmp-ios-bitcode
-        path: openmp-install
+        path: openmp-install-pod
 
   ios-gpu-bitcode:
     needs: [setup, openmp-ios-bitcode]
