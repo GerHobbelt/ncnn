@@ -109,8 +109,8 @@ jobs:
         rm -rf Lib
         mkidr Include
         mkdir Lib
-        cp openmp-install/lib/libomp.a Lib/libomp.a
-        cp -r openmp-install/include/* Include/
+        cp openmp-install-pod/lib/libomp.a Lib/libomp.a
+        cp -r openmp-install-pod/include/* Include/
     - name: package-ncnn
       run: |
         cp -r build/install/include/* Include/
