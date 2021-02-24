@@ -1,8 +1,6 @@
 name: release_pod
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
@@ -107,43 +105,19 @@ jobs:
         cmake --build . --target install
     - name: package-openmp
       run: |
-        rm -rf openmp.framework
-        mkdir -p openmp.framework/Versions/A/Headers
-        mkdir -p openmp.framework/Versions/A/Resources
-        ln -s A openmp.framework/Versions/Current
-        ln -s Versions/Current/Headers openmp.framework/Headers
-        ln -s Versions/Current/Resources openmp.framework/Resources
-        ln -s Versions/Current/openmp openmp.framework/openmp
-        cp openmp-install/lib/libomp.a openmp.framework/Versions/A/openmp
-        cp -r openmp-install/include/* openmp.framework/Versions/A/Headers/
-        sed -e 's/__NAME__/openmp/g' -e 's/__IDENTIFIER__/org.llvm.openmp/g' -e 's/__VERSION__/11.0/g' Info.plist > openmp.framework/Versions/A/Resources/Info.plist
-    - name: package-glslang
+        rm -rf Include
+        rm -rf Lib
+        mkidr Include
+        mkdir Lib
+        cp openmp-install/lib/libomp.a Lib/libomp.a
+        cp -r openmp-install/include/* Include/
+    - name: package-ncnn
       run: |
-        rm -rf glslang.framework
-        mkdir -p glslang.framework/Versions/A/Headers
-        mkdir -p glslang.framework/Versions/A/Resources
-        ln -s A glslang.framework/Versions/Current
-        ln -s Versions/Current/Headers glslang.framework/Headers
-        ln -s Versions/Current/Resources glslang.framework/Resources
-        ln -s Versions/Current/glslang glslang.framework/glslang
-        libtool -static build/install/lib/libglslang.a build/install/lib/libSPIRV.a build/install/lib/libOGLCompiler.a build/install/lib/libOSDependent.a -o build/install/lib/libglslang_combined.a
-        cp build/install/lib/libglslang_combined.a glslang.framework/Versions/A/glslang
-        cp -r build/install/include/glslang glslang.framework/Versions/A/Headers/
-        sed -e 's/__NAME__/glslang/g' -e 's/__IDENTIFIER__/org.khronos.glslang/g' -e 's/__VERSION__/1.0/g' Info.plist > glslang.framework/Versions/A/Resources/Info.plist
+        cp -r build/install/include/* Include/
+        cp -r build/install/lib/* Lib/
     - name: package
       run: |
-        rm -rf ncnn.framework
-        mkdir -p ncnn.framework/Versions/A/Headers
-        mkdir -p ncnn.framework/Versions/A/Resources
-        ln -s A ncnn.framework/Versions/Current
-        ln -s Versions/Current/Headers ncnn.framework/Headers
-        ln -s Versions/Current/Resources ncnn.framework/Resources
-        ln -s Versions/Current/ncnn ncnn.framework/ncnn
-        cp -r build/install/lib/libncnn.a ncnn.framework/Versions/A/ncnn
-        cp -r build/install/include/* ncnn.framework/Versions/A/Headers/
-        sed -e 's/__NAME__/ncnn/g' -e 's/__IDENTIFIER__/com.tencent.ncnn/g' -e 's/__VERSION__/1.0/g' Info.plist > ncnn.framework/Versions/A/Resources/Info.plist
-        rm -f ${{ env.PACKAGENAME }}.zip
-        zip -9 -y -r ${{ env.PACKAGENAME }}.zip openmp.framework glslang.framework ncnn.framework $GITHUB_WORKSPACE/ncnn/LICENSE.txt
+        zip -9 -y -r ${{ env.PACKAGENAME }}.zip Include Lib $GITHUB_WORKSPACE/ncnn/LICENSE.txt
     - name: upload-zip
       uses: actions/upload-artifact@v2.2.2
       with:
