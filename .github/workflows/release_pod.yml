@@ -19,7 +19,7 @@ jobs:
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
   openmp-ios-bitcode:
-    runs-on: macos-11.0
+    runs-on: macos-11.2
     steps:
     - name: cache-openmp
       id: cache-openmp
@@ -62,7 +62,7 @@ jobs:
 
   ios-gpu-bitcode:
     needs: [setup, openmp-ios-bitcode]
-    runs-on: macos-11.0
+    runs-on: macos-11.2
     env:
       PACKAGENAME: ncnn-${{ needs.setup.outputs.VERSION }}-ios-vulkan-bitcode-pod
     steps:
@@ -127,7 +127,7 @@ jobs:
         path: ${{ env.PACKAGENAME }}.zip
 
   openmp-macos:
-    runs-on: macos-11.0
+    runs-on: macos-11.2
     steps:
     - name: cache-openmp
       id: cache-openmp
