@@ -21,17 +21,10 @@ jobs:
   openmp-ios-bitcode:
     runs-on: macos-latest
     steps:
-    - name: cache-openmp
-      id: cache-openmp
-      uses: actions/cache@v1
-      with:
-        path: openmp-install
-        key: openmp-ios-bitcode-release-11.0.0
     - name: checkout
       if: steps.cache-openmp.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
     - name: openmp
-      if: steps.cache-openmp.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/openmp-11.0.0.src.tar.xz
         tar -xf openmp-11.0.0.src.tar.xz
@@ -129,17 +122,9 @@ jobs:
   openmp-macos:
     runs-on: macos-latest
     steps:
-    - name: cache-openmp
-      id: cache-openmp
-      uses: actions/cache@v1
-      with:
-        path: openmp-install
-        key: openmp-ios-bitcode-release-11.0.0
     - name: checkout
-      if: steps.cache-openmp.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
     - name: openmp
-      if: steps.cache-openmp.outputs.cache-hit != 'true'
       run: |
         wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/openmp-11.0.0.src.tar.xz
         tar -xf openmp-11.0.0.src.tar.xz
@@ -147,7 +132,6 @@ jobs:
         sed -i'' -e '/.size __kmp_unnamed_critical_addr/d' runtime/src/z_Linux_asm.S
         sed -i'' -e 's/__kmp_unnamed_critical_addr/___kmp_unnamed_critical_addr/g' runtime/src/z_Linux_asm.S
     - name: build-x86_64
-      if: steps.cache-openmp.outputs.cache-hit != 'true'
       run: |
         cd openmp-11.0.0.src
         mkdir build-x86_64 && cd build-x86_64
@@ -156,7 +140,6 @@ jobs:
         cmake --build . -j 3
         cmake --build . --target install
     - name: build-arm64
-      if: steps.cache-openmp.outputs.cache-hit != 'true'
       run: |
         cd openmp-11.0.0.src
         mkdir build-arm64 && cd build-arm64
@@ -165,7 +148,6 @@ jobs:
         cmake --build . -j 3
         cmake --build . --target install
     - name: merge-fat-library
-      if: steps.cache-openmp.outputs.cache-hit != 'true'
       run: |
         rm -rf $GITHUB_WORKSPACE/openmp-install-mac-pod
         mkdir -p $GITHUB_WORKSPACE/openmp-install-mac-pod
@@ -244,9 +226,9 @@ jobs:
         rm -rf mac/Lib
         mkdir -p mac/Include
         mkdir -p mac/Lib
-        cp openmp-install-pod/lib/libomp.a mac/Lib/libomp.a
+        cp openmp-install-mac-pod/lib/libomp.a mac/Lib/libomp.a
         cp -r openmp-install-mac-pod/include/* mac/Include/
-    - name: package-glslang
+    - name: package-ncnn
       run: |
         cp -r build/install-x86_64/include/* Include/
         libtool -static build-x86_64/install/lib/libglslang.a build-arm64/install/lib/libglslang.a -o mac/Lib/libglslang.a
