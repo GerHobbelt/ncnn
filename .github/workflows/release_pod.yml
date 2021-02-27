@@ -230,7 +230,7 @@ jobs:
         cp -r openmp-install-mac-pod/include/* mac/Include/
     - name: package-ncnn
       run: |
-        cp -r build/install-x86_64/include/* mac/Include/
+        cp -r build-x86_64/install/include/* mac/Include/
         libtool -static build-x86_64/install/lib/libglslang.a build-arm64/install/lib/libglslang.a -o mac/Lib/libglslang.a
         libtool -static build-x86_64/install/lib/libSPIRV.a build-arm64/install/lib/libSPIRV.a -o mac/Lib/libSPIRV.a
         libtool -static build-x86_64/install/lib/libOGLCompiler.a build-arm64/install/lib/libOGLCompiler.a -o mac/Lib/libOGLCompiler.a
