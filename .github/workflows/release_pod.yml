@@ -235,7 +235,7 @@ jobs:
         libtool -static build-x86_64/install/lib/libSPIRV.a build-arm64/install/lib/libSPIRV.a -o mac/Lib/libSPIRV.a
         libtool -static build-x86_64/install/lib/libOGLCompiler.a build-arm64/install/lib/libOGLCompiler.a -o mac/Lib/libOGLCompiler.a
         libtool -static build-x86_64/install/lib/libOSDependent.a build-arm64/install/lib/libOSDependent.a -o mac/Lib/libOSDependent.a
-        libtool -static build-x86_64/install/lib/ncnn.a build-arm64/install/lib/ncnn.a -o mac/Lib/ncnn.a
+        libtool -static build-x86_64/install/lib/libncnn.a build-arm64/install/lib/libncnn.a -o mac/Lib/libncnn.a
         rm -f ${{ env.PACKAGENAME }}.zip
         zip -9 -y -r ${{ env.PACKAGENAME }}.zip mac/*
     - name: upload-zip
