@@ -1,0 +1,66 @@
+<html><body>
+<h1><div id="team"></div></h1>
+</body>
+<script src="aadata.js"></script>
+<script type="text/javascript">
+
+var tblarea = document.getElementById('team');
+var erocount=thumb.length/10;
+var keyerocount=20;
+var curEro=0;
+
+function vidstr(src)
+{
+	var c0=src.charAt(0);
+	if(c0=='@')
+	{return 'https://video.twimg.com/amplify_video/'+src.substring(1);}
+	else if(c0=='!')
+	{return 'https://video.twimg.com/tweet_video/'+src.substring(1);}
+	else
+	{return 'https://video.twimg.com/ext_tw_video/'+src;}
+}
+
+function thumbstr(src)
+{
+	var c0=src.charAt(0);
+	if(c0=='@')
+	{return 'http://pbs.twimg.com/amplify_video_thumb/'+src.substring(1);}
+	else if(c0=='!')
+	{return 'http://pbs.twimg.com/tweet_video_thumb/'+src.substring(1);}
+	else
+	{return 'http://pbs.twimg.com/ext_tw_video_thumb/'+src;}
+}
+
+function apyed()
+{
+	yina = document.createElement('div');
+	yina.style['float'] = 'left';
+	
+	var kole7="";
+	for(var j=0;j<10;j++){
+var iszrda=curEro*10+j;
+kole7+='<a href = "'+vidstr(vids[iszrda])+
+'" target="_blank"><img src="'+thumbstr(thumb[iszrda])+
+'" width="200"/></a><a href="https://twitter.com/'+msgs[iszrda]+'" target="_blank">@</a><br>';
+
+	}
+	yina.innerHTML = kole7;
+	tblarea.appendChild(yina);
+	curEro++;
+}
+
+function keyFunction() {
+if(curEro<keyerocount){apyed();}
+}
+
+function menuFunction() {
+	if(curEro<erocount){apyed();
+	keyerocount=curEro+20;
+	if(keyerocount>erocount){keyerocount=erocount;}
+	return false;}
+}
+
+document.onkeydown=keyFunction;
+window.oncontextmenu=menuFunction;
+keyFunction();
+</script></html>
