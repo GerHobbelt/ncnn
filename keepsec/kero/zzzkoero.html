@@ -1,5 +1,5 @@
-<html><body>
-<h1><div id="team"></div></h1>
+<html><body style="background-color: black;">
+<div id="team"></div>
 </body>
 <script src="aadata.js"></script>
 <script type="text/javascript">
@@ -36,13 +36,14 @@ function mydav(sta, endo)
 {
 	yina = document.createElement('div');
 	yina.style['float'] = 'left';
+	yina.style['background-color']='gray';
 	
 	var kole7="";
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+='<a href = "'+vidstr(vids[iszrda])+
 '" target="_blank"><img src="'+thumbstr(thumb[iszrda])+
-'" width="225"/></a><a href="https://twitter.com/'+msgs[iszrda]+'" target="_blank">@</a><br>';
+'" width="220"/></a><a href="https://twitter.com/'+msgs[iszrda]+'" target="_blank">💭</a><br>';
 
 	}
 	yina.innerHTML = kole7;
@@ -51,9 +52,9 @@ kole7+='<a href = "'+vidstr(vids[iszrda])+
 
 function apyed()
 {
-	mydav(0,5);
-	mydav(5,8);
-	mydav(8,10);
+	mydav(0,3);
+	mydav(3,7);
+	mydav(7,10);
 	tblarea.appendChild(brk);
 	
 	curEro++;
