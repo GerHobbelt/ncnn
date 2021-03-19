@@ -52,7 +52,7 @@ namespace eroneto
 			int cota=data.Length-1;
 			string[] izkor=new string[4+cota*3];
 			string[] mizr=data[0];
-			izkor[0]="thumb=['";
+			izkor[0]="var curEro=0;\t\t//\t"+(cota/10)+"\n\nthumb=['";
 			izkor[1+cota]=mizr[0]+"'];\n\nvids=['";
 			izkor[2+cota*2]=mizr[1]+"'];\n\nmsgs=['";
 			izkor[3+cota*3]=mizr[2]+"'];";
