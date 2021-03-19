@@ -5,6 +5,7 @@
 <script type="text/javascript">
 
 var tblarea = document.getElementById('team');
+var brk=document.createElement("p");
 var erocount=thumb.length/10;
 var keyerocount=20;
 var curEro=0;
@@ -31,32 +32,44 @@ function thumbstr(src)
 	{return 'http://pbs.twimg.com/ext_tw_video_thumb/'+src;}
 }
 
-function apyed()
+function mydav(sta, endo)
 {
 	yina = document.createElement('div');
 	yina.style['float'] = 'left';
 	
 	var kole7="";
-	for(var j=0;j<10;j++){
+	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+='<a href = "'+vidstr(vids[iszrda])+
 '" target="_blank"><img src="'+thumbstr(thumb[iszrda])+
-'" width="200"/></a><a href="https://twitter.com/'+msgs[iszrda]+'" target="_blank">@</a><br>';
+'" width="225"/></a><a href="https://twitter.com/'+msgs[iszrda]+'" target="_blank">@</a><br>';
 
 	}
 	yina.innerHTML = kole7;
 	tblarea.appendChild(yina);
+}
+
+function apyed()
+{
+	mydav(0,5);
+	mydav(5,8);
+	mydav(8,10);
+	tblarea.appendChild(brk);
+	
 	curEro++;
+	
 }
 
 function keyFunction() {
-if(curEro<keyerocount){apyed();}
+if(curEro<keyerocount){apyed();
+document.title=curEro*10;}
 }
 
 function menuFunction() {
 	if(curEro<erocount){apyed();
 	keyerocount=curEro+20;
 	if(keyerocount>erocount){keyerocount=erocount;}
+	document.title=(curEro*10) + " to "+ (keyerocount*10);
 	return false;}
 }
 
