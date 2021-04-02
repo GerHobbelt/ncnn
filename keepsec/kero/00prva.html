@@ -1,0 +1,37 @@
+<html><body>
+</body>
+<script type="text/javascript">
+
+var scriptlist=['401','330'];
+
+var scril = scriptlist.length;
+let ifrm = new Array(scril);
+
+for(var i=scril-1;i>=0;i--)
+{
+var iframee = document.createElement('iframe');
+document.body.appendChild(iframee);
+document.body.appendChild(document.createElement("br"));
+ifrm[i]=iframee.contentDocument;
+}
+
+for(var i=scril-1;i>=0;i--)
+{
+
+ifrm[i].write('<html><body><pre id="team"></pre></body><scr'+'ipt src="../pv/aadata'+scriptlist[i]+'.js"></scr'+'ipt><scr'+'ipt src="rpre.js"></scr'+'ipt></html>');
+ifrm[i].close();
+
+}
+
+/*
+var tll="";
+for(var i=scril-1;i>=0;i--)
+{
+vpp=ifrm[i].getElementById('team');
+tll+=vpp.innerHTML;
+
+}
+*/
+
+
+</script></html>

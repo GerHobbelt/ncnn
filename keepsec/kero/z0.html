@@ -1,8 +1,7 @@
 <html><body style="background-color: #400010;">
+<h1 style="background-color: #ffffff;" onclick="keyFunction()">圃圃圃<br>圃圃圃<br>圃圃圃<br>圃圃圃<br></h1>
 <div id="team"></div>
-<p><div style="float:left"><textarea rows="20" cols="26">
-At w3schools.com you will learn how to make a website. They offer free tutorials in all web development technologies.
-</textarea></div>
+<h1 style="background-color: #ffffff;" onclick="keyFunction()">圃圃圃<br>圃圃圃<br>圃圃圃<br>圃圃圃<br></h1>
 </body>
 <script src="aadata.js"></script>
 <script type="text/javascript">
@@ -39,37 +38,43 @@ var agen=['left','right'];
 
 function mydav(sta, endo,ag)
 {
-	yina = document.createElement('div');
-	yina.style['float'] = 'right';//'left';
-	yina.style['background-color']='black';
 	
-	var kole7="";
+	
+	var kole7='<div style="background-color: black;">';
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
-kole7+='<a href="https://twitter.com/'+msgs[iszrda]+
-'" target="_blank">🦄</a><br><a href = "'+vidstr(vids[iszrda])+
-'" target="_blank"><img src="'+thumbstr(thumb[iszrda])+
-'" width="205"/></a>0<br>';
+kole7+='圃<br><img src="'+thumbstr(thumb[iszrda])+
+'" onclick="puppy(\''+vidstr(vids[iszrda])+
+'\')"/>0<br>';
 
 	}
-	yina.innerHTML = kole7;
-	tblarea.appendChild(yina);
+	
+	tblarea.innerHTML =kole7+'</div>';
 }
 
 function apyed()
 {
-	mydav(0,3,0);
-	mydav(3,7,1);
-	mydav(7,10,0);
-	tblarea.appendChild(brk);
+	mydav(0,10,0);
+
 	
-	curEro++;
+	
 	
 }
 
 function keyFunction() {
-if(curEro<keyerocount){apyed();
-document.title=curEro*10;}
+
+curEro=Math.floor(Math.random()*erocount);
+
+apyed();
+document.title=curEro*10;
+}
+
+function puppy(url)
+{
+var newWindow = window.open("", null, null);
+newWindow.document.write('<html><body><video controls autobuffer autoplay ><source src='+url+
+' ></video></body></html>');
+//status=no,toolbar=no,menubar=no,location=no
 }
 
 function menuFunction() {
@@ -80,7 +85,7 @@ function menuFunction() {
 	return false;}
 }
 
-document.onkeydown=keyFunction;
-window.oncontextmenu=menuFunction;
+
 keyFunction();
+
 </script></html>
