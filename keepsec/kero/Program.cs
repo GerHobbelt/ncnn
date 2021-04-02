@@ -17,112 +17,225 @@ namespace eroneto
 		[DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
 		public static extern int system(string command);
 		
-		public static char[] sep0xA={'\n'};
-		public static char[] sepQuo={'\"'};
-		public static char[] sep0x9={'\t'};
+		public static char[] sep0xA = { '\n' };
+		public static char[] sepQuo = { '\"' };
+		public static char[] sep0x9 = { '\t' };
 		
 		static void klening()
 		{
-			string[] data=File.ReadAllLines("rlines.csv");
-			File.Move("rlines.csv","zb/rlines."+DateTimeOffset.Now.ToUnixTimeSeconds().ToString("X")+".csv");
+			string[] data = File.ReadAllLines("rlines.csv");
+			File.Move("rlines.csv", "zb/rlines." + DateTimeOffset.Now.ToUnixTimeSeconds().ToString("X") + ".csv");
 			
-			int cota=data.Length-deuu.Count;
+			int cota = data.Length - deuu.Count;
 			
-			List<string> kle=new List<string>();
+			List<string> kle = new List<string>();
 			
-			for(int i=0;i<cota;i++)
-			{
-				var ivo=data[i].Split(sep0x9);
-				if(!deuu.Contains(ivo[0]))
-				{
+			for (int i = 0; i < cota; i++) {
+				var ivo = data[i].Split(sep0x9);
+				if (!deuu.Contains(ivo[0])) {
 					kle.Add(data[i]);
 				}
 
 			}
 			
-			int cota2=data.Length;
-			for(int i=cota;i<cota2;i++)
-			{
-					kle.Add(data[i]);
+			int cota2 = data.Length;
+			for (int i = cota; i < cota2; i++) {
+				kle.Add(data[i]);
 			}
 			
-			File.WriteAllLines("rlines.csv",kle.ToArray());
+			File.WriteAllLines("rlines.csv", kle.ToArray());
+		}
+		
+		static string trimthumb(string thupic)
+		{
+			thupic = thupic.Replace("https://pbs.twimg.com/ext_tw_video_thumb/", string.Empty);
+						
+			if (thupic[0] == 'h') {
+				thupic = thupic.Replace("https://pbs.twimg.com/amplify_video_thumb/", "@");
+			}
+						
+			if (thupic[0] == 'h') {
+				thupic = thupic.Replace("https://pbs.twimg.com/tweet_video_thumb/", "!");
+			}
+			
+			return thupic;
+		}
+		
+		static string trimvid(string vid)
+		{
+			vid = vid.Replace("https://video.twimg.com/ext_tw_video/", string.Empty);
+							
+			if (vid[0] == 'h') {
+				vid = vid.Replace("https://video.twimg.com/amplify_video/", "@");
+			}
+							
+			if (vid[0] == 'h') {
+				vid = vid.Replace("https://video.twimg.com/tweet_video/", "!");
+			}
+			
+			return vid;
+		}
+		
+		static string[] dlpage(string url,char[] sep)
+		{
+			return dndr.DownloadString(url).Split(sep);
+				
 		}
 		
 		static void Main(string[] args)
 		{
 			ServicePointManager.Expect100Continue = true;                
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-			ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+			ServicePointManager.ServerCertificateValidationCallback = delegate {
+				return true;
+			};
 			StreamWriter sw = File.AppendText("rlines.csv");
-			while(true)
-			{
+			while (true) {
 			
-				string[] html=dndr.DownloadString("https://www.nurumayu.net/ko/twidouga/realtime_t.php").Split(sep0xA);
+				int getsome = 90000;
+				int secdec=3500;
 				
-				int htmllen=html.Length;
-				bool getsome=false;
-				for(int i=0;i<htmllen;i++)
-				{
-					if(html[i].Length>200&&html[i].Contains("video.twimg.com"))
-					{
-						string[] siu=html[i].Split(sepQuo);
+				
+				try {
+					string[] html = dndr.DownloadString("https://www.nurumayu.net/ko/twidouga/realtime_tzucks.php").Split(sep0xA);
+					string[] html2 = dndr.DownloadString("https://www.nurumayu.net/ko/twidouga/realtime_t.php").Split(sep0xA);
+				
+					int htmllen = html.Length;
+				
+					for (int i = 0; i < htmllen; i++) {
+						if (html[i].Length > 200 && html[i].Contains("video.twimg.com")) {
+							string[] siu = html[i].Split(sepQuo);
 						
-						string thupic=siu[7].Replace("http://pbs.twimg.com/ext_tw_video_thumb/",string.Empty);
+							string thupic = siu[7].Replace("https://pbs.twimg.com/ext_tw_video_thumb/", string.Empty);
 						
-						if(thupic[0]=='h')
-						{
-							thupic=thupic.Replace("http://pbs.twimg.com/amplify_video_thumb/","@");
-						}
-						
-						if(thupic[0]=='h')
-						{
-							thupic=thupic.Replace("http://pbs.twimg.com/tweet_video_thumb/","!");
-						}
-						
-						if(!deuu.Contains(thupic))
-						{
-							deuu.Add(thupic);
-							string vid=siu[3].Replace("https://video.twimg.com/ext_tw_video/",string.Empty);
-							
-							if(vid[0]=='h')
-							{
-								vid=vid.Replace("https://video.twimg.com/amplify_video/","@");
+							if (thupic[0] == 'h') {
+								thupic = thupic.Replace("https://pbs.twimg.com/amplify_video_thumb/", "@");
 							}
-							
-							if(vid[0]=='h')
-							{
-								vid=vid.Replace("https://video.twimg.com/tweet_video/","!");
+						
+							if (thupic[0] == 'h') {
+								thupic = thupic.Replace("https://pbs.twimg.com/tweet_video_thumb/", "!");
 							}
+						
+							if (!deuu.Contains(thupic)) {
+								deuu.Add(thupic);
+								string vid = siu[3].Replace("https://video.twimg.com/ext_tw_video/", string.Empty);
+							
+								if (vid[0] == 'h') {
+									vid = vid.Replace("https://video.twimg.com/amplify_video/", "@");
+								}
+							
+								if (vid[0] == 'h') {
+									vid = vid.Replace("https://video.twimg.com/tweet_video/", "!");
+								}
 							
 							
-							string msg=html[i+2].Split(sepQuo)[1].Replace("https://twitter.com/",string.Empty).Replace("https://mobile.twitter.com/",string.Empty);
-							sw.WriteLine(thupic+"\t"+vid+"\t"+msg);
+								string msg = html[i + 2].Split(sepQuo)[1].Replace("https://twitter.com/", string.Empty).Replace("https://mobile.twitter.com/", string.Empty);
+								sw.WriteLine(thupic + "\t" + vid + "\t" + msg);
 							
-							getsome=true;
+								getsome -= 2500;
+								secdec=0;
+							}
 						}
 					}
-				}
 				
-				if(getsome)
-				{
-					sw.Flush();
+					html=html2;
+					htmllen = html.Length;
 				
-					if(deuu.Count>1000)
-					{
+					for (int i = 0; i < htmllen; i++) {
+						if (html[i].Length > 200 && html[i].Contains("video.twimg.com")) {
+							string[] siu = html[i].Split(sepQuo);
 						
-						sw.Close();
+							string thupic = siu[7].Replace("https://pbs.twimg.com/ext_tw_video_thumb/", string.Empty);
 						
-						klening();
+							if (thupic[0] == 'h') {
+								thupic = thupic.Replace("https://pbs.twimg.com/amplify_video_thumb/", "@");
+							}
 						
-						system("start eroneto.exe");
-						break;
+							if (thupic[0] == 'h') {
+								thupic = thupic.Replace("https://pbs.twimg.com/tweet_video_thumb/", "!");
+							}
+						
+							if (!deuu.Contains(thupic)) {
+								deuu.Add(thupic);
+								string vid = siu[3].Replace("https://video.twimg.com/ext_tw_video/", string.Empty);
+							
+								if (vid[0] == 'h') {
+									vid = vid.Replace("https://video.twimg.com/amplify_video/", "@");
+								}
+							
+								if (vid[0] == 'h') {
+									vid = vid.Replace("https://video.twimg.com/tweet_video/", "!");
+								}
+							
+							
+								string msg = html[i + 2].Split(sepQuo)[1].Replace("https://twitter.com/", string.Empty).Replace("https://mobile.twitter.com/", string.Empty);
+								sw.WriteLine(thupic + "\t" + vid + "\t" + msg);
+							
+								getsome -= 2500;
+								secdec=0;
+							}
+						}
+					}
+					
+				} catch {}
+				
+				
+				try{
+					string[] html = dlpage("https://twivideo.net/?realtime",sep0xA);
+					int htmllen = html.Length;
+				
+					for (int i = 0; i < htmllen; i++) {
+						if (html[i].Length > 150 && html[i].Contains("video.twimg.com")) {
+							
+							string thupic=trimthumb(html[i+1].Split(sepQuo)[1]);
+							if (!deuu.Contains(thupic)) {
+								deuu.Add(thupic);
+								//getsome -= 3500;
+								
+								string vid=trimvid(html[i].Split(sepQuo)[1]);
+								string msg = html[i + 5].Split(sepQuo)[3].Replace("https://twitter.com/", string.Empty).Replace("https://mobile.twitter.com/", string.Empty);
+								sw.WriteLine(thupic + "\t" + vid + "\t" + msg);
+								getsome -= secdec;
+								
+							}
+						}
 						
 					}
-				}
 				
-				Thread.Sleep(90000);
+				}
+				catch{}
+				
+				/*
+				try{
+					string[] html = dlpage("https://tk2dl.com/t/recent.html",sep0xA);
+					int htmllen = html.Length;
+				
+					for (int i = 0; i < htmllen; i++) {
+						
+					}
+					
+				}
+				catch{}
+				*/
+				
+				if (getsome != 90000) {
+						sw.Flush();
+				
+						
+						if (deuu.Count > 1000) {
+							break;
+						}
+						
+						if(getsome<30000)
+							getsome=30000;
+					}
+				
+				Thread.Sleep(getsome);
 			}
+			
+			sw.Close();			
+			klening();			
+			system("start eroneto.exe");
 		}
 		
 	}

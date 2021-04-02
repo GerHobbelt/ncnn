@@ -45,14 +45,14 @@ namespace eroneto
 		
 		static void mkjs()
 		{
-			system("rd /s /q zb");
-			system("md zb");
+			//system("rd /s /q zb");
+			//system("md zb");
 			
 			string[][] data=ReadAllLines("rlines.csv");
 			int cota=data.Length-1;
 			string[] izkor=new string[4+cota*3];
 			string[] mizr=data[0];
-			izkor[0]="var curEro=0;\t\t//\t"+(cota/10)+"\n\nthumb=['";
+			izkor[0]="curEro= 000;\t\t//\t"+(cota/10)+"\n\nthumb=['";
 			izkor[1+cota]=mizr[0]+"'];\n\nvids=['";
 			izkor[2+cota*2]=mizr[1]+"'];\n\nmsgs=['";
 			izkor[3+cota*3]=mizr[2]+"'];";
@@ -74,7 +74,7 @@ namespace eroneto
 			 string[] data=File.ReadAllLines("rlines.csv");
 			 int cota=data.Length;
 			 List<string> kle=new List<string>();
-			for(int i=0;i<cota;i++)
+			for(int i=cota-1;i>=0;i--)
 			{
 				var ivo=data[i].Split('\t');
 				if(!deuuk.Contains(ivo[0]))
@@ -85,13 +85,24 @@ namespace eroneto
 
 			}
 			
-			File.WriteAllLines("rlines_.csv",kle.ToArray());
+			cota=kle.Count;
+			data=new string[cota];
+			int k=cota-1;
+			foreach(string ka in kle)
+			{
+				data[k]=ka;
+				k--;
+			}
+			
+			
+			
+			File.WriteAllLines("rlines++.csv",data);
 		}
 		
 		static void Main(string[] args)
 		{
-			//cleandup();
-			mkjs();
+			cleandup();
+			//mkjs();
 		}
 		
 	}
