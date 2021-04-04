@@ -1,5 +1,4 @@
-<html><body>
-</body>
+<html><body><div id="ifm"></div><br><h1 onclick="gall()">Download</h1></body>
 <script type="text/javascript">
 
 var scriptlist=['401','330'];
@@ -7,11 +6,12 @@ var scriptlist=['401','330'];
 var scril = scriptlist.length;
 let ifrm = new Array(scril);
 
+var ifmarea = document.getElementById('ifm');
 for(var i=scril-1;i>=0;i--)
 {
 var iframee = document.createElement('iframe');
-document.body.appendChild(iframee);
-document.body.appendChild(document.createElement("br"));
+ifmarea.appendChild(iframee);
+ifmarea.appendChild(document.createElement("br"));
 ifrm[i]=iframee.contentDocument;
 }
 
@@ -23,7 +23,25 @@ ifrm[i].close();
 
 }
 
-/*
+function downloadString(text, fileType, fileName) {
+  var blob = new Blob([text], { type: fileType });
+
+  var a = document.createElement('a');
+  a.download = fileName;
+  a.href = URL.createObjectURL(blob);
+  a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+}
+
+
+
+function gall()
+{
+
 var tll="";
 for(var i=scril-1;i>=0;i--)
 {
@@ -31,7 +49,9 @@ vpp=ifrm[i].getElementById('team');
 tll+=vpp.innerHTML;
 
 }
-*/
+downloadString(tll, "text/csv", "00rlines.csv");
+}
+
 
 
 </script></html>
