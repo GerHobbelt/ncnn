@@ -1,19 +1,19 @@
-<html><body><div id="ifm"></div><br><h1 onclick="gall(this)">Load all js</h1></body>
+<html><body><div id="ifm" style="float:left"></div><br><h1 onclick="gall(this)">Load all js</h1></body>
 <script>
-var scriptlist=['409','407','401','330'];
-var curEro= 100;
+var jls=['409','407','401','330'];
+var curEro= 900;
 
 
 
 
-var scril = scriptlist.length;
+var scril = jls.length;
 let ifrm = new Array(scril+1);
 var ifmarea = document.getElementById('ifm');
 
 var dstr="";
 for(var i=0;i<scril;i++)
 {
-dstr+='<h3 onclick="nwd('+scriptlist[i]+')">Goto '+scriptlist[i]+'</h3>';
+dstr+='<h3 onclick="nwd('+jls[i]+')">Goto '+jls[i]+'</h3>';
 }
 ifmarea.innerHTML=dstr;
 dstr="";
@@ -32,14 +32,15 @@ function downloadString(text, fileType, fileName) {
   setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
 }
 
-var wdtx1='<html><body style="background-color: #400010;"><div id="team"></div><br><div style="float:left"><textarea id="urlrec" rows="20" cols="26" style="background-color: gray;"></textarea></div></body><scr'+'ipt src="aadata';
+var wdtx1='<html><body style="background-color: #400010;"><div id="team"></div><br><div style="float:left"><input type="number" value="5" ondblclick=repg(this)><br><textarea id="urlrec" rows="20" cols="26" style="background-color: gray;">';
+var wdtx1n1='\n\n</textarea></div></body><scr'+'ipt src="aadata';
 var wdtx2='.js"></scr'+'ipt><scr'+'ipt>curEro=';
 var wdtx3=';</scr'+'ipt><scr'+'ipt src="zclo.js"></scr'+'ipt></html>';
 
 function nwd(num)
 {
 	var newWindow = window.open("", null, null);
-	newWindow.document.write(wdtx1+num+wdtx2+curEro+wdtx3);
+	newWindow.document.write(wdtx1+num+wdtx1n1+num+wdtx2+curEro+wdtx3);
 
 }
 
@@ -61,7 +62,7 @@ function makealllyk()
 	for(var i=0;i<scril;i++)
 	{
 
-	ifrm[i].write(tx1+'ipt src="aadata'+scriptlist[scril-1-i]+tx2);
+	ifrm[i].write(tx1+'ipt src="aadata'+jls[scril-1-i]+tx2);
 	ifrm[i].close();
 
 	}

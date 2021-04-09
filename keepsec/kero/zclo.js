@@ -5,6 +5,15 @@ var erocount=thumb.length/10;
 var keyerocount=curEro+20;
 
 
+function repg(ele)
+{
+	tblarea.innerHTML="";
+	curEro=ele.value*100;
+	keyerocount=curEro+20;
+	keyFunction();
+
+}
+
 function vidstr(src)
 {
 	var c0=src.charAt(0);
