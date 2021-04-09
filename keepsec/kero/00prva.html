@@ -1,27 +1,35 @@
 <html><body><div id="ifm"></div><br><h1 onclick="gall()">Download</h1></body>
 <script type="text/javascript">
 
-var scriptlist=['401','330'];
+var scriptlist=['409','407','401','330'];
+
 
 var scril = scriptlist.length;
-let ifrm = new Array(scril);
+let ifrm = new Array(scril+1);
 
 var ifmarea = document.getElementById('ifm');
-for(var i=scril-1;i>=0;i--)
+for(var i=0;i<scril+1;i++)
 {
 var iframee = document.createElement('iframe');
 ifmarea.appendChild(iframee);
 ifmarea.appendChild(document.createElement("br"));
 ifrm[i]=iframee.contentDocument;
 }
+var tx1='<html><body><pre id="team"></pre></body><scr';
+var tx2='.js"></scr'+'ipt><scr'+'ipt src="rpre.js"></scr'+'ipt></html>';
 
-for(var i=scril-1;i>=0;i--)
+for(var i=0;i<scril;i++)
 {
 
-ifrm[i].write('<html><body><pre id="team"></pre></body><scr'+'ipt src="../pv/aadata'+scriptlist[i]+'.js"></scr'+'ipt><scr'+'ipt src="rpre.js"></scr'+'ipt></html>');
+ifrm[i].write(tx1+'ipt src="../pv/aadata'+scriptlist[scril-1-i]+tx2);
 ifrm[i].close();
 
 }
+
+ifrm[scril].write(tx1+'ipt src="../../aadata'+tx2);
+ifrm[scril].close();
+
+
 
 function downloadString(text, fileType, fileName) {
   var blob = new Blob([text], { type: fileType });
@@ -43,7 +51,7 @@ function gall()
 {
 
 var tll="";
-for(var i=scril-1;i>=0;i--)
+for(var i=0;i<scril+1;i++)
 {
 vpp=ifrm[i].getElementById('team');
 tll+=vpp.innerHTML;
