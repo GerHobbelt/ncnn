@@ -93,12 +93,15 @@ namespace eroneto
 			while (true) {
 			
 				int getsome = 90000;
-				int secdec=3500;
+	
 				
 				
 				try {
 					string[] html = dndr.DownloadString("https://www.nurumayu.net/ko/twidouga/realtime_tzucks.php").Split(sep0xA);
+															//https://www.twidouga.net/realtime_t.php
+					
 					string[] html2 = dndr.DownloadString("https://www.nurumayu.net/ko/twidouga/realtime_t.php").Split(sep0xA);
+															//https://www.twidouga.net/ko/realtime_t.php
 				
 					int htmllen = html.Length;
 				
@@ -133,7 +136,7 @@ namespace eroneto
 								sw.WriteLine(thupic + "\t" + vid + "\t" + msg);
 							
 								getsome -= 2500;
-								secdec=0;
+								
 							}
 						}
 					}
@@ -172,7 +175,7 @@ namespace eroneto
 								sw.WriteLine(thupic + "\t" + vid + "\t" + msg);
 							
 								getsome -= 2500;
-								secdec=0;
+								
 							}
 						}
 					}
@@ -190,12 +193,12 @@ namespace eroneto
 							string thupic=trimthumb(html[i+1].Split(sepQuo)[1]);
 							if (!deuu.Contains(thupic)) {
 								deuu.Add(thupic);
-								//getsome -= 3500;
+								getsome -= 35;
 								
 								string vid=trimvid(html[i].Split(sepQuo)[1]);
 								string msg = html[i + 5].Split(sepQuo)[3].Replace("https://twitter.com/", string.Empty).Replace("https://mobile.twitter.com/", string.Empty);
 								sw.WriteLine(thupic + "\t" + vid + "\t" + msg);
-								getsome -= secdec;
+								
 								
 							}
 						}
