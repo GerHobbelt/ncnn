@@ -7,10 +7,17 @@ var keyerocount=curEro+20;
 
 function repg(ele)
 {
-	tblarea.innerHTML="";
-	curEro=ele.value*100;
-	keyerocount=curEro+20;
-	keyFunction();
+	recarea.innerHTML+='\n\n'+erocount.toString(10);
+	var evv=curEro+(ele.value*10);
+
+	if(evv>0&&evv<erocount)
+	{
+		curEro=evv;
+		tblarea.innerHTML="";
+		
+		keyerocount=curEro+20;
+		keyFunction();
+	}
 
 }
 
