@@ -29,7 +29,7 @@ function downloadString(text, fileType, fileName) {
   setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
 }
 
-var wdtx1='<html><body style="background-color: #400010;"><div id="team"></div><br><div style="float:left"><input type="number" value="5" ondblclick=repg(this)><a href="../../zzzkoero.html">✨✨</a><br><textarea id="urlrec" rows="20" cols="26" style="background-color: gray;">';
+var wdtx1='<html><body style="background-color: #400010;"><div id="team"></div><br><div style="float:left"><input type="number" value="5" oninput=disabsk() ondblclick=repg(this)><a href="../../zzzkoero.html">✨✨</a><br><textarea id="urlrec" rows="20" cols="26" style="background-color: gray;">';
 var wdtx1n1='\n\n</textarea></div></body><scr'+'ipt src="aadata';
 var wdtx2='.js"></scr'+'ipt><scr'+'ipt>curEro=';
 var wdtx3=';</scr'+'ipt><scr'+'ipt src="../../zclo.js"></scr'+'ipt></html>';
@@ -70,18 +70,10 @@ function makealllyk()
 
 
 
-var notfrms = true;
 
-function gall(ele)
+
+function mkallstrr()
 {
-	if(notfrms&&confirm("loading alljs???"))
-	{
-		notfrms=false;
-		makealllyk();
-		ele.innerHTML = 'Download';
-		return;
-	}
-
 	var tll="";
 	for(var i=0;i<scril+1;i++)
 	{
@@ -89,7 +81,31 @@ function gall(ele)
 	tll+=vpp.innerHTML;
 
 	}
-	downloadString(tll, "text/csv", "00rlines.csv");
+	return tll;
+}
+
+function rtto()
+{
+
+vpp=ifrm[0].getElementById('team');
+vpp.innerHTML=mkallstrr();
+
+}
+
+var notfrms = true;
+
+function gall(ele)
+{
+	if(notfrms&&confirm("Load all JS???"))
+	{
+		notfrms=false;
+		makealllyk();
+		ele.outerHTML = '<h1 onclick="rtto()">Write</h1><h1 onclick="gall(this)">Download</h1>';
+		return;
+	}
+
+
+	downloadString(mkallstrr(), "text/csv", "00rlines.csv");
 }
 
 
