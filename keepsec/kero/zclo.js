@@ -5,6 +5,23 @@ var erocount=thumb.length/10;
 var keyerocount=curEro+20;
 
 
+function disabsk()
+{
+	keyerocount=0;
+}
+
+
+var nwvv1='<html><body style="background-color: black;"><center><video width="auto" id="media" controls loop muted autoplay><source src="';
+var nwvv2='" type="video/mp4"></video></center></body><script src="zvid.js"></script></html>';
+
+function nwdvid(vidurl)
+{
+	//var newWindow = window.open(vidurl, null, null);
+	var newWindow = window.open("", null, null);
+	newWindow.document.write(nwvv1+vidurl+nwvv2);
+
+}
+
 function repg(ele)
 {
 	recarea.innerHTML+='\n\n'+erocount.toString(10);
@@ -57,8 +74,8 @@ function mydav(sta, endo,ag)
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+='<a href="https://twitter.com/'+msgs[iszrda]+
-'" target="_blank">⛪　　　　　</a><a onclick=xt('+iszrda+')>✨　　　<br></a><a href = "'+vidstr(vids[iszrda])+
-'" target="_blank"><img src="'+thumbstr(thumb[iszrda])+
+'" target="_blank">⛪　　　　　</a><a onclick=xt('+iszrda+')>✨　　　<br></a><a onclick=nwdvid("'+vidstr(vids[iszrda])+
+'") target="_blank"><img src="'+thumbstr(thumb[iszrda])+
 '" width="205"/></a>0<br>';
 
 	}
