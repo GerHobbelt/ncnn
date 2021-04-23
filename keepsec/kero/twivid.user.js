@@ -2,45 +2,35 @@
 // @match https://video.twimg.com/*
 // ==/UserScript==
 
+
 var vio=document.getElementsByTagName("video")[0];
 
+//document.getElementsByTagName('meta')['viewport'].content="height=device-width";
 
 var plbrate=1.0;
-
-
-
 var isrot=false;
+
+vio.loop=true;
 
 function rotvi(krot)
 {
 
-deg='0';
 if(isrot)
 {
 
-
-vio.style.top = '0px';
-//vio.width=vio.videoWidth;
-vio.height=window.outerHeight;
+vio.style.webkitTransform='';
 
 isrot=false;
 }
 else
 {
 
-vio.style.top = '0px';
-deg=krot;
-//vio.height=vio.videoHeight;
-vio.height=window.outerWidth-20;
+vio.style.webkitTransform = 'rotate('+krot+'deg)  scale(1.8)'; 
+
 
 isrot=true;
 }
 
-vio.style.webkitTransform = 'rotate('+deg+'deg)'; 
-vio.style.mozTransform    = 'rotate('+deg+'deg)'; 
-vio.style.msTransform     = 'rotate('+deg+'deg)'; 
-vio.style.oTransform      = 'rotate('+deg+'deg)'; 
-vio.style.transform       = 'rotate('+deg+'deg)'; 
 
 }
 
