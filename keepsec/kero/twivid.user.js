@@ -14,7 +14,7 @@ vio.loop=true;
 
 vio.style.maxHeight='400%'
 vio.style.maxWidth='400%'
-vio.height=window.outerHeight;
+vio.height=window.innerHeight;
 
 function rotvi(krot)
 {
@@ -23,7 +23,7 @@ if(isrot)
 {
 
 vio.style.webkitTransform='';
-vio.height=window.outerHeight;
+vio.height=window.innerHeight;
 
 isrot=false;
 }
@@ -32,6 +32,7 @@ else
 
 vio.style.webkitTransform = 'rotate('+krot+'deg)'; 
 vio.height=window.outerWidth-20;
+
 
 isrot=true;
 }
