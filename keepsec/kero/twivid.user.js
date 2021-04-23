@@ -56,7 +56,7 @@ document.onkeydown=function(e) {
 	ratechange();
             break;
 	case 100:
-		vio.height-=50;
+		vio.height-=100;
 		
 	break;
 	case 101:
@@ -64,7 +64,7 @@ document.onkeydown=function(e) {
 		ratechange();
 	break;
         case 102:
-	vio.height+=50;
+	vio.height+=100;
 	
             break;
 	case 103:
