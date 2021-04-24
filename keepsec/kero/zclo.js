@@ -75,18 +75,25 @@ function mydav(sta, endo,ag)
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+='<a href="https://twitter.com/'+msgs[iszrda]+
-'" target="_blank">⛪　　　　　</a><a onclick=xt('+iszrda+')>✨　　　<br></a><a href="'+vidstr(vids[iszrda])+
-'" target="_blank"><img src="'+thumbstr(thumb[iszrda])+
+'" >⛪　　　　　</a><a onmouseenter=xt('+iszrda+
+') onclick=xtp() >✨　　　<br></a><a href="'+vidstr(vids[iszrda])+
+'" ><img src="'+thumbstr(thumb[iszrda])+
 '" width="205"/></a>0<br>';
 
 	}
 	yina.innerHTML = kole7;
 	tblarea.appendChild(yina);
 }
-
-function xt(num)
+var nymu=0;
+function xtp()
 {
-	recarea.innerHTML+='\nhttps://twitter.com/'+msgs[num];
+recarea.innerHTML+='\nhttps://twitter.com/'+msgs[nymu];
+}
+
+function xt(iszrda)
+{
+	nymu=iszrda;
+	document.body.background = thumbstr(thumb[iszrda]);
 }
 
 function apyed()
