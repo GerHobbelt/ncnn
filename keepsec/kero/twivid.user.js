@@ -12,9 +12,11 @@ var isrot=false;
 vio.loop=true;
 
 
-vio.style.maxHeight='800%'
-vio.style.maxWidth='800%'
-vio.height=window.innerHeight;
+vio.style.maxHeight='800%';
+vio.style.maxWidth='800%';
+document.body.style.overflow = "hidden";
+
+vio.height=window.innerHeight-4;
 
 function rotvi(krot)
 {
@@ -23,7 +25,7 @@ if(isrot)
 {
 
 vio.style.webkitTransform='';
-vio.height=window.innerHeight;
+vio.height=window.innerHeight-4;
 
 isrot=false;
 }
@@ -31,7 +33,7 @@ else
 {
 
 vio.style.webkitTransform = 'rotate('+krot+'deg)'; 
-vio.height=window.outerWidth-100;
+vio.height=window.outerWidth-50;
 
 
 isrot=true;
@@ -49,6 +51,10 @@ document.title="rate="+plbrate;
 }
 document.onkeydown=function(e) {
     switch (e.keyCode) {
+	case 27:
+	case 112:
+	close();
+            break;
         case 98:
 	plbrate-=0.1;
 	if(plbrate<0.2)
