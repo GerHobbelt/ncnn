@@ -1,6 +1,7 @@
 
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
+//var timgarea = document.getElementById('timg');
 var erocount=thumb.length/10;
 var keyerocount=curEro+20;
 
@@ -54,13 +55,13 @@ function thumbstr(src)
 {
 	var c0=src.charAt(0);
 	if(c0=='@')
-	{return 'http://pbs.twimg.com/amplify_video_thumb/'+src.substring(1);}
+	{return 'https://pbs.twimg.com/amplify_video_thumb/'+src.substring(1);}
 	else if(c0=='!')
-	{return 'http://pbs.twimg.com/tweet_video_thumb/'+src.substring(1);}
+	{return 'https://pbs.twimg.com/tweet_video_thumb/'+src.substring(1);}
 	else if(c0=='h')
 	{return src;}
 	else
-	{return 'http://pbs.twimg.com/ext_tw_video_thumb/'+src;}
+	{return 'https://pbs.twimg.com/ext_tw_video_thumb/'+src;}
 }
 
 var agen=['left','right'];
@@ -76,9 +77,9 @@ function mydav(sta, endo,ag)
 var iszrda=curEro*10+j;
 kole7+='<a href="https://twitter.com/'+msgs[iszrda]+
 '" >⛪　　　　　</a><a onmouseenter=xt('+iszrda+
-') onclick=xtp() >✨　　　<br></a><a href="'+vidstr(vids[iszrda])+
+') onclick=xtp() >✨　　　　　<br></a><a href="'+vidstr(vids[iszrda])+
 '" ><img src="'+thumbstr(thumb[iszrda])+
-'" width="205"/></a>0<br>';
+':thumb" width="205"/></a>0<br>';
 
 	}
 	yina.innerHTML = kole7;
@@ -93,7 +94,9 @@ recarea.innerHTML+='\nhttps://twitter.com/'+msgs[nymu];
 function xt(iszrda)
 {
 	nymu=iszrda;
-	document.body.background = thumbstr(thumb[iszrda]);
+	var tsstr=thumbstr(thumb[iszrda]);
+	document.body.background = tsstr;
+	//timgarea.src=tsstr;
 }
 
 function apyed()
