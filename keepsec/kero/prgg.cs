@@ -16,6 +16,10 @@ namespace eroneto
 		[DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
 		public static extern int system(string command);
 		
+		public static char[] sep0x5d = { ']' };
+		public static char[] sepDuo = { ',' };
+		public static char[] sepMao = { ':' };
+		
 		static string[][] ReadAllLines(string path)
 		{
 			var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -68,6 +72,95 @@ namespace eroneto
 			File.WriteAllText("aadata.js",string.Concat(izkor));
 		}
 		
+		static void aco1(WebClient dndr)
+		{
+			string[] acotz=File.ReadAllLines("aco.txt");
+			
+			int acolen=acotz.Length;
+			
+			for(int i=0;i<acolen;i++)
+			{
+				string html = dndr.DownloadString("https://lab.syncer.jp/api/13/"+acotz[i]);
+				if(html.StartsWith("[200"))
+				{
+					string[] xap=html.Replace(",[[\"",",").Replace(",[",string.Empty).Replace("\"",string.Empty).Replace(@"https:\/\/pbs.twimg.com\/ext_tw_video_thumb\/",string.Empty).Replace(@"\/","/").Split(sep0x5d,StringSplitOptions.RemoveEmptyEntries);
+					string[] xap2=xap[0].Split(sepDuo);
+					xap[0]=xap2[1]+","+xap2[2];
+					File.WriteAllLines(acotz[i]+".log",xap);
+				}
+				else
+				{
+					Console.WriteLine(acotz[i]+"====="+html);
+				}
+				
+				Thread.Sleep(90000);
+			}
+			
+			system("pause");
+		}
+		
+		static void aco2(WebClient dndr)
+		{
+			string[] acotz=File.ReadAllLines("ikon.csv");
+			StreamWriter sw = File.AppendText("rlineskota.csv");
+			
+			StreamWriter origjson = File.AppendText("xxj.csv");
+			
+			int acolen=acotz.Length;
+			
+			for(int i=0;i<acolen;i++)
+			{
+				try{
+				string html = dndr.DownloadString("https://lab.syncer.jp/api/100/"+acotz[i]);
+				if(html.StartsWith("[200"))
+				{
+					html=html.Replace(@"https:\/\/video.twimg.com\/ext_tw_video\/",string.Empty).Replace(@"https:\/\/pbs.twimg.com\/ext_tw_video_thumb\/",string.Empty).Replace(@"\/","/").Replace("https:",string.Empty).Replace("http:",string.Empty);
+					origjson.WriteLine(html);
+					string[] xap=html.Split(sepDuo);
+					
+					string tumb=xap[2].Replace("\"",string.Empty);
+					string vid=xap[4].Split(sepMao)[1].Replace("\"",string.Empty);
+					sw.WriteLine(tumb+"\t"+vid+"\t-"+acotz[i]);
+					sw.Flush();
+					
+					
+				}
+				else
+				{
+					Console.WriteLine(acotz[i]+"====="+html);
+				}
+				
+				
+				}
+				catch
+					{
+						Console.WriteLine("error==="+acotz[i]);
+					}
+					
+					Thread.Sleep(90000);
+			}
+				
+			sw.Close();
+			origjson.Close();
+			
+			system("pause");
+		}
+		
+		static void dlbati()
+		{
+			
+			ServicePointManager.Expect100Continue = true;                
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+			ServicePointManager.ServerCertificateValidationCallback = delegate {
+				return true;
+			};
+			
+
+			
+			aco2(new WebClient());
+			
+		}
+		
 		static void cleandup()
 		{
 			 HashSet<string> deuuk = new HashSet<string>();
@@ -101,7 +194,7 @@ namespace eroneto
 		
 		static void Main(string[] args)
 		{
-			cleandup();
+			dlbati();
 			//mkjs();
 		}
 		

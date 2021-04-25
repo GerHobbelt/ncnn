@@ -1,7 +1,7 @@
 
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
-//var timgarea = document.getElementById('timg');
+var timgarea = document.getElementById('timg');
 var erocount=thumb.length/10;
 var keyerocount=curEro+20;
 
@@ -34,8 +34,8 @@ function repg(ele)
 		curEro=evv;
 		tblarea.innerHTML="";
 		
-		keyerocount=curEro+20;
-		keyFunction();
+		
+		menuFunction();
 	}
 
 }
@@ -69,23 +69,25 @@ var agen=['left','right'];
 function mydav(sta, endo,ag)
 {
 	yina = document.createElement('div');
-	yina.style['float'] = 'right';//'left';
-	yina.style['background-color']='black';
+	yina.style['float'] = 'right';
+	//yina.style.webkitTransform = 'rotate(90deg)'; 
+	//yina.style['background-color']='black';
+	//yina.style.width=210;
 	
 	var kole7="";
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+='<a href="https://twitter.com/'+msgs[iszrda]+
-'" >⛪　　　　　</a><a onmouseenter=xt('+iszrda+
-') onclick=xtp() >✨　　　　　<br></a><a href="'+vidstr(vids[iszrda])+
+'" >⛪　　　　</a><a onmouseenter=xt('+iszrda+
+') onclick=xtp() >✨</a><br><a href="'+vidstr(vids[iszrda])+
 '" ><img src="'+thumbstr(thumb[iszrda])+
-':thumb" width="205"/></a>0<br>';
+':thumb" width="181"/></a>0<br>';
 
 	}
 	yina.innerHTML = kole7;
 	tblarea.appendChild(yina);
 }
-var nymu=0;
+var nymu=-10;
 function xtp()
 {
 recarea.innerHTML+='\nhttps://twitter.com/'+msgs[nymu];
@@ -96,24 +98,29 @@ function xt(iszrda)
 	nymu=iszrda;
 	var tsstr=thumbstr(thumb[iszrda]);
 	document.body.background = tsstr;
-	//timgarea.src=tsstr;
+	timgarea.src=tsstr;
+	timgarea.style.maxHeight = '800%';
 }
 
 function apyed()
 {
-	mydav(0,3,0);
-	mydav(3,7,1);
-	mydav(7,10,0);
-	//tblarea.appendChild(brk);
+	mydav(0,5,0);
+	mydav(5,10,0);
+	//mydav(0,4,0);
+	//mydav(4,6,1);
+	//mydav(6,10,0);
+if(nymu>=0)
+{
+timgarea.src='';
+timgarea.style.maxHeight = '1%';
+nymu=-1;
+}
 	
 	curEro++;
 	
 }
 
-function keyFunction() {
-if(curEro<keyerocount){apyed();
-document.title=curEro*10;}
-}
+
 
 function menuFunction() {
 	if(curEro<erocount){apyed();
@@ -122,7 +129,22 @@ function menuFunction() {
 	document.title=(curEro*10) + " to "+ (keyerocount*10);
 	return false;}
 }
-
-document.onkeydown=keyFunction;
 window.oncontextmenu=menuFunction;
-keyFunction();
+menuFunction();
+
+document.onkeydown=function(e) {
+switch (e.keyCode) {
+	case 39:
+		document.body.scrollLeft+=1000;
+	break;
+	case 37:
+		document.body.scrollLeft-=1000;
+	break;
+
+default:
+	if(curEro<keyerocount){apyed();
+	document.title=curEro*10;}
+break;
+}
+}
+
