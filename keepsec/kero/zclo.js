@@ -6,6 +6,31 @@ var erocount=thumb.length/10;
 var keyerocount=curEro+20;
 
 
+function findimgerr()
+{
+	var imgsetz=document.getElementsByTagName("img");
+	var imgsetzl=imgsetz.length;
+	var zsrcrec="";
+	for(var i=0;i<imgsetzl;i++)
+	{
+	if(imgsetz[i].naturalWidth==0)
+	{
+		var srck=imgsetz[i].src;
+		if(srck.slice(-6)==":thumb")
+		{
+			zsrcrec+='\n'+srck.slice(0,-6);
+		}
+		
+	}
+	
+	}
+	recarea.innerHTML+=zsrcrec;
+
+	return zsrcrec;
+
+}
+
+
 function disabsk()
 {
 	keyerocount=0;
@@ -26,6 +51,7 @@ function nwdvid(vidurl)
 
 function repg(ele)
 {
+	ele.blur();
 	recarea.innerHTML+='\n\n'+erocount.toString(10);
 	var evv=curEro+(ele.value*10);
 	if(evv<0){evv=0;}
@@ -79,7 +105,7 @@ function mydav(sta, endo,ag)
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+='<a href="https://twitter.com/'+msgs[iszrda]+
-'" >⛪　　　　</a><a onmouseenter=xt('+iszrda+
+'" >⛪　　　　　　　　</a><a onmouseenter=xt('+iszrda+
 ') onclick=xtp() >✨</a><br><a href="'+vidstr(vids[iszrda])+
 '" ><img src="'+thumbstr(thumb[iszrda])+
 ':thumb" width="183"/></a>0<br>';
@@ -141,14 +167,21 @@ menuFunction();
 
 document.onkeydown=function(e) {
 switch (e.keyCode) {
+	case 105:
+	case 106:
+	menuFunction();
+	document.body.scrollTop+=300;
+	break;
 	case 102:
 	case 39:
 		document.body.scrollLeft+=500;
+		document.body.scrollTop+=3;
 	break;
 	case 100:
 	case 37:
 		document.body.scrollLeft-=500;
 		if(document.body.scrollLeft<600){document.body.background='';}
+		document.body.scrollTop+=3;
 	break;
 	case 101:
 
