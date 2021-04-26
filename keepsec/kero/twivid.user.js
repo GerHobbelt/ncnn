@@ -5,6 +5,8 @@
 
 var vio=document.getElementsByTagName("video")[0];
 
+if(vio=== undefined){setTimeout(function() { close(); }, 1000);}
+
 
 var plbrate=1.0;
 var isrot=false;
@@ -14,7 +16,7 @@ vio.loop=true;
 
 vio.style.maxHeight='800%';
 vio.style.maxWidth='800%';
-document.body.style.overflow = "hidden";
+//document.body.style.overflow = "hidden";
 
 vio.height=window.innerHeight-4;
 
@@ -52,6 +54,7 @@ document.title="rate="+plbrate;
 document.onkeydown=function(e) {
     switch (e.keyCode) {
 	case 27:
+	case 106:
 	case 112:
 	close();
             break;
