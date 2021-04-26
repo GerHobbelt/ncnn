@@ -7,9 +7,9 @@ body {
     background-size: contain;
 }
 </style></head><body>
-<h1 style="background-color: #ffffff;" onclick="keyFunction()">圃圃圃<br>圃圃圃<br>圃圃圃<br>圃圃圃<br></h1>
+<h1 style="background-color: #ffffff;" onclick="keyFunction()">www<br>www<br>www<br>www<br></h1>
 <div id="team"></div>
-<h1 style="background-color: #ffffff;" onclick="keyFunction()">圃圃圃<br>圃圃圃<br>圃圃圃<br>圃圃圃<br></h1>
+<h1 style="background-color: #ffffff;" onclick="keyFunction()">www<br>www<br>www<br>www<br></h1>
 </body>
 <script src="aadata.js"></script>
 <script type="text/javascript">
@@ -35,11 +35,11 @@ function thumbstr(src)
 {
 	var c0=src.charAt(0);
 	if(c0=='@')
-	{return 'http://pbs.twimg.com/amplify_video_thumb/'+src.substring(1);}
+	{return 'https://pbs.twimg.com/amplify_video_thumb/'+src.substring(1);}
 	else if(c0=='!')
-	{return 'http://pbs.twimg.com/tweet_video_thumb/'+src.substring(1);}
+	{return 'https://pbs.twimg.com/tweet_video_thumb/'+src.substring(1);}
 	else
-	{return 'http://pbs.twimg.com/ext_tw_video_thumb/'+src;}
+	{return 'https://pbs.twimg.com/ext_tw_video_thumb/'+src;}
 }
 
 var agen=['left','right'];
@@ -48,16 +48,16 @@ function mydav(sta, endo,ag)
 {
 	
 	
-	var kole7='<div style="background-color: black;">';
+	var kole7='';
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
-kole7+='圃<br><img src="'+thumbstr(thumb[iszrda])+
+kole7+='w<br><img src="'+thumbstr(thumb[iszrda])+
 '" onclick="puppy(\''+vidstr(vids[iszrda])+
 '\')"/>0<br>';
 
 	}
 	
-	tblarea.innerHTML =kole7+'</div>';
+	tblarea.innerHTML =kole7;
 }
 
 function apyed()
@@ -80,7 +80,7 @@ document.title=curEro*10;
 function puppy(url)
 {
 var newWindow = window.open("", null, null);
-newWindow.document.write('<html><body><video controls autobuffer autoplay ><source src='+url+
+newWindow.document.write('<html><body><video controls autobuffer autoplay muted><source src='+url+
 ' ></video></body></html>');
 //status=no,toolbar=no,menubar=no,location=no
 }
