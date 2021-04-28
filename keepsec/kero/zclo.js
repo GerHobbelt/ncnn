@@ -98,7 +98,7 @@ const kx2='" >⛪　　　　　　　　</a><a onmouseenter=xt(';
 const kx2b='" >====<br>====</a><br><a href="';
 const kx3=') onclick=xtp() >✨</a><br><a href="';
 const kx4='" ><img src="';
-const kx5a=':thumb" width=181 /></a>0<br>';
+const kx5a=':thumb" width=205 /></a>0<br>';
 const kx5b='" /></a><br>';
 
 function mydav(sta, endo,ag)
@@ -148,8 +148,8 @@ if(nymu>=0){
 
 function apyed()
 {
-	mydav(0,5,0);
-	mydav(5,10,0);
+	mydav(0,10,0);
+	
 	//mydav(0,4,0);
 	//mydav(4,6,1);
 	//mydav(6,10,0);
@@ -176,7 +176,22 @@ function menuFunction() {
 window.oncontextmenu=menuFunction;
 menuFunction();
 
-function kuriakey(){keyerocount=curEro+50;}
+var canfire=true;
+function symfire()
+{
+	if(curEro<keyerocount){apyed();
+	document.title=curEro*10;}
+}
+
+function kuriakey(){
+	if(canfire)
+	{
+		canfire=false;
+		keyerocount=curEro+50;
+		setTimeout(function() { symfire(); canfire=true;}, 800);
+	}
+	
+}
 function fakekuriakey(){return;}
 
 function fpt(e,ele)
@@ -265,6 +280,15 @@ switch (e.keyCode) {
 		curEro+=2;
 		fullpg();
 	return;
+
+	case 104:
+		document.body.scrollTop-=600;
+	return;
+
+	case 98:
+		document.body.scrollTop+=600;
+	return;
+
 }
 return;
 }
@@ -317,8 +341,7 @@ switch (e.keyCode) {
 	break;
 }
 
-	if(curEro<keyerocount){apyed();
-	document.title=curEro*10;}
+	symfire();
 
 }
 
