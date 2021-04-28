@@ -3,7 +3,7 @@ var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
 var erocount=thumb.length/10;
-var keyerocount=curEro+20;
+var keyerocount=curEro+50;
 
 
 function findimgerr()
@@ -37,8 +37,8 @@ function disabsk()
 }
 
 
-var nwvv1='<html><body style="background-color: black;"><center><video width="auto" id="media" controls loop muted autoplay><source src="';
-var nwvv2='" type="video/mp4"></video></center></body><scr'+'ipt src="zvid.js"></scr'+'ipt></html>';
+const nwvv1='<html><body style="background-color: black;"><center><video width="auto" id="media" controls loop muted autoplay><source src="';
+const nwvv2='" type="video/mp4"></video></center></body><scr'+'ipt src="zvid.js"></scr'+'ipt></html>';
 
 function nwdvid(vidurl)
 {
@@ -93,6 +93,14 @@ function thumbstr(src)
 
 var agen=['left','right'];
 
+const kx1='<a href="https://twitter.com/';
+const kx2='" >⛪　　　　　　　　</a><a onmouseenter=xt(';
+const kx2b='" >=====>>>></a><a href="';
+const kx3=') onclick=xtp() >✨</a><br><a href="';
+const kx4='" ><img src="';
+const kx5a=':thumb" width="183"/></a>0<br>';
+const kx5b='" /></a><br>';
+
 function mydav(sta, endo,ag)
 {
 	yina = document.createElement('div');
@@ -104,11 +112,11 @@ function mydav(sta, endo,ag)
 	var kole7="";
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
-kole7+='<a href="https://twitter.com/'+msgs[iszrda]+
-'" >⛪　　　　　　　　</a><a onmouseenter=xt('+iszrda+
-') onclick=xtp() >✨</a><br><a href="'+vidstr(vids[iszrda])+
-'" ><img src="'+thumbstr(thumb[iszrda])+
-':thumb" width="183"/></a>0<br>';
+kole7+=kx1+msgs[iszrda]+
+kx2+iszrda+
+kx3+vidstr(vids[iszrda])+
+kx4+thumbstr(thumb[iszrda])+
+kx5a;
 
 	}
 	yina.innerHTML = kole7;
@@ -131,11 +139,10 @@ function xt(iszrda)
 
 function rmvimg()
 {
-if(nymu>=0)
-{
-timgarea.src='';
-timgarea.style.maxHeight = '1%';
-nymu=-1;
+if(nymu>=0){
+	timgarea.src='';
+	timgarea.style.maxHeight = '1%';
+	nymu=-1;
 }
 }
 
@@ -155,8 +162,12 @@ function apyed()
 
 
 function menuFunction() {
+	if(keyerocount==-100){
+	tblarea.innerHTML='';
+	document.onmousemove=kuriakey;};
+
 	if(curEro<erocount){apyed();
-	keyerocount=curEro+20;
+	keyerocount=curEro+50;
 	if(keyerocount>erocount){keyerocount=erocount;}
 	document.title=(curEro*10) + " to "+ (keyerocount*10);
 	return false;}
@@ -165,12 +176,66 @@ function menuFunction() {
 window.oncontextmenu=menuFunction;
 menuFunction();
 
+function kuriakey(){keyerocount=curEro+50;}
+function fakekuriakey(){return;}
+
+function fpt(e,ele)
+{
+if(e.keyCode==13)
+{
+curEro=ele.value;
+ele.blur();
+fullpg();
+}
+}
+
+function fullpg()
+{
+	document.body.background='';
+	nymu=10;
+	rmvimg();
+var hdtinput='<br>==========================================================================================✨✨✨✨<input type="number" value='+
+curEro+' onkeyup=fpt(event,this)>✨✨✨✨<br>'
+	var kole7=hdtinput;
+	for(var j=0;j<10;j++){
+		var iszrda=curEro*10+j;
+		kole7+=kx1+msgs[iszrda]+
+		kx2b+vidstr(vids[iszrda])+
+		kx4+thumbstr(thumb[iszrda])+
+		kx5b;
+	}
+	
+	tblarea.innerHTML =kole7+hdtinput;
+	document.title='fpg'+curEro;
+	keyerocount=-100;
+	document.onmousemove=fakekuriakey;
+
+}
+
+
+document.onmousemove=kuriakey;
+
 document.onkeydown=function(e) {
+
+if(keyerocount<0){
+if(e.keyCode==65)
+{
+		curEro=Math.floor(Math.random()*erocount);
+		fullpg();
+}
+return;
+}
+
+
 switch (e.keyCode) {
+	case 65:
+		curEro=Math.floor(Math.random()*erocount);
+		fullpg();
+	return;
 	case 105:
 	case 106:
-	menuFunction();
-	document.body.scrollTop+=300;
+		menuFunction();
+		document.body.scrollTop+=300;
 	break;
 	case 102:
 	case 39:
@@ -185,23 +250,25 @@ switch (e.keyCode) {
 	break;
 	case 101:
 
-	var evv=curEro+Math.floor((Math.random()-0.5)*erocount/7);
-	if(evv>=0&&evv<erocount){
-	curEro=evv;
-	menuFunction();
-	document.body.scrollTop+=300;
-	}
+		var evv=curEro+Math.floor((Math.random()-0.5)*erocount/7);
+		if(evv>=0&&evv<erocount){
+		curEro=evv;
+		menuFunction();
+		document.body.scrollTop+=300;
+		}
 	break;
 
 	case 104:
-	document.body.scrollTop-=600;
+		document.body.scrollTop-=600;
 	break;
 
 	case 98:
-	document.body.scrollTop+=600;
+		document.body.scrollTop+=300;
 	break;
 }
+
 	if(curEro<keyerocount){apyed();
 	document.title=curEro*10;}
+
 }
 
