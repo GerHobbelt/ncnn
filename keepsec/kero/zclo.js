@@ -95,10 +95,10 @@ var agen=['left','right'];
 
 const kx1='<a href="https://twitter.com/';
 const kx2='" >⛪　　　　　　　　</a><a onmouseenter=xt(';
-const kx2b='" >====</a><br><a href="';
+const kx2b='" >====<br>====</a><br><a href="';
 const kx3=') onclick=xtp() >✨</a><br><a href="';
 const kx4='" ><img src="';
-const kx5a=':thumb" width="183"/></a>0<br>';
+const kx5a=':thumb" width=181 /></a>0<br>';
 const kx5b='" /></a><br>';
 
 function mydav(sta, endo,ag)
@@ -199,7 +199,7 @@ fullpg();
 function partpg()
 {
 	yina = document.createElement('center');
-	var kole7='<br><br><br>';
+	var kole7='<br>';
 	for(var j=0;j<20;j++){
 		var iszrda=curEro*10+j;
 		kole7+=kx1+msgs[iszrda]+
