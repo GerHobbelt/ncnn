@@ -2,7 +2,7 @@
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
-var erocount=thumb.length/10;
+var erocount=Math.ceil(thumb.length/10);
 var keyerocount=curEro+50;
 
 
@@ -95,7 +95,7 @@ var agen=['left','right'];
 
 const kx1='<a href="https://twitter.com/';
 const kx2='" >⛪　　　　　　　　</a><a onmouseenter=xt(';
-const kx2b='" >=====>>>></a><a href="';
+const kx2b='" >====</a><br><a href="';
 const kx3=') onclick=xtp() >✨</a><br><a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width="183"/></a>0<br>';
@@ -162,7 +162,7 @@ function apyed()
 
 
 function menuFunction() {
-	if(keyerocount==-100){
+	if(keyerocount<0){
 	tblarea.innerHTML='';
 	document.onmousemove=kuriakey;};
 
@@ -183,7 +183,15 @@ function fpt(e,ele)
 {
 if(e.keyCode==13)
 {
-curEro=ele.value;
+var evv=ele.value;
+	if(evv<0){curEro+=evv;}
+	else
+	{
+		if(evv>erocount){evv=erocount-10;}
+		curEro=evv;
+	}
+
+
 ele.blur();
 fullpg();
 }
@@ -194,9 +202,11 @@ function fullpg()
 	document.body.background='';
 	nymu=10;
 	rmvimg();
-var hdtinput='<br>==========================================================================================✨✨✨✨<input type="number" value='+
-curEro+' onkeyup=fpt(event,this)>✨✨✨✨<br>'
-	var kole7=hdtinput;
+
+
+	var kole7='<div class="nv">　　　　　　　　　　　<input type="number" value='+
+curEro+' onkeyup=fpt(event,this)>⛪</div><center>';
+
 	for(var j=0;j<10;j++){
 		var iszrda=curEro*10+j;
 		kole7+=kx1+msgs[iszrda]+
@@ -205,7 +215,7 @@ curEro+' onkeyup=fpt(event,this)>✨✨✨✨<br>'
 		kx5b;
 	}
 	
-	tblarea.innerHTML =kole7+hdtinput;
+	tblarea.innerHTML =kole7+'</center>';
 	document.title='fpg'+curEro;
 	keyerocount=-100;
 	document.onmousemove=fakekuriakey;
@@ -218,10 +228,23 @@ document.onmousemove=kuriakey;
 document.onkeydown=function(e) {
 
 if(keyerocount<0){
-if(e.keyCode==65)
-{
+switch (e.keyCode) {
+	case 65:
+	case 106:
+	
 		curEro=Math.floor(Math.random()*erocount);
 		fullpg();
+	return;
+
+	case 109:
+		curEro--;
+		fullpg();
+	return;
+
+	case 107:
+		curEro++;
+		fullpg();
+	return;
 }
 return;
 }
