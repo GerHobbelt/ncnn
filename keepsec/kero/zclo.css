@@ -1,0 +1,18 @@
+body {
+    background-color: black;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+body::-webkit-scrollbar {
+    display: none;
+}
+center {
+    background-color: #400010;
+}
+.nv {
+	position:fixed;
+	bottom:10px;
+
+}

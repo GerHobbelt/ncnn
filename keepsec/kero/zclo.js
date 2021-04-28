@@ -196,7 +196,22 @@ ele.blur();
 fullpg();
 }
 }
-
+function partpg()
+{
+	yina = document.createElement('center');
+	var kole7='<br><br><br>';
+	for(var j=0;j<20;j++){
+		var iszrda=curEro*10+j;
+		kole7+=kx1+msgs[iszrda]+
+		kx2b+vidstr(vids[iszrda])+
+		kx4+thumbstr(thumb[iszrda])+
+		kx5b;
+	}
+	yina.innerHTML = kole7;
+	tblarea.appendChild(yina);
+	curEro+=2;
+	document.title='pfpg'+curEro;
+}
 function fullpg()
 {
 	document.body.background='';
@@ -207,7 +222,7 @@ function fullpg()
 	var kole7='<div class="nv">　　　　　　　　　　　<input type="number" value='+
 curEro+' onkeyup=fpt(event,this)>⛪</div><center>';
 
-	for(var j=0;j<10;j++){
+	for(var j=0;j<20;j++){
 		var iszrda=curEro*10+j;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b+vidstr(vids[iszrda])+
@@ -236,13 +251,18 @@ switch (e.keyCode) {
 		fullpg();
 	return;
 
+	case 81:
+		curEro=0;
+		menuFunction();
+	return;
+
 	case 109:
-		curEro--;
+		curEro-=2;
 		fullpg();
 	return;
 
 	case 107:
-		curEro++;
+		curEro+=2;
 		fullpg();
 	return;
 }
@@ -260,6 +280,13 @@ switch (e.keyCode) {
 		menuFunction();
 		document.body.scrollTop+=300;
 	break;
+
+	case 81:
+	case 107:
+		partpg();
+		document.body.scrollTop+=1000;
+	return;
+
 	case 102:
 	case 39:
 		document.body.scrollLeft+=500;
