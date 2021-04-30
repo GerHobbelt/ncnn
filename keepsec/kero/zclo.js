@@ -118,9 +118,9 @@ function thumbstr(src)
 var agen=['left','right'];
 
 const kx1='<a href="https://twitter.com/';
-const kx2='" >⛪　　　　　　　　</a><a onmouseenter=xt(';
 const kx2b='" >====<br>====</a><br><a href="';
-const kx3=') onclick=xtp() >✨</a><br><a href="';
+const kx2='" >⛪　　　　　　　　</a><a id=';
+const kx3=' onmouseover=xt(this) onclick=xtp() >✨✨</a><br><a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width=205 /></a>0<br>';
 const kx5b='" /></a><br>';
@@ -145,8 +145,11 @@ kx5a;
 	tblarea.appendChild(yina);
 }
 
+var ovrcount=0;
+
 function skrback()
 {
+nymu=-1;
 document.body.background='';
 document.body.scrollTop+=20;
 document.body.scrollLeft=0;
@@ -155,27 +158,67 @@ document.body.scrollLeft=0;
 var nymu=-10;
 function xtp()
 {
-	
+
+	if(ovrcount==0)
+	{
+		//tblarea.appendChild(timgarea);
+		var tsstr=thumbstr(thumb[nymu]);
+		document.body.background = tsstr;
+		timgarea.src=tsstr;
+		timgarea.style.maxHeight = '800%';
+	}
+
 	recarea.value+='\n^'+nymu;
 	document.body.scrollLeft+=2000;
 	setTimeout(function() {skrback();}, 1000);
 	//recarea.value+='\nhttps://twitter.com/'+msgs[nymu];
 }
 
-function xt(iszrda)
+
+
+function xt(ele)
 {
-	nymu=iszrda;
-	var tsstr=thumbstr(thumb[iszrda]);
-	document.body.background = tsstr;
-	timgarea.src=tsstr;
-	timgarea.style.maxHeight = '800%';
+var iszrda = ele.id;
+	if(nymu!=iszrda)
+	{
+		nymu=iszrda;
+		ovrcount=0;
+		var tssr=thumbstr(thumb[iszrda]);
+		timgarea.src=tssr;
+		var ymgg=ele.nextSibling.nextSibling.firstChild;
+		if(ymgg.naturalWidth==0)
+		{
+			ymgg.src=tssr;
+			ymgg.height=ymgg.width;
+		}
+		
+	}
+	else
+	{
+	
+		if(ovrcount==1)
+		{
+			//tblarea.appendChild(timgarea);
+			
+			document.body.background = timgarea.src;
+			timgarea.style.maxHeight = '800%';
+			
+		}
+		else if(ovrcount==2){
+			document.body.scrollLeft+=2000;
+			setTimeout(function() {skrback();}, 1000);
+			
+
+		}
+		ovrcount++;
+	}
 }
 
 function rmvimg()
 {
 if(nymu>=0){
-	timgarea.src='';
-	timgarea.style.maxHeight = '1%';
+	//timgarea.src='';
+	//timgarea.style.maxHeight = '1%';
 	nymu=-1;
 }
 }
