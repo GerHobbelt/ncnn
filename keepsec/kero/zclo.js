@@ -212,13 +212,14 @@ var iszrda = parseInt(ele.title,10);
 					ymgg.src=syyr;
 					ymgg.height=ymgg.width;
 					ele.title=iszrda+'r';
-					nymu=-10;
+					
 				}
 				else
 				{
 					ele.title=iszrda+'g';
-					timgarea.src=syyr;
+					
 				}
+				nymu=-10;
 			}
 			return;
 			case 'r':
@@ -252,7 +253,7 @@ var iszrda = parseInt(ele.title,10);
 	else
 	{
 	
-		if(ovrcount==1)
+		if(ovrcount==0)
 		{
 			//tblarea.appendChild(timgarea);
 			
@@ -260,7 +261,7 @@ var iszrda = parseInt(ele.title,10);
 			//timgarea.style.maxHeight = '800%';
 			
 		}
-		else if(ovrcount==2){
+		else if(ovrcount==1){
 			document.body.scrollLeft+=2000;
 			setTimeout(function() {skrback();}, 1000);
 			
