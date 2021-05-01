@@ -41,7 +41,7 @@ function printsele()
 		var c0=lynz[i].charAt(0);
 		if(c0=='^')
 		{
-			var yr=parseInt(lynz[i]);
+			var yr=parseInt(lynz[i],10);
 			zsrcrec+=thumb[i]+'\t'+vids[i]+'\t'+msgs[i]+'\t'+lynz[i]+'\n';
 
 		}
@@ -120,7 +120,7 @@ var agen=['left','right'];
 const kx1='<a href="https://twitter.com/';
 const kx2b='" >====<br>====</a><br><a href="';
 const kx2='" >⛪　　　　　　　　</a><a id=';
-const kx3=' onmouseover=xt(this) onclick=xtp() >✨✨</a><br><a href="';
+const kx3='i onmouseover=xt(this) onclick=xtp() >✨</a><br><a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width=205 /></a>0<br>';
 const kx5b='" /></a><br>';
@@ -178,19 +178,70 @@ function xtp()
 
 function xt(ele)
 {
-var iszrda = ele.id;
+
+
+var c0=ele.id;
+c0=c0.charAt(c0.length-1);
+
+if(c0=='z'){return;}
+
+var iszrda = parseInt(ele.id,10);
+
+
 	if(nymu!=iszrda)
 	{
 		nymu=iszrda;
 		ovrcount=0;
-		var tssr=thumbstr(thumb[iszrda]);
-		timgarea.src=tssr;
-		var ymgg=ele.nextSibling.nextSibling.firstChild;
-		if(ymgg.naturalWidth==0)
+		var syyr=thumbstr(thumb[iszrda]);
+		switch(c0)
 		{
-			ymgg.src=tssr;
-			ymgg.height=ymgg.width;
+			case 'g':
+				timgarea.src=syyr;
+			return;
+			case 'i':
+			{
+				var ymgg=ele.nextSibling.nextSibling.firstChild;
+				if(ymgg.naturalWidth==0)
+				{
+					ymgg.alt=msgs[iszrda];
+					ymgg.src=syyr;
+					ymgg.height=ymgg.width;
+					ele.id=iszrda+'r';
+					nymu=-10;
+				}
+				else
+				{
+					ele.id=iszrda+'g';
+					timgarea.src=syyr;
+				}
+			}
+			return;
+			case 'r':
+			{
+				var ymgg=ele.nextSibling.nextSibling.firstChild;
+				if(ymgg.naturalWidth==0)
+				{
+					ele.id=iszrda+'z';
+				}
+				else
+				{
+					ymgg.alt='';
+					ele.id=iszrda+'g';
+					timgarea.src=syyr;
+				}
+				
+			}
+			return;
+
 		}
+
+		
+
+		
+		
+		
+		
+		
 		
 	}
 	else
@@ -200,8 +251,8 @@ var iszrda = ele.id;
 		{
 			//tblarea.appendChild(timgarea);
 			
-			document.body.background = timgarea.src;
-			timgarea.style.maxHeight = '800%';
+			document.body.background =timgarea.src;
+			//timgarea.style.maxHeight = '800%';
 			
 		}
 		else if(ovrcount==2){
@@ -377,7 +428,7 @@ return;
 
 
 switch (e.keyCode) {
-	case 65:
+	case 90:
 		curEro=Math.floor(Math.random()*erocount);
 		fullpg();
 	return;
