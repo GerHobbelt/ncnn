@@ -74,6 +74,8 @@ function nwdvid(vidurl)
 
 function repg(ele)
 {
+	timgarea.src='';
+	timgarea.style.maxHeight = '1%';
 	ele.blur();
 	recarea.value+='\n\n'+erocount.toString(10);
 	var evv=curEro+(ele.value*10);
@@ -117,9 +119,12 @@ function thumbstr(src)
 
 var agen=['left','right'];
 
+var speg=['　　','　','　　　　　','　　　','　　　　','　　','　','　　　　　','　　　','　　　　'];
+
 const kx1='<a href="https://twitter.com/';
 const kx2b='" >====<br>====</a><br><a href="';
-const kx2='" >⛪　　　　　　　　</a><a id=';
+const kx2a1='" >⛪　　　　';
+const kx2a2='</a><a title=';
 const kx3='i onmouseover=xt(this) onclick=xtp() >✨</a><br><a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width=205 /></a>0<br>';
@@ -135,7 +140,7 @@ function mydav(sta, endo,ag)
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+=kx1+msgs[iszrda]+
-kx2+iszrda+
+kx2a1+speg[j]+kx2a2+iszrda+
 kx3+vidstr(vids[iszrda])+
 kx4+thumbstr(thumb[iszrda])+
 kx5a;
@@ -180,12 +185,12 @@ function xt(ele)
 {
 
 
-var c0=ele.id;
+var c0=ele.title;
 c0=c0.charAt(c0.length-1);
 
 if(c0=='z'){return;}
 
-var iszrda = parseInt(ele.id,10);
+var iszrda = parseInt(ele.title,10);
 
 
 	if(nymu!=iszrda)
@@ -206,12 +211,12 @@ var iszrda = parseInt(ele.id,10);
 					ymgg.alt=msgs[iszrda];
 					ymgg.src=syyr;
 					ymgg.height=ymgg.width;
-					ele.id=iszrda+'r';
+					ele.title=iszrda+'r';
 					nymu=-10;
 				}
 				else
 				{
-					ele.id=iszrda+'g';
+					ele.title=iszrda+'g';
 					timgarea.src=syyr;
 				}
 			}
@@ -221,12 +226,12 @@ var iszrda = parseInt(ele.id,10);
 				var ymgg=ele.nextSibling.nextSibling.firstChild;
 				if(ymgg.naturalWidth==0)
 				{
-					ele.id=iszrda+'z';
+					ele.title=iszrda+'z';
 				}
 				else
 				{
 					ymgg.alt='';
-					ele.id=iszrda+'g';
+					ele.title=iszrda+'g';
 					timgarea.src=syyr;
 				}
 				
@@ -390,7 +395,7 @@ document.onkeydown=function(e) {
 
 if(keyerocount<0){
 switch (e.keyCode) {
-	case 65:
+	case 90:
 	case 106:
 	
 		curEro=Math.floor(Math.random()*erocount);
