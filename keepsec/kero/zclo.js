@@ -72,11 +72,15 @@ function nwdvid(vidurl)
 
 }
 
+var canfire=true;
+
 function repg(ele)
 {
+	ele.blur();
 	timgarea.src='';
 	timgarea.style.maxHeight = '1%';
-	ele.blur();
+
+	canfire=true;
 	recarea.value+='\n\n'+erocount.toString(10);
 	var evv=curEro+(ele.value*10);
 	if(evv<0){evv=0;}
@@ -124,8 +128,8 @@ var speg=['　　','　','　　　　　','　　　','　　　　','　　','
 const kx1='<a href="https://twitter.com/';
 const kx2b='" >====<br>====</a><br><a href="';
 const kx2a1='" >⛪　　　　';
-const kx2a2='</a><a title=';
-const kx3='i onmouseover=xt(this) onclick=xtp() >✨</a><br><a href="';
+const kx2a2='</a><a title=i';
+const kx3=' onmouseover=xt(this) onclick=xtp() >✨</a><br><a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width=205 /></a>0<br>';
 const kx5b='" /></a><br>';
@@ -185,12 +189,11 @@ function xt(ele)
 {
 
 
-var c0=ele.title;
-c0=c0.charAt(c0.length-1);
+var c0=ele.title.charAt(0);
 
 if(c0=='z'){return;}
 
-var iszrda = parseInt(ele.title,10);
+var iszrda = parseInt(ele.title.substring(1));
 
 
 	if(nymu!=iszrda)
@@ -211,12 +214,12 @@ var iszrda = parseInt(ele.title,10);
 					ymgg.alt=msgs[iszrda];
 					ymgg.src=syyr;
 					ymgg.height=ymgg.width;
-					ele.title=iszrda+'r';
+					ele.title='r'+iszrda;
 					
 				}
 				else
 				{
-					ele.title=iszrda+'g';
+					ele.title='g'+iszrda;
 					
 				}
 				nymu=-10;
@@ -227,12 +230,12 @@ var iszrda = parseInt(ele.title,10);
 				var ymgg=ele.nextSibling.nextSibling.firstChild;
 				if(ymgg.naturalWidth==0)
 				{
-					ele.title=iszrda+'z';
+					ele.title='z'+iszrda;
 				}
 				else
 				{
 					ymgg.alt='';
-					ele.title=iszrda+'g';
+					ele.title='g'+iszrda;
 					timgarea.src=syyr;
 				}
 				
@@ -311,20 +314,24 @@ function menuFunction() {
 window.oncontextmenu=menuFunction;
 menuFunction();
 
-var canfire=true;
+
 function symfire()
 {
-	if(curEro<keyerocount&&curEro<hardlim){apyed();
-	document.title=curEro*10;}
+	apyed();
+	document.title=curEro*10;
 }
 
 function kuriakey(){
 	if(canfire)
 	{
 		canfire=false;
-		keyerocount=curEro+50;
-		symfire(); 
-		setTimeout(function() {canfire=true;}, 1200);
+		if(curEro<hardlim)
+		{
+			keyerocount=curEro+50;
+			setTimeout(function() {symfire(); canfire=true;}, 1200);
+		}
+		
+		
 	}
 	
 }
@@ -366,9 +373,7 @@ function partpg()
 }
 function fullpg()
 {
-	document.body.background='';
-	nymu=10;
-	rmvimg();
+
 
 
 	var kole7='<div class="nv">　　　　　　　　　　　<input type="number" value='+
@@ -396,7 +401,7 @@ document.onkeydown=function(e) {
 
 if(keyerocount<0){
 switch (e.keyCode) {
-	case 90:
+	case 87:
 	case 106:
 	
 		curEro=Math.floor(Math.random()*erocount);
@@ -434,9 +439,12 @@ return;
 
 
 switch (e.keyCode) {
-	case 90:
+	case 87:
 		curEro=Math.floor(Math.random()*erocount);
 		fullpg();
+		document.body.background='';
+		timgarea.src='';
+		timgarea.style.maxHeight = '1%';
 	return;
 	case 105:
 	case 106:
@@ -461,7 +469,7 @@ switch (e.keyCode) {
 		if(document.body.scrollLeft<600){document.body.background='';}
 		document.body.scrollTop+=10;
 	break;
-	case 101:
+	case 111:
 
 		var evv=curEro+Math.floor((Math.random()-0.5)*erocount/7);
 		if(evv>=0&&evv<erocount){
@@ -481,7 +489,7 @@ switch (e.keyCode) {
 	break;
 }
 
-	symfire();
+	if(curEro<keyerocount){symfire();}
 	//rmvimg();
 
 }
