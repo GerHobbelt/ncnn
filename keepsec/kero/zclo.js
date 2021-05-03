@@ -237,7 +237,7 @@ var iszrda = parseInt(ele.title.substring(1));
 				var ymgg=ele.nextSibling.nextSibling.firstChild;
 				if(ymgg.naturalWidth==0)
 				{
-					ele.outerHTML='<a title=z'+iszrda+' onclick=rkl("'+msgs[iszrda].split('/')[0]+'") >⛔</a>';
+					ele.outerHTML='<a title=z'+iszrda+' href="https://twitter.com/'+msgs[iszrda].split('/')[0]+'" >⛔</a>';
 					/*
 					ele.title='z'+iszrda;
 					var naki=
