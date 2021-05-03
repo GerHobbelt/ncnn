@@ -439,7 +439,7 @@ return;
 
 
 switch (e.keyCode) {
-	case 87:
+	case 81:
 		curEro=Math.floor(Math.random()*erocount);
 		fullpg();
 		document.body.background='';
@@ -452,7 +452,7 @@ switch (e.keyCode) {
 		document.body.scrollTop+=300;
 	break;
 
-	case 81:
+	case 90:
 	case 107:
 		partpg();
 		document.body.scrollTop+=1000;
