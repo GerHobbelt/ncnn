@@ -71,7 +71,7 @@ document.body.scrollTop=y*mxh;
 
 
 
-function fakekuriakey(){return;}
+//function fakekuriakey(){return;}
 
 
 var mufunc0=function(ev) {
@@ -106,7 +106,7 @@ if(panni)
 	case 111:
 		panni=false;
 		vio.controls=true;
-		document.onmousemove=fakekuriakey;
+		document.onmousemove=null;
 		document.body.style.overflow = "auto";
 		return;
 	case 104:
