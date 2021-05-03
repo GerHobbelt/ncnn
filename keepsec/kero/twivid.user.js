@@ -76,12 +76,12 @@ function fakekuriakey(){return;}
 
 var mufunc0=function(ev) {
 
-if((delayii&0xF)==0x0) {
-	delayii=0x1;
-	ruu(ev.screenX,ev.screenY);
-} else{delayii++;}
+delayii++;
 
-};
+if(delayii > 0x14) {
+	delayii=0x0;
+	ruu(ev.clientX,ev.clientY);
+} };
 
 function ratechange()
 {
