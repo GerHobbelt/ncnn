@@ -1,5 +1,6 @@
 // ==UserScript==
 // @match https://twitter.com/*/status/*
+// @match https://twitter.com/*/with_replies
 // ==/UserScript==
 
 

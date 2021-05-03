@@ -234,7 +234,7 @@ var iszrda = parseInt(ele.title.substring(1));
 				{
 					var niki=msgs[iszrda].split('/')[0];
 					if(niki=='i'){niki=' >⛔</a>';}
-					else{niki=' href="https://twitter.com/'+niki+'">⛔</a>'};
+					else{niki=' href="https://twitter.com/'+niki+'/with_replies">⛔</a>'};
 					ele.outerHTML='<a title=z'+iszrda+niki;
 				}
 				else
