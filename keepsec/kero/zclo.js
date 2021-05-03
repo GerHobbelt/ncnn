@@ -4,7 +4,7 @@ var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
 var erocount=Math.ceil(thumb.length/10);
 var keyerocount=curEro+50;
-var hardlim=curEro+1001;
+var hardlim=curEro+501;
 
 
 function findimgerr()
@@ -88,7 +88,7 @@ function repg(ele)
 
 	
 		curEro=evv;
-		hardlim=curEro+1001;
+		hardlim=curEro+501;
 		tblarea.innerHTML="";
 		
 		
@@ -165,6 +165,13 @@ document.body.scrollLeft=0;
 }
 
 var nymu=-10;
+
+function rkl(usrna)
+{
+
+window.open('https://twitter.com/'+usrna, null, null);
+}
+
 function xtp()
 {
 
@@ -230,7 +237,12 @@ var iszrda = parseInt(ele.title.substring(1));
 				var ymgg=ele.nextSibling.nextSibling.firstChild;
 				if(ymgg.naturalWidth==0)
 				{
+					ele.outerHTML='<a title=z'+iszrda+' onclick=rkl("'+msgs[iszrda].split('/')[0]+'") >⛔</a>';
+					/*
 					ele.title='z'+iszrda;
+					var naki=
+					ele.onclick=function(){rklik(naki);};
+					*/
 				}
 				else
 				{
@@ -401,8 +413,8 @@ document.onkeydown=function(e) {
 
 if(keyerocount<0){
 switch (e.keyCode) {
-	case 87:
-	case 106:
+	case 90:
+	case 101:
 	
 		curEro=Math.floor(Math.random()*erocount);
 		fullpg();
@@ -474,7 +486,7 @@ switch (e.keyCode) {
 		var evv=curEro+Math.floor((Math.random()-0.5)*erocount/7);
 		if(evv>=0&&evv<erocount){
 		curEro=evv;
-		hardlim=curEro+1001;
+		hardlim=curEro+501;
 		menuFunction();
 		document.body.scrollTop+=300;
 		}
