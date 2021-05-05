@@ -27,28 +27,28 @@ function effeci()
 {
 document.onkeydown=kyfunc0;
 var sst=yput.value;
+yput.rows=1;
 if(sst)
 {
+	var c0=sst.charAt(0);
+	if(c0=='/')
+	{
+		if(intervalHandle){clearInterval(intervalHandle);intervalHandle=null;}
+		var sn=sst.split('/');
+		var vsta=parseFloat(sn[1]);
+		var fvend=parseFloat(sn[2]);
+		if(fvend<0){
+			fvend=-(vsta+fvend);
+			yput.value='/'+vsta.toFixed(2)+'/'+fvend.toFixed(2)+'/\n';
+		}
+		
+		seclup(vsta);
+		intervalHandle=setInterval(function(){seclup(vsta);}, Math.ceil(fvend*(1000.5/plbrate)));
 
-var c0=sst.charAt(0);
-if(c0=='/')
-{
-	if(intervalHandle){clearInterval(intervalHandle);intervalHandle=null;}
-	var sn=sst.split('/');
-	var vsta=parseFloat(sn[1]);
-	var fvend=parseFloat(sn[2]);
-	if(fvend<0){
-		fvend=-(vsta+fvend);
-		yput.value='/'+vsta.toFixed(2)+'/'+fvend.toFixed(2)+'/\n';
-	}
-	
-	seclup(vsta);
-	intervalHandle=setInterval(function(){seclup(vsta);}, Math.ceil(fvend*(1000.5/plbrate)));
+	} else{vio.style.webkitFilter = sst.replace('\n',' ');}
 
-} else{vio.style.webkitFilter = sst.replace('\n',' ');}
-
-vio.play();
-return;
+	vio.play();
+	return;
 }
 	vio.style.webkitFilter = '';
 	vio.play();
@@ -57,7 +57,8 @@ return;
 function paosa(){
 
 	document.onkeydown=null;
-	if(intervalHandle){}
+	yput.rows=8;
+	if(intervalHandle){return;}
 	else{vio.pause();}
 }
 
@@ -65,7 +66,7 @@ function createeffctctrl()
 {
 var oyput = document.createElement('div');
 oyput.style='position:fixed;right:0px;top:0px;color:white;';
-oyput.innerHTML='<textarea rows=8 ></textarea><pre>\n\nbrightness(2)\n\ncontrast(1)\nsaturate(1)\nhue-rotate(0deg)\nblur(0px)\ninvert(0)\nsepia(0)</pre>';
+oyput.innerHTML='<textarea rows=1 ></textarea><pre>\n\nbrightness(1.3)\n\ncontrast(1.5)\nsaturate(0.5)\nhue-rotate(90deg)\nblur(0px)\ninvert(0)\nsepia(0)</pre>';
 document.body.insertBefore(oyput,vio);
 oyput=oyput.firstChild;
 oyput.onfocus=paosa;
@@ -203,16 +204,14 @@ if(panni)
 		document.body.scrollTop-=50;
 		return;
 	case 99:
-		document.body.scrollLeft+=50;
-		document.body.scrollTop+=50;
+		vio.currentTime+=2;
 		return;
 	case 105:
 		document.body.scrollLeft+=50;
 		document.body.scrollTop-=50;
 		return;
 	case 97:
-		document.body.scrollLeft-=50;
-		document.body.scrollTop+=50;
+		vio.currentTime-=2;
 		return;
 	case 88:
 		plbrate-=0.1;
