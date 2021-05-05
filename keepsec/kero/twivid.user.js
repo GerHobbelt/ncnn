@@ -21,8 +21,7 @@ vio.style.maxWidth='800%';
 vio.height=window.innerHeight-4;
 var intervalHandle = null;
 
-function seclup(sta,endo)
-{if(vio.currentTime>endo){vio.currentTime=sta;}}
+function seclup(sta){vio.currentTime=sta;}
 
 function effeci()
 {
@@ -36,8 +35,15 @@ if(c0=='!')
 {
 var sn=sst.split('!');
 var vsta=parseFloat(sn[1]);
-var vend=parseFloat(sn[2])+vsta;
-intervalHandle=setInterval(function(){seclup(vsta,vend);}, 1000);
+var vend=Math.ceil(parseFloat(sn[2])*1100);
+
+if(intervalHandle){
+clearInterval(intervalHandle);
+intervalHandle=null;
+}
+
+intervalHandle=setInterval(function(){seclup(vsta);}, vend);
+
 }
 else
 {
