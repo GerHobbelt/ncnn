@@ -26,6 +26,7 @@ function seclup(sta,endo)
 
 function effeci()
 {
+document.onkeydown=kyfunc0;
 var sst=yput.value;
 if(sst)
 {
@@ -40,27 +41,33 @@ intervalHandle=setInterval(function(){seclup(vsta,vend);}, 1000);
 }
 else
 {
-vio.pause();
+
 vio.style.webkitFilter = sst.replace('\n',' ');
 }
+vio.play();
 return;
 }
 vio.style.webkitFilter = '';
+vio.play();
 }
 
-function kuntinu(){
-vio.play();
+function paosa(){
+
+document.onkeydown=null;
+if(intervalHandle){}
+else{vio.pause();}
+
 }
 
 function createeffctctrl()
 {
 var oyput = document.createElement('div');
-oyput.style='position:fixed;right:0px;top:0px;';
-oyput.innerHTML='<textarea rows=8 >brightness(1)\ncontrast(1)\nsaturate(1)\nhue-rotate(0deg)\nblur(0px)\ninvert(0)\nsepia(0)</textarea>';
+oyput.style='position:fixed;right:0px;top:0px;color:white;';
+oyput.innerHTML='<textarea rows=8 ></textarea><pre>brightness(2)\n\ncontrast(1)\nsaturate(1)\nhue-rotate(0deg)\nblur(0px)\ninvert(0)\nsepia(0)</pre>';
 document.body.insertBefore(oyput,vio);
 oyput=oyput.firstChild;
-oyput.ondblclick=effeci;
-oyput.onblur=kuntinu;
+oyput.onfocus=paosa;
+oyput.onblur=effeci;
 
 
 return oyput;
@@ -122,7 +129,7 @@ document.body.scrollTop=y*mxh;
 
 
 
-//function fakekuriakey(){return;}
+
 
 
 var mufunc0=function(ev) {
@@ -146,7 +153,7 @@ if(intervalHandle){
 clearInterval(intervalHandle);
 intervalHandle=null;
 }
-else{yput.value='!0.0!2.0';}
+else{yput.value='!'+vio.currentTime+'!2.0';}
 
 
 }
@@ -154,7 +161,7 @@ else{yput.value='!0.0!2.0';}
 var panni=false;
 var notplu500=true;
 
-document.onkeydown=function(e) {
+var kyfunc0=function(e) {
 //vio.muted=false;
 if(panni)
 {
@@ -306,3 +313,5 @@ return;
 
 	}
 };
+
+document.onkeydown=kyfunc0;
