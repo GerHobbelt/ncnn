@@ -31,16 +31,19 @@ if(sst)
 {
 
 var c0=sst.charAt(0);
-if(c0=='!')
+if(c0=='/')
 {
-	var sn=sst.split('!');
-	var vsta=parseFloat(sn[1]);
-	var vend=Math.ceil(parseFloat(sn[2])*(1100.5/plbrate));
-
 	if(intervalHandle){clearInterval(intervalHandle);intervalHandle=null;}
+	var sn=sst.split('/');
+	var vsta=parseFloat(sn[1]);
+	var fvend=parseFloat(sn[2]);
+	if(fvend<0){
+		fvend=-(vsta+fvend);
+		yput.value='/'+vsta.toFixed(2)+'/'+fvend.toFixed(2)+'/\n';
+	}
 	
 	seclup(vsta);
-	intervalHandle=setInterval(function(){seclup(vsta);}, vend);
+	intervalHandle=setInterval(function(){seclup(vsta);}, Math.ceil(fvend*(1000.5/plbrate)));
 
 } else{vio.style.webkitFilter = sst.replace('\n',' ');}
 
@@ -152,7 +155,7 @@ if(intervalHandle){
 clearInterval(intervalHandle);
 intervalHandle=null;
 }
-else{yput.value='!'+vio.currentTime.toFixed(2)+'!2.0';}
+else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0/\n';}
 
 
 }
