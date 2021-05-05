@@ -33,43 +33,36 @@ if(sst)
 var c0=sst.charAt(0);
 if(c0=='!')
 {
-var sn=sst.split('!');
-var vsta=parseFloat(sn[1]);
-var vend=Math.ceil(parseFloat(sn[2])*1100);
+	var sn=sst.split('!');
+	var vsta=parseFloat(sn[1]);
+	var vend=Math.ceil(parseFloat(sn[2])*(1100.5/plbrate));
 
-if(intervalHandle){
-clearInterval(intervalHandle);
-intervalHandle=null;
-}
+	if(intervalHandle){clearInterval(intervalHandle);intervalHandle=null;}
+	
+	seclup(vsta);
+	intervalHandle=setInterval(function(){seclup(vsta);}, vend);
 
-intervalHandle=setInterval(function(){seclup(vsta);}, vend);
+} else{vio.style.webkitFilter = sst.replace('\n',' ');}
 
-}
-else
-{
-
-vio.style.webkitFilter = sst.replace('\n',' ');
-}
 vio.play();
 return;
 }
-vio.style.webkitFilter = '';
-vio.play();
+	vio.style.webkitFilter = '';
+	vio.play();
 }
 
 function paosa(){
 
-document.onkeydown=null;
-if(intervalHandle){}
-else{vio.pause();}
-
+	document.onkeydown=null;
+	if(intervalHandle){}
+	else{vio.pause();}
 }
 
 function createeffctctrl()
 {
 var oyput = document.createElement('div');
 oyput.style='position:fixed;right:0px;top:0px;color:white;';
-oyput.innerHTML='<textarea rows=8 ></textarea><pre>brightness(2)\n\ncontrast(1)\nsaturate(1)\nhue-rotate(0deg)\nblur(0px)\ninvert(0)\nsepia(0)</pre>';
+oyput.innerHTML='<textarea rows=8 ></textarea><pre>\n\nbrightness(2)\n\ncontrast(1)\nsaturate(1)\nhue-rotate(0deg)\nblur(0px)\ninvert(0)\nsepia(0)</pre>';
 document.body.insertBefore(oyput,vio);
 oyput=oyput.firstChild;
 oyput.onfocus=paosa;
@@ -150,7 +143,7 @@ if(delayii > 0x14) {
 function ratechange()
 {
 vio.playbackRate=plbrate;
-document.title="rate="+plbrate;
+document.title="rate="+plbrate.toFixed(2);
 }
 
 function klirlup()
@@ -159,7 +152,7 @@ if(intervalHandle){
 clearInterval(intervalHandle);
 intervalHandle=null;
 }
-else{yput.value='!'+vio.currentTime+'!2.0';}
+else{yput.value='!'+vio.currentTime.toFixed(2)+'!2.0';}
 
 
 }
