@@ -233,8 +233,12 @@ var iszrda = parseInt(ele.title.substring(1));
 				if(ymgg.naturalWidth==0)
 				{
 					var niki=msgs[iszrda].split('/')[0];
+					
+					
 					if(niki=='i'){niki=' >⛔</a>';}
-					else{niki=' href="https://twitter.com/'+niki+'/with_replies">⛔</a>'};
+					else{
+						ymgg.alt+='\n^'+niki+'\n';
+						niki=' href="https://twitter.com/'+niki+'/with_replies">⛔</a>'};
 					ele.outerHTML='<a title=z'+iszrda+niki;
 				}
 				else
@@ -444,6 +448,10 @@ return;
 
 
 switch (e.keyCode) {
+	case 65:
+		keyerocount=0;
+		hardlim=0;
+	return;
 	case 81:
 		curEro=Math.floor(Math.random()*erocount);
 		fullpg();

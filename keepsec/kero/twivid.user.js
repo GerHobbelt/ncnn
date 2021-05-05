@@ -19,6 +19,49 @@ vio.style.maxWidth='800%';
 
 
 vio.height=window.innerHeight-4;
+var intervalHandle = null;
+
+function seclup(sta,endo)
+{if(vio.currentTime>endo){vio.currentTime=sta;}}
+
+function effeci()
+{
+var sst=yput.value;
+var c0=sst.charAt(0);
+if(c0=='!')
+{
+var sn=sst.split('!');
+var vsta=parseFloat(sn[1]);
+var vend=parseFloat(sn[2]);
+intervalHandle=setInterval(function(){seclup(vsta,vend);}, 1000);
+}
+else
+{
+vio.pause();
+vio.style.webkitFilter = sst.replace('\n',' ');
+}
+}
+
+function kuntinu(){
+vio.play();
+}
+
+function createeffctctrl()
+{
+var oyput = document.createElement('div');
+oyput.style='position:fixed;right:0px;top:0px;';
+oyput.innerHTML='<textarea rows=8 >blur(0px)\nsaturate(1)\nhue-rotate(0deg)\nbrightness(1)\ncontrast(1)\ninvert(0)\nsepia(0)</textarea>';
+document.body.insertBefore(oyput,vio);
+oyput=oyput.firstChild;
+oyput.ondblclick=effeci;
+oyput.onblur=kuntinu;
+
+
+return oyput;
+}
+
+var yput=createeffctctrl();
+
 
 function rotvi(krot)
 {
@@ -43,6 +86,8 @@ isrot=true;
 
 
 }
+
+
 
 var delayii=0x0;
 var mxw=0;
@@ -89,6 +134,17 @@ vio.playbackRate=plbrate;
 document.title="rate="+plbrate;
 }
 
+function klirlup()
+{
+if(intervalHandle){
+clearInterval(intervalHandle);
+intervalHandle=null;
+}
+else{yput.value='!0.0!2.0';}
+
+
+}
+
 var panni=false;
 var notplu500=true;
 
@@ -102,6 +158,10 @@ if(panni)
 	case 106:
 	case 112:
 		close();
+		return;
+
+	case 83:
+		klirlup();
 		return;
 	case 111:
 		panni=false;
@@ -180,6 +240,10 @@ return;
 	case 106:
 	case 112:
 		close();
+		return;
+
+	case 83:
+		klirlup();
 		return;
 	case 111:
 		if(!isrot){
