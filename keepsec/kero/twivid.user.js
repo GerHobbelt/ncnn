@@ -27,12 +27,15 @@ function seclup(sta,endo)
 function effeci()
 {
 var sst=yput.value;
+if(sst)
+{
+
 var c0=sst.charAt(0);
 if(c0=='!')
 {
 var sn=sst.split('!');
 var vsta=parseFloat(sn[1]);
-var vend=parseFloat(sn[2]);
+var vend=parseFloat(sn[2])+vsta;
 intervalHandle=setInterval(function(){seclup(vsta,vend);}, 1000);
 }
 else
@@ -40,6 +43,9 @@ else
 vio.pause();
 vio.style.webkitFilter = sst.replace('\n',' ');
 }
+return;
+}
+vio.style.webkitFilter = '';
 }
 
 function kuntinu(){
@@ -50,7 +56,7 @@ function createeffctctrl()
 {
 var oyput = document.createElement('div');
 oyput.style='position:fixed;right:0px;top:0px;';
-oyput.innerHTML='<textarea rows=8 >blur(0px)\nsaturate(1)\nhue-rotate(0deg)\nbrightness(1)\ncontrast(1)\ninvert(0)\nsepia(0)</textarea>';
+oyput.innerHTML='<textarea rows=8 >brightness(1)\ncontrast(1)\nsaturate(1)\nhue-rotate(0deg)\nblur(0px)\ninvert(0)\nsepia(0)</textarea>';
 document.body.insertBefore(oyput,vio);
 oyput=oyput.firstChild;
 oyput.ondblclick=effeci;
