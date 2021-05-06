@@ -1,30 +1,28 @@
 // ==UserScript==
-// @match https://video.twimg.com/*
+// @match https://www.youtube.com/embed/*
+// @match https://www.youtube.com/watch?v=*
+// @match http://embed.nicovideo.jp/watch/*
 // ==/UserScript==
 
 
-var vio=document.getElementsByTagName("video")[0];
-if(vio=== undefined){setTimeout(function() { close(); }, 500);}
 
-var kyfunc = new Array(2);
+var vio=null;
+var yput=null;
+var pll=null;
+
+var kyfunc = new Array(4);
+
 
 var plbrate=1.0;
 var isrot=false;
 
-vio.loop=true;
 
-
-vio.style.maxHeight='800%';
-vio.style.maxWidth='800%';
-
-
-vio.height=window.innerHeight-4;
 var intervalHandle = null;
 
 
-function effeci()
+function effeci(nkyfun)
 {
-document.onkeydown=kyfunc[1];
+document.onkeyup=kyfunc[nkyfun];
 var sst=yput.value;
 yput.rows=1;
 if(sst)
@@ -55,27 +53,24 @@ if(sst)
 
 function paosa(){
 
-	document.onkeydown=kyfunc[0];
+	document.onkeyup=kyfunc[0];
 	yput.rows=8;
 	if(intervalHandle){return;}
 	else{vio.pause();}
 }
 
-function createeffctctrl()
+function createeffctctrl(pa,bifo)
 {
 var oyput = document.createElement('div');
 oyput.style='position:fixed;right:0px;top:0px;color:white;';
 oyput.innerHTML='<textarea rows=1 ></textarea>';
-document.body.insertBefore(oyput,vio);
+pa.insertBefore(oyput,bifo);
 oyput=oyput.firstChild;
-oyput.onfocus=paosa;
-oyput.onblur=effeci;
-
 
 return oyput;
 }
 
-var yput=createeffctctrl();
+
 
 
 function rotvi(krot)
@@ -146,7 +141,7 @@ if(delayii > 0x14) {
 function ratechange()
 {
 vio.playbackRate=plbrate;
-document.title="rate="+plbrate.toFixed(2);
+//document.title="rate="+plbrate.toFixed(2);
 }
 
 function klirlup()
@@ -163,7 +158,12 @@ else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0/\n';}
 var panni=false;
 var notplu500=true;
 
-
+function ytpaosa()
+{
+	pll.style.width='88%';
+	paosa();
+	setTimeout(function() { yput.focus(); }, 500);
+}
 
 kyfunc[0]=function(e) {
 
@@ -201,156 +201,182 @@ return;
 	}
 };
 
+kyfunc[1]=function(e) {
 
-var kyfunc[1]=function(e) {
-//vio.muted=false;
-if(panni)
-{
+
+
 	switch (e.keyCode) {
 
-	case 27:
-	case 106:
-	case 112:
-		close();
+	case 81:
+		
+		ytpaosa();
 		return;
+
+
 
 	case 83:
 		klirlup();
 		return;
-	case 111:
-		panni=false;
-		vio.controls=true;
-		document.onmousemove=null;
-		document.body.style.overflow = "auto";
-		return;
-	case 104:
-		document.body.scrollTop-=50;
-		return;
 
-	case 98:
-		document.body.scrollTop+=50;
-		return;
-	case 100:
-		document.body.scrollLeft-=50;
-		return;
-	case 102:
-		document.body.scrollLeft+=50;
-		return;
 
-	case 103:
-		document.body.scrollLeft-=50;
-		document.body.scrollTop-=50;
-		return;
-	case 99:
-		vio.currentTime+=2;
-		return;
-	case 105:
-		document.body.scrollLeft+=50;
-		document.body.scrollTop-=50;
-		return;
-	case 97:
-		vio.currentTime-=2;
-		return;
 	case 88:
 		plbrate-=0.1;
-		if(plbrate<0.2)
-		{plbrate=0.2;}
+		if(plbrate<0.1)
+		{plbrate=0.1;}
 		ratechange();
 		return;
-	case 65:
-		
 
-		vio.height-=100;
-
-		calcscall();
+	case 90:
 			
+		plbrate=1.0;
+		ratechange();
 		return;
 
-	case 68:
-		
-		vio.height+=100;
-
-		calcscall();
-		
-		return;
-
+	
 	case 87:
 		plbrate+=0.1;
 		ratechange();
 		return;
-	}
-
-return;
-}
-
-
-	switch (e.keyCode) {
-
-
-
-	case 27:
-	case 106:
-	case 112:
-		close();
-		return;
-
-	case 83:
-		klirlup();
-		return;
-	case 111:
-		if(!isrot){
-		vio.style.margin= '0px';
-		if(notplu500)
-		vio.height+=600;
-		notplu500=false;
-		}
-
 	
-		if(calcscall()){
-			vio.controls=false;
-			document.body.style.overflow = "hidden";
-			document.onmousemove=mufunc0;
-		}
-
-		panni=true;
-		return;
-
-	case 98:
-		plbrate-=0.1;
-		if(plbrate<0.2)
-		{plbrate=0.2;}
-		ratechange();
-		return;
-	case 100:
-			if(!isrot){vio.style.margin= '0px';}
-			vio.height-=100;
-			
-		return;
-	case 101:
-			vio.style.margin='auto';
-			plbrate=1.0;
-			ratechange();
-		return;
-	case 102:
-		if(!isrot){vio.style.margin= '0px';}
-		vio.height+=100;
-		notplu500=false;
-		
-		return;
-	case 103:
-		rotvi('270');
-		break;
-	case 104:
-		plbrate+=0.1;
-		ratechange();
-		return;
-	case 105:
-		rotvi('90');
-		return;
 
 
 
 	}
 };
 
-document.onkeydown=kyfunc[1];
+var ytemburl=null;
+
+kyfunc[2]=function(e) {
+
+
+
+	switch (e.keyCode) {
+
+	case 81:
+		window.location.href = 'https://www.youtube.com/embed/'+ytemburl;
+		
+		return;
+
+
+
+	case 83:
+		klirlup();
+		return;
+
+
+	case 88:
+		plbrate-=0.1;
+		if(plbrate<0.1)
+		{plbrate=0.1;}
+		ratechange();
+		return;
+
+	case 90:
+			
+		plbrate=1.0;
+		ratechange();
+		return;
+
+	
+	case 87:
+		plbrate+=0.1;
+		ratechange();
+		return;
+	
+
+
+
+	}
+};
+
+
+
+function yteffeci(){
+pll.style.width='100%';
+effeci(1);
+}
+
+function yt2effeci(){
+effeci(2);
+}
+
+function waitinstall()
+{
+var flx=document.getElementById('flex');
+if(flx)
+{
+var oyput = document.createElement('div');
+oyput.innerHTML='<textarea rows=1 ></textarea>';
+flx.appendChild(oyput);
+yput=oyput.firstChild;
+
+yput.onfocus=paosa;
+yput.onblur=yt2effeci;
+document.onkeyup=kyfunc[2];
+vio=document.getElementsByTagName("video")[0];
+clearInterval(intervalHandle);
+intervalHandle=null;
+}
+
+}
+
+function installhk()
+{
+	var uv=location.href.split('/');
+	if(uv[2]=='www.youtube.com')
+	{
+		if(uv[3]=='embed')
+		{
+			vio=document.getElementsByTagName("video")[0];
+
+			var ppll=document.getElementById('player');
+			
+
+			pll=ppll.firstChild;
+		
+
+			
+
+			yput=createeffctctrl(document.body,ppll);
+			
+			yput.onblur=yteffeci;
+			document.onkeyup=kyfunc[1];
+			
+			
+			var trash1=document.getElementsByClassName('ytp-pause-overlay ytp-scroll-min ytp-scroll-max')[0];
+			trash1.innerHTML='';
+			trash1.className='';
+			trash1=document.getElementsByClassName('ytp-gradient-top')[0];
+			trash1.className='';
+			
+			
+			
+		}
+		else
+		{
+			var uv1=uv[3].split('=');
+			if(uv1[0]=='watch?v')
+			{
+
+				
+				ytemburl=uv1[1];
+				intervalHandle=setInterval(waitinstall, 1000);
+
+				
+				
+
+
+				
+			}
+			
+		}
+	}
+	else if(uv[2]=='embed.nicovideo.jp')
+	{
+		vio=document.getElementsByTagName("video")[0];
+		//document.onkeyup=kyfunc[3];
+	}
+
+}
+
+installhk();
