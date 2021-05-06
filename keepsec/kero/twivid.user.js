@@ -56,7 +56,10 @@ if(sst)
 		}
 		vio.playbackRate=plbrate;
 
-	
+	} else if(c0=='o') {
+		if(isrot){rotvi('0');}
+		rotvi(sst.substring(1));
+
 	} else{vio.style.webkitFilter = sst.replace('\n',' ');}
 
 	vio.play();
