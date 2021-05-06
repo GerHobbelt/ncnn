@@ -24,7 +24,7 @@ var intervalHandle = null;
 
 function effeci()
 {
-document.onkeydown=kyfunc[1];
+document.onkeyup=kyfunc[1];
 var sst=yput.value;
 yput.rows=1;
 if(sst)
@@ -55,7 +55,7 @@ if(sst)
 
 function paosa(){
 
-	document.onkeydown=kyfunc[0];
+	document.onkeyup=kyfunc[0];
 	yput.rows=8;
 	if(intervalHandle){return;}
 	else{vio.pause();}
@@ -202,7 +202,7 @@ return;
 };
 
 
-var kyfunc[1]=function(e) {
+kyfunc[1]=function(e) {
 //vio.muted=false;
 if(panni)
 {
@@ -353,4 +353,4 @@ return;
 	}
 };
 
-document.onkeydown=kyfunc[1];
+document.onkeyup=kyfunc[1];
