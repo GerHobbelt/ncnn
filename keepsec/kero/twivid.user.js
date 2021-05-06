@@ -43,7 +43,20 @@ if(sst)
 		
 		vio.currentTime=vsta;
 		intervalHandle=setInterval(function(){vio.currentTime=vsta;}, Math.ceil(fvend*(1000.5/plbrate)));
+	} else if(c0=='r') {
+		if(sst.length<3)
+		{
+			plbrate=1.0;
+			
+		}
+		else
+		{
+			plbrate=parseFloat(sst.substring(1));
+			
+		}
+		vio.playbackRate=plbrate;
 
+	
 	} else{vio.style.webkitFilter = sst.replace('\n',' ');}
 
 	vio.play();
@@ -146,7 +159,7 @@ if(delayii > 0x14) {
 function ratechange()
 {
 vio.playbackRate=plbrate;
-document.title="rate="+plbrate.toFixed(2);
+yput.value='r'+plbrate.toFixed(2);
 }
 
 function klirlup()
