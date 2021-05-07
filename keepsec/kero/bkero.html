@@ -1,19 +1,23 @@
 <html><body><div id="ifm" style="float:left"></div><br><h1 onclick="gall(this)">　Load</h1></body>
 <script>
 var curEro= 000;
-var jls=['614'];
+var jls=['1','2','3'];
 
 var scril = jls.length;
-var ifrm = new Array(scril+1);
+var ifrm = new Array(scril);
 var ifmarea = document.getElementById('ifm');
 
-var dstr="";
+function prepg()
+{
+var dstr="<h3>";
 for(var i=0;i<scril;i++)
 {
-dstr+='<a href="bkero2.html?'+jls[i]+'"><h3>Goto '+jls[i]+'</h3></a>';
+dstr+='<a href="../../zzzkoero.html?'+jls[i]+'">Goto '+jls[i]+'</a><br>';
 }
-ifmarea.innerHTML=dstr;
-dstr="";
+ifmarea.innerHTML=dstr+"</h3>";
+}
+
+prepg();
 
 function downloadString(text, fileType, fileName) {
   var blob = new Blob([text], { type: fileType });
@@ -45,10 +49,10 @@ const tx2='.js"></scr'+'ipt><scr'+'ipt src="rpre.js"></scr'+'ipt></html>';
 
 function makealllyk()
 {
-	ifmarea.innerHTML=dstr;
+	ifmarea.innerHTML='';
 
 	
-	for(var i=0;i<scril+1;i++)
+	for(var i=0;i<scril;i++)
 	{
 	var iframee = document.createElement('iframe');
 	ifmarea.appendChild(iframee);
@@ -60,7 +64,7 @@ function makealllyk()
 	for(var i=0;i<scril;i++)
 	{
 
-	ifrm[i].write(tx1+'ipt src="aadata'+jls[scril-1-i]+tx2);
+	ifrm[i].write(tx1+'ipt src="aadata.'+jls[scril-1-i]+tx2);
 	ifrm[i].close();
 
 	}
@@ -73,10 +77,11 @@ function makealllyk()
 
 
 
-function mkallstrr()
+function mkallstrr(prepan)
 {
 	var tll="";
-	for(var i=0;i<scril+1;i++)
+	if(prepan){tll=prepan;}
+	for(var i=0;i<scril;i++)
 	{
 	vpp=ifrm[i].getElementById('team');
 	tll+=vpp.innerHTML;
@@ -89,7 +94,7 @@ function rtto()
 {
 
 vpp=ifrm[0].getElementById('team');
-vpp.innerHTML=mkallstrr();
+vpp.innerHTML=mkallstrr('!!!!done!!!!\n');
 
 }
 
@@ -106,7 +111,7 @@ function gall(ele)
 	}
 
 
-	downloadString(mkallstrr(), "text/csv", "00rlines.csv");
+	downloadString(mkallstrr(''), "text/csv", "00rlines.csv");
 }
 
 

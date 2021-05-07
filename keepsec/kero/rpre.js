@@ -1,10 +1,12 @@
 function fistr()
 {
 var tblarea = document.getElementById('team');
-var stia="";
-for(var i=thumb.length-1;i>=0;i--)
-{stia+=thumb[i]+'\t'+vids[i]+'\t'+msgs[i]+'\n';}
-tblarea.innerHTML=stia;
+var alul=thumb.length;
+var rez=new Array(alul);
+alul--;
+
+for(var i=alul;i>=0;i--) {rez[alul-i]=thumb[i]+'\t'+vids[i]+'\t'+msgs[i]+'\n';}
+tblarea.innerHTML= rez.join(''); 
 }
 
 fistr();

@@ -19,7 +19,89 @@ namespace eroneto
 		public static char[] sep0x5d = { ']' };
 		public static char[] sepDuo = { ',' };
 		public static char[] sepMao = { ':' };
+		public static char[] sepXie = { '/' };
+		public static char[] sepTab = { '\t' };
+		const int sepjslen=50000;
 		
+		static string[] js50src;
+		static int js50srccur=0;
+		
+		static void fixlazt(string[] arr)
+		{
+			int laz=arr.Length-1;
+			arr[laz]=arr[laz].Replace(",\n'","];");
+		}
+		
+		static bool mkjs50pp(int ord)
+		{
+			bool islast=false;
+			if(js50srccur<sepjslen){islast=true;}
+			
+			int sta=0;
+			
+			if(islast)
+			{
+				sta=js50srccur+1;
+			}
+			else
+			{
+				sta=sepjslen;
+			}
+			
+			string[] thumbz=new string[sta];
+			string[] vidz=new string[sta];
+			string[] msgz=new string[sta];
+			
+			for(int i=0;i<sta;i++)
+			{
+				var ivo=js50src[js50srccur-i].Split(sepTab);
+				thumbz[i]=ivo[0]+"',\n'";;
+				vidz[i]=ivo[1]+"',\n'";;
+				msgz[i]=ivo[2]+"',\n'";;
+				
+			}
+			fixlazt(thumbz);
+			fixlazt(vidz);
+			fixlazt(msgz);
+			
+			string stfazt="var curEro=0000;\n\nthumb=['";
+			if(islast){stfazt="var curEro=0000;\t\t//\t"+(sta/10)+"\n\nthumb=['";}
+			
+			StreamWriter sw = File.AppendText("aadata."+ord+".js");
+			
+			sw.Write(stfazt);
+			foreach(var st in thumbz)
+			{
+				sw.Write(st);
+			}
+			sw.Write("\n\nvids=['");
+			foreach(var st in vidz)
+			{
+				sw.Write(st);
+			}
+			sw.Write("\n\nmsgs=['");
+			foreach(var st in msgz)
+			{
+				sw.Write(st);
+			}
+			sw.Close();
+			return !islast;
+		}
+		
+		static void mkjs50()
+		{
+			js50src=File.ReadAllLines("rlines.csv");
+			js50srccur=js50src.Length-1;
+			int ord=1;
+			while(mkjs50pp(ord))
+			{
+				js50srccur-=sepjslen;
+				ord++;
+			}
+			
+		}
+		
+		/*
 		static string[][] ReadAllLines(string path)
 		{
 			var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -146,6 +228,21 @@ namespace eroneto
 			system("pause");
 		}
 		
+		static void chkmiss()
+		{
+			string[] acotz=File.ReadAllLines("ikon.csv");
+			string bizfind=File.ReadAllText("rlines - 複製.csv");
+			
+			foreach(string st in acotz)
+			{
+				if(bizfind.IndexOf("/"+st)<0)
+				{
+					Console.WriteLine(st);
+				}
+			}
+			system("pause");
+		}
+		
 		static void dlbati()
 		{
 			
@@ -156,8 +253,51 @@ namespace eroneto
 			};
 			
 
-			
+			//client.Encoding = Encoding.UTF8; 
 			aco2(new WebClient());
+			
+		}
+		
+		static WebClient glbdl;
+		const string jprog="../bk40792.html";
+		static void buukdl()
+		{
+			ServicePointManager.Expect100Continue = true;                
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+			ServicePointManager.ServerCertificateValidationCallback = delegate {
+				return true;
+			};
+			
+			glbdl=new WebClient();
+			glbdl.Encoding = Encoding.UTF8;
+			
+			while(true)
+			{
+				Console.WriteLine("Enter Url:");
+				string ul=Console.ReadLine();
+				string[] ty=ul.Split(sepXie);
+				int pglen=int.Parse(ty[ty.Length-1].Replace(".html",string.Empty));
+				ty[ty.Length-1]=string.Empty;
+				ul=string.Join("/",ty);
+				
+				system("del *.html");
+				
+				for(int i=0;i<pglen;i++)
+				{
+					string fna=(i+1).ToString()+".html";
+					try{
+					string konten=glbdl.DownloadString(ul+fna).Replace("https://c",string.Empty);
+					File.WriteAllText(fna,konten);
+					Thread.Sleep(500);
+					}
+					catch{}
+				}
+				ty=File.ReadAllLines(jprog);
+				ty[2]="var pgcot= "+pglen+";";
+				File.WriteAllLines(jprog,ty);
+				system("gofalkon.bat");
+			}
+			
 			
 		}
 		
@@ -191,11 +331,11 @@ namespace eroneto
 			
 			File.WriteAllLines("rlines++.csv",data);
 		}
-		
+		*/
 		static void Main(string[] args)
 		{
-			dlbati();
-			//mkjs();
+			
+			mkjs50();
 		}
 		
 	}

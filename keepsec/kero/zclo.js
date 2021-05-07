@@ -1,7 +1,7 @@
 
-var tblarea = null;
-var recarea = null;
-var timgarea = null;
+var tblarea = document.getElementById('team');
+var recarea = document.getElementById('urlrec');
+var timgarea = document.getElementById('timg');
 var erocount=0;
 var keyerocount=0;
 var hardlim=0;
@@ -406,9 +406,7 @@ curEro+' onkeyup=fpt(event,this)>⛪</div><center>';
 
 function installclo(){
 
-tblarea = document.getElementById('team');
-recarea = document.getElementById('urlrec');
-timgarea = document.getElementById('timg');
+
 erocount=Math.ceil(thumb.length/10);
 keyerocount=curEro+50;
 hardlim=curEro+501;
@@ -534,8 +532,8 @@ function insp(apa)
 var uv=location.href.split('?');
 if(uv.length>1){
 
-if(apa){apa+='aadata'+uv[1]+'.js';}
-else{apa='aadata'+uv[1]+'.js';}
+if(apa){apa+='aadata.'+uv[1]+'.js';}
+else{apa='aadata.'+uv[1]+'.js';}
 
 } else{apa='aadata.js';}
 
