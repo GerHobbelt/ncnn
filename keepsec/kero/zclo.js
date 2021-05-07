@@ -419,8 +419,11 @@ document.onkeydown=function(e) {
 
 if(keyerocount<0){
 switch (e.keyCode) {
+	case 27:
 	case 90:
 	case 101:
+	case 106:
+	case 112:
 	
 		curEro=Math.floor(Math.random()*erocount);
 		fullpg();

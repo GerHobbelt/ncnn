@@ -124,20 +124,42 @@ var delayii=0x0;
 var mxw=0;
 var mxh=0;
 
+const sl1=1.1;
+const sl2=0.9;
+
 function calcscall()
 {
 var tmxw=vio.scrollWidth/window.outerWidth;
 var tmxh=vio.scrollHeight/window.outerHeight;
 
-if(tmxw>1.0&&tmxh>1.0)
+if(tmxw>sl1&&tmxh>sl1)
 {
-mxw=tmxw-0.9;
-mxh=tmxh-0.9;
+mxw=tmxw-sl2;
+mxh=tmxh-sl2;
 return true;
 } 
 return false;
 	
 }
+
+var isnotpan=true;
+function installpan()
+{
+	isnotpan=false;
+	vio.controls=false;
+	document.body.style.overflow = "hidden";
+	document.onmousemove=mufunc0;
+}
+
+function rmvpan()
+{
+	isnotpan=true;
+	vio.controls=true;
+	document.onmousemove=null;
+	document.body.style.overflow = "auto";
+}
+
+
 
 function ruu(x,y)
 {
@@ -177,8 +199,6 @@ else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0/\n';}
 }
 
 var panni=false;
-var notplu500=true;
-
 
 
 kyfunc[0]=function(e) {
@@ -235,9 +255,7 @@ if(panni)
 		return;
 	case 111:
 		panni=false;
-		vio.controls=true;
-		document.onmousemove=null;
-		document.body.style.overflow = "auto";
+		rmvpan();
 		return;
 	case 104:
 		document.body.scrollTop-=50;
@@ -257,15 +275,16 @@ if(panni)
 		document.body.scrollLeft-=50;
 		document.body.scrollTop-=50;
 		return;
-	case 99:
-		vio.currentTime+=2;
-		return;
+
 	case 105:
 		document.body.scrollLeft+=50;
 		document.body.scrollTop-=50;
 		return;
 	case 97:
 		vio.currentTime-=2;
+		return;
+	case 99:
+		vio.currentTime+=2;
 		return;
 	case 88:
 		plbrate-=0.1;
@@ -314,19 +333,13 @@ return;
 		klirlup();
 		return;
 	case 111:
-		if(!isrot){
-		vio.style.margin= '0px';
-		if(notplu500)
-		vio.height+=600;
-		notplu500=false;
+		if(!isrot){vio.style.margin= '0px';
+		if(vio.scrollWidth<(window.innerWidth+50)){vio.height+=600;}
 		}
+		
 
 	
-		if(calcscall()){
-			vio.controls=false;
-			document.body.style.overflow = "hidden";
-			document.onmousemove=mufunc0;
-		}
+		if(calcscall()){installpan();}
 
 		panni=true;
 		return;
@@ -337,9 +350,16 @@ return;
 		{plbrate=0.2;}
 		ratechange();
 		return;
+	case 97:
+		vio.currentTime-=2;
+		return;
+	case 99:
+		vio.currentTime+=2;
+		return;
 	case 100:
 			if(!isrot){vio.style.margin= '0px';}
 			vio.height-=100;
+			if(!calcscall()){if(!isnotpan){rmvpan();}}
 			
 		return;
 	case 101:
@@ -350,7 +370,7 @@ return;
 	case 102:
 		if(!isrot){vio.style.margin= '0px';}
 		vio.height+=100;
-		notplu500=false;
+		if(calcscall()){if(isnotpan){installpan();}}
 		
 		return;
 	case 103:
