@@ -10,7 +10,7 @@ var vio=null;
 var yput=null;
 var pll=null;
 
-var kyfunc = new Array(4);
+var kyfunc = new Array(3);
 
 
 var plbrate=1.0;
@@ -187,7 +187,7 @@ kyfunc[0]=function(e) {
 	switch (e.keyCode) {
 
 	case 66:
-	yput.value+='rightness(2)\n';
+	yput.value+='rightness(1.2)\n';
 	return;
 case 67:
 yput.value+='ontrast(1.5)\n';
@@ -378,8 +378,19 @@ function installhk()
 	}
 	else if(uv[2]=='embed.nicovideo.jp')
 	{
+
+		var oyput = document.createElement('div');
+		oyput.innerHTML='<textarea rows=1 ></textarea>';
+		document.getElementsByClassName('f171bmb6')[1].appendChild(oyput);
+		yput=oyput.firstChild;
+		
+		yput.onfocus=paosa;
+		yput.onblur=yt2effeci;
+		
+
+
 		vio=document.getElementsByTagName("video")[0];
-		//document.onkeyup=kyfunc[3];
+		document.onkeyup=kyfunc[2];
 	}
 
 }

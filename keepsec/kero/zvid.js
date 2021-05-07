@@ -1,6 +1,7 @@
 var vio=document.getElementById('media');
 
 
+var kyfunc = new Array(2);
 
 var plbrate=1.0;
 var isrot=false;
@@ -10,9 +11,83 @@ vio.loop=true;
 
 vio.style.maxHeight='800%';
 vio.style.maxWidth='800%';
-//document.body.style.overflow = "hidden";
+
 
 vio.height=window.innerHeight-4;
+var intervalHandle = null;
+
+
+function effeci()
+{
+document.onkeyup=kyfunc[1];
+var sst=yput.value;
+yput.rows=1;
+if(sst)
+{
+	var c0=sst.charAt(0);
+	if(c0=='/')
+	{
+		if(intervalHandle){clearInterval(intervalHandle);intervalHandle=null;}
+		var sn=sst.split('/');
+		var vsta=parseFloat(sn[1]);
+		var fvend=parseFloat(sn[2]);
+		if(fvend<0){
+			fvend=-(vsta+fvend);
+			yput.value='/'+vsta.toFixed(2)+'/'+fvend.toFixed(2)+'/\n';
+		}
+		
+		vio.currentTime=vsta;
+		intervalHandle=setInterval(function(){vio.currentTime=vsta;}, Math.ceil(fvend*(1000.5/plbrate)));
+	} else if(c0=='r') {
+		if(sst.length<3)
+		{
+			plbrate=1.0;
+			
+		}
+		else
+		{
+			plbrate=parseFloat(sst.substring(1));
+			
+		}
+		vio.playbackRate=plbrate;
+
+	} else if(c0=='o') {
+		if(isrot){rotvi('0');}
+		rotvi(sst.substring(1));
+
+	} else{vio.style.webkitFilter = sst.replace('\n',' ');}
+
+	vio.play();
+	return;
+}
+	vio.style.webkitFilter = '';
+	vio.play();
+}
+
+function paosa(){
+
+	document.onkeyup=kyfunc[0];
+	yput.rows=8;
+	if(intervalHandle){return;}
+	else{vio.pause();}
+}
+
+function createeffctctrl()
+{
+var oyput = document.createElement('div');
+oyput.style='position:fixed;right:0px;top:0px;color:white;';
+oyput.innerHTML='<textarea rows=1 ></textarea>';
+document.body.insertBefore(oyput,vio);
+oyput=oyput.firstChild;
+oyput.onfocus=paosa;
+oyput.onblur=effeci;
+
+
+return oyput;
+}
+
+var yput=createeffctctrl();
+
 
 function rotvi(krot)
 {
@@ -37,6 +112,8 @@ isrot=true;
 
 
 }
+
+
 
 var delayii=0x0;
 var mxw=0;
@@ -65,7 +142,8 @@ document.body.scrollTop=y*mxh;
 
 
 
-function fakekuriakey(){return;}
+
+
 
 var mufunc0=function(ev) {
 
@@ -79,13 +157,63 @@ if(delayii > 0x14) {
 function ratechange()
 {
 vio.playbackRate=plbrate;
-document.title="rate="+plbrate;
+yput.value='r'+plbrate.toFixed(2);
+}
+
+function klirlup()
+{
+if(intervalHandle){
+clearInterval(intervalHandle);
+intervalHandle=null;
+}
+else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0/\n';}
+
+
 }
 
 var panni=false;
 var notplu500=true;
 
-document.onkeydown=function(e) {
+
+
+kyfunc[0]=function(e) {
+
+
+
+	switch (e.keyCode) {
+
+	case 66:
+	yput.value+='rightness(1.5)\n';
+	return;
+case 67:
+yput.value+='ontrast(1.5)\n';
+return;
+
+case 83:
+yput.value+='aturate(2.5)\n';
+return;
+
+case 72:
+yput.value+='ue-rotate(30deg)\n';
+return;
+
+case 73:
+yput.value+='nvert(1)\n';
+return;
+
+case 76:
+yput.value+='blur(0px)\n';
+return;
+
+case 80:
+yput.value+='sepia(0)\n';
+return;
+
+	}
+};
+
+
+kyfunc[1]=function(e) {
 vio.muted=false;
 if(panni)
 {
@@ -96,10 +224,14 @@ if(panni)
 	case 112:
 		close();
 		return;
+
+	case 83:
+		klirlup();
+		return;
 	case 111:
 		panni=false;
 		vio.controls=true;
-		document.onmousemove=fakekuriakey;
+		document.onmousemove=null;
 		document.body.style.overflow = "auto";
 		return;
 	case 104:
@@ -121,16 +253,14 @@ if(panni)
 		document.body.scrollTop-=50;
 		return;
 	case 99:
-		document.body.scrollLeft+=50;
-		document.body.scrollTop+=50;
+		vio.currentTime+=2;
 		return;
 	case 105:
 		document.body.scrollLeft+=50;
 		document.body.scrollTop-=50;
 		return;
 	case 97:
-		document.body.scrollLeft-=50;
-		document.body.scrollTop+=50;
+		vio.currentTime-=2;
 		return;
 	case 88:
 		plbrate-=0.1;
@@ -173,6 +303,10 @@ return;
 	case 106:
 	case 112:
 		close();
+		return;
+
+	case 83:
+		klirlup();
 		return;
 	case 111:
 		if(!isrot){
@@ -229,3 +363,5 @@ return;
 
 	}
 };
+
+document.onkeyup=kyfunc[1];

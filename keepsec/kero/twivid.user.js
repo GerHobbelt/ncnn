@@ -188,7 +188,7 @@ kyfunc[0]=function(e) {
 	switch (e.keyCode) {
 
 	case 66:
-	yput.value+='rightness(2)\n';
+	yput.value+='rightness(1.2)\n';
 	return;
 case 67:
 yput.value+='ontrast(1.5)\n';

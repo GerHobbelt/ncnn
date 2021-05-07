@@ -1,10 +1,10 @@
 
-var tblarea = document.getElementById('team');
-var recarea = document.getElementById('urlrec');
-var timgarea = document.getElementById('timg');
-var erocount=Math.ceil(thumb.length/10);
-var keyerocount=curEro+50;
-var hardlim=curEro+501;
+var tblarea = null;
+var recarea = null;
+var timgarea = null;
+var erocount=0;
+var keyerocount=0;
+var hardlim=0;
 
 
 function findimgerr()
@@ -320,8 +320,7 @@ function menuFunction() {
 	return false;}
 	
 }
-window.oncontextmenu=menuFunction;
-menuFunction();
+
 
 
 function symfire()
@@ -404,6 +403,18 @@ curEro+' onkeyup=fpt(event,this)>⛪</div><center>';
 }
 
 
+
+function installclo(){
+
+tblarea = document.getElementById('team');
+recarea = document.getElementById('urlrec');
+timgarea = document.getElementById('timg');
+erocount=Math.ceil(thumb.length/10);
+keyerocount=curEro+50;
+hardlim=curEro+501;
+
+window.oncontextmenu=menuFunction;
+menuFunction();
 document.onmousemove=kuriakey;
 
 document.onkeydown=function(e) {
@@ -506,4 +517,27 @@ switch (e.keyCode) {
 	//rmvimg();
 
 }
+}
 
+function mkscript(sksrc)
+{
+	var sk = document.createElement('script');
+	sk.src=sksrc;
+	document.body.append(sk);
+	return sk;
+}
+
+
+function insp(apa)
+{
+
+var uv=location.href.split('?');
+if(uv.length>1){
+
+if(apa){apa+='aadata'+uv[1]+'.js';}
+else{apa='aadata'+uv[1]+'.js';}
+
+} else{apa='aadata.js';}
+
+mkscript(apa).onload=installclo;
+}

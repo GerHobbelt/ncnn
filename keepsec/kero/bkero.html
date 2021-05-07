@@ -1,8 +1,114 @@
-<html><head><base target="_blank"><link href="../../zclo.css" rel="stylesheet"/></head><body>
-<img src="" width=141% height=1 /><div id="team"></div>
-<textarea id="urlrec" rows="5" cols="26"></textarea><br><img id="timg" height=125% />
-<div class="nv"><input type="number" value="5" onfocus=disabsk() ondblclick=repg(this)>✨</div>
-</body>
-<script src="aadata.js"></script>
-<script src="../../zclo.js"></script>
-</html>
+<html><body><div id="ifm" style="float:left"></div><br><h1 onclick="gall(this)">　Load</h1></body>
+<script>
+var curEro= 000;
+var jls=['614'];
+
+var scril = jls.length;
+var ifrm = new Array(scril+1);
+var ifmarea = document.getElementById('ifm');
+
+var dstr="";
+for(var i=0;i<scril;i++)
+{
+dstr+='<a href="bkero2.html?'+jls[i]+'"><h3>Goto '+jls[i]+'</h3></a>';
+}
+ifmarea.innerHTML=dstr;
+dstr="";
+
+function downloadString(text, fileType, fileName) {
+  var blob = new Blob([text], { type: fileType });
+
+  var a = document.createElement('a');
+  a.download = fileName;
+  a.href = URL.createObjectURL(blob);
+  a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+}
+
+const wdtx1='<html><body style="background-color: #400010;"><div id="team"></div><br><div style="float:left"><input type="number" value="5" onfocus=disabsk() ondblclick=repg(this)><a href="../../zzzkoero.html">✨✨</a><br><textarea id="urlrec" rows="20" cols="26" style="background-color: gray;">';
+const wdtx1n1='\n\n</textarea></div></body><scr'+'ipt src="aadata';
+const wdtx2='.js"></scr'+'ipt><scr'+'ipt>curEro=';
+const wdtx3=';</scr'+'ipt><scr'+'ipt src="../../zclo.js"></scr'+'ipt></html>';
+
+function nwd(num)
+{
+	var newWindow = window.open("", null, null);
+	newWindow.document.write(wdtx1+num+wdtx1n1+num+wdtx2+curEro+wdtx3);
+
+}
+const tx1='<html><body><pre id="team"></pre></body><scr';
+const tx2='.js"></scr'+'ipt><scr'+'ipt src="rpre.js"></scr'+'ipt></html>';
+
+function makealllyk()
+{
+	ifmarea.innerHTML=dstr;
+
+	
+	for(var i=0;i<scril+1;i++)
+	{
+	var iframee = document.createElement('iframe');
+	ifmarea.appendChild(iframee);
+	ifmarea.appendChild(document.createElement("br"));
+	ifrm[i]=iframee.contentDocument;
+	}
+
+
+	for(var i=0;i<scril;i++)
+	{
+
+	ifrm[i].write(tx1+'ipt src="aadata'+jls[scril-1-i]+tx2);
+	ifrm[i].close();
+
+	}
+
+	//ifrm[scril].write(tx1+'ipt src="../../xaadata'+tx2);
+	//ifrm[scril].close();
+}
+
+
+
+
+
+function mkallstrr()
+{
+	var tll="";
+	for(var i=0;i<scril+1;i++)
+	{
+	vpp=ifrm[i].getElementById('team');
+	tll+=vpp.innerHTML;
+
+	}
+	return tll;
+}
+
+function rtto()
+{
+
+vpp=ifrm[0].getElementById('team');
+vpp.innerHTML=mkallstrr();
+
+}
+
+var notfrms = true;
+
+function gall(ele)
+{
+	if(notfrms&&confirm("Load all JS???"))
+	{
+		notfrms=false;
+		makealllyk();
+		ele.outerHTML = '<h1 onclick="rtto()">Write</h1><h1 onclick="gall(this)">Download</h1>';
+		return;
+	}
+
+
+	downloadString(mkallstrr(), "text/csv", "00rlines.csv");
+}
+
+
+
+</script></html>
