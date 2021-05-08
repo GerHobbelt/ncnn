@@ -541,10 +541,13 @@ uvv1=uv[1];
 tblarea.id=uvv1;
 
 uv=uvv1.split('.');
-if(uv.length>1)
-{
-uvv1=uv[0];
+if(uv.length>1) {
 curEro=parseInt(uv[1],10);
+	if(uv[0]) {uvv1=uv[0];}
+	else {
+	mkscript('aadata.js').onload=installclo;
+	return;
+	}
 }
 
 if(apa){apa+='aadata.'+uvv1+'.js';}
@@ -552,6 +555,7 @@ else{apa='aadata.'+uvv1+'.js';}
 
 
 } else{apa='aadata.js';}
+
 
 mkscript(apa).onload=installclo;
 }
