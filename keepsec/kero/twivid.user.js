@@ -263,8 +263,8 @@ if(delayii > 0x14) {
 
 kyfunc[3]=function(ev) { 
 dltay=ev.deltaY;
-if(dltay>10&&vio.height>(dfheight+150)){zmout();}
-else if(dltay<-10){zmin();}
+if(dltay>50&&vio.height>(dfheight+150)){zmout();}
+else if(dltay<-50){zmin();}
 };
 
 function ratechange()
