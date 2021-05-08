@@ -5,9 +5,9 @@ var ifmarea = document.getElementById('ifm');
 
 function prepg()
 {
-	var dstr="<h3>";
+	var dstr="<h2>";
 	for(var i=0;i<scril;i++){dstr+='<a href="../zzzkoero.html#'+i+'">Goto '+i+'</a><br>';}
-	ifmarea.innerHTML=dstr+"</h3>";
+	ifmarea.innerHTML=dstr+"</h2><br><br><br><h3 onclick=mklokal() >Mp4Disk</h3>";
 }
 
 prepg();
@@ -22,11 +22,13 @@ function fyna()
 	if(loadcount==scril) {for(var i=0;i<scril;i++){ifrm[i].outerHTML=ifrm[i].contentDocument.getElementById('t').outerHTML;}}
 }
 
+var donotgall=false;
+
 function gall(ele)
 {
+	if(donotgall){return;}
 	
 	ifmarea.innerHTML='';
-	ifmarea.style='';
 	for(var i=0;i<scril;i++)
 	{
 		var iframee = document.createElement('iframe');
@@ -47,5 +49,22 @@ function gall(ele)
 	return;
 	
 }
+function printlokal()
+{
+	var ll=locfi.length;
+	for(var i=0;i<ll;i++)
+	{
+		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4" target=_black>'+locfi[i]+'</a>  ';
+	}
+	ifmarea.innerHTML=locfi.join('');
+	donotgall=true;
+}
 
+function mklokal()
+{
+	sk = document.createElement('script');
+	sk.src='locfi.js';
+	document.body.append(sk);
+	sk.onload=printlokal;
 
+}

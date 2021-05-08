@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name VidTool
 // @match https://video.twimg.com/*
+// @match file://*.mp4
 // ==/UserScript==
 
 //var vio=document.getElementById('media');
