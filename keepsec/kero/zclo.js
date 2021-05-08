@@ -433,7 +433,9 @@ switch (e.keyCode) {
 	return;
 
 	case 81:
-		curEro=0;
+		uv=tblarea.id.split('.');
+		if(uv.length>1) { curEro=parseInt(uv[1],10);}
+		else {curEro=0;}
 		menuFunction();
 	return;
 

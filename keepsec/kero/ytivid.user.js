@@ -211,12 +211,10 @@ case 73:
 yput.value+='nvert(1)\n';
 return;
 
-case 76:
-yput.value+='blur(0px)\n';
-return;
+
 
 case 80:
-yput.value+='sepia(0)\n';
+yput.value+='sepia(0)\nblur(0px)\n';
 return;
 
 	}

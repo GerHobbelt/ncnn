@@ -101,6 +101,8 @@ vio.play();
 
 function paosa(){
 
+	if(vio.scrollWidth>1850){vio.height-=100;shrinkbefore=true;}
+
 	document.onkeyup=kyfunc[0];
 	yput.rows=8;
 	if(intervalHandle){return;}
