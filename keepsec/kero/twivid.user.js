@@ -147,8 +147,8 @@ function installpan()
 {
 	isnotpan=false;
 	vio.controls=false;
-	document.body.style.overflow = "hidden";
 	document.onmousemove=mufunc0;
+	document.body.style.overflow = "hidden";
 }
 
 function rmvpan()

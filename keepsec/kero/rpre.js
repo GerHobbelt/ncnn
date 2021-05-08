@@ -1,6 +1,6 @@
 function fistr()
 {
-var tblarea = document.getElementById('team');
+var tblarea = document.getElementById('t');
 var alul=thumb.length;
 
 
