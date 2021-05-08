@@ -64,8 +64,8 @@ namespace eroneto
 			fixlazt(vidz);
 			fixlazt(msgz);
 			
-			string stfazt="var curEro=0000;\n\nthumb=['";
-			if(islast){stfazt="var curEro=0000;\t\t//\t"+(sta/10)+"\n\nthumb=['";}
+			string stfazt="thumb=['";
+			if(islast){stfazt="\t\t//\t"+(sta/10)+"\n\nthumb=['";}
 			
 			StreamWriter sw = File.AppendText("aadata."+ord+".js");
 			
@@ -87,21 +87,51 @@ namespace eroneto
 			sw.Close();
 			return !islast;
 		}
-		
+		const string bkero="bkero.html";
 		static void mkjs50()
 		{
 			js50src=File.ReadAllLines("rlines.csv");
 			js50srccur=js50src.Length-1;
-			int ord=1;
+			int ord=0;
 			while(mkjs50pp(ord))
 			{
 				js50srccur-=sepjslen;
 				ord++;
 			}
 			
+			//js50src=File.ReadAllLines(bkero);
+			//js50src[1]="var scril = "+(ord+1)+";";
+			//File.WriteAllLines(bkero,js50src);
+			                   
+			
+			
+		}
+		/*
+		static void findmymiss()
+		{
+			js50src=File.ReadAllLines("aadata.3.js");
+			int fy=0;
+			for(int i=0;i<50010;i++)
+			{
+				if(js50src[i].StartsWith("'!"))
+				{
+					fy++;
+					
+					if(fy>5)
+					{
+						Console.WriteLine(js50src[i]);
+					}
+				}
+				else
+				{
+					fy=0;
+				}
+			}
+			
+			Console.ReadKey();
 		}
 		
-		/*
+		
 		static string[][] ReadAllLines(string path)
 		{
 			var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -138,7 +168,7 @@ namespace eroneto
 			int cota=data.Length-1;
 			string[] izkor=new string[4+cota*3];
 			string[] mizr=data[0];
-			izkor[0]="curEro= 000;\t\t//\t"+(cota/10)+"\n\nthumb=['";
+			izkor[0]="\t\t//\t"+(cota/10)+"\n\nthumb=['";
 			izkor[1+cota]=mizr[0]+"'];\n\nvids=['";
 			izkor[2+cota*2]=mizr[1]+"'];\n\nmsgs=['";
 			izkor[3+cota*3]=mizr[2]+"'];";
@@ -335,7 +365,7 @@ namespace eroneto
 		static void Main(string[] args)
 		{
 			
-			mkjs50();
+			findmymiss();
 		}
 		
 	}

@@ -6,7 +6,7 @@ var ifmarea = document.getElementById('ifm');
 function prepg()
 {
 	var dstr="<h3>";
-	for(var i=0;i<scril;i++){dstr+='<a href="../zzzkoero.html?'+i+'">Goto '+i+'</a><br>';}
+	for(var i=0;i<scril;i++){dstr+='<a href="../zzzkoero.html#'+i+'">Goto '+i+'</a><br>';}
 	ifmarea.innerHTML=dstr+"</h3>";
 }
 

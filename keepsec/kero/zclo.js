@@ -408,6 +408,9 @@ function installclo(){
 
 
 erocount=Math.ceil(thumb.length/10);
+
+if(curEro>erocount){curEro=erocount-10;}
+
 keyerocount=curEro+50;
 hardlim=curEro+501;
 
@@ -522,7 +525,7 @@ switch (e.keyCode) {
 
 function mkscript(sksrc)
 {
-	var sk = document.createElement('script');
+	sk = document.createElement('script');
 	sk.src=sksrc;
 	document.body.append(sk);
 	return sk;
@@ -532,11 +535,21 @@ function mkscript(sksrc)
 function insp(apa)
 {
 
-var uv=location.href.split('?');
+uv=location.href.split('#');
 if(uv.length>1){
+uvv1=uv[1];
+tblarea.id=uvv1;
 
-if(apa){apa+='aadata.'+uv[1]+'.js';}
-else{apa='aadata.'+uv[1]+'.js';}
+uv=uvv1.split('.');
+if(uv.length>1)
+{
+uvv1=uv[0];
+curEro=parseInt(uv[1],10);
+}
+
+if(apa){apa+='aadata.'+uvv1+'.js';}
+else{apa='aadata.'+uvv1+'.js';}
+
 
 } else{apa='aadata.js';}
 
