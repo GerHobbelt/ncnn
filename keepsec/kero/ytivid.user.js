@@ -1,4 +1,5 @@
 // ==UserScript==
+// @name YT&NiCo
 // @match https://www.youtube.com/embed/*
 // @match https://www.youtube.com/watch?v=*
 // @match http://embed.nicovideo.jp/watch/*

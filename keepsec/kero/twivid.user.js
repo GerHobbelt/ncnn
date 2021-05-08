@@ -99,9 +99,17 @@ shrinkbefore=false;
 vio.play();
 }
 
+
+function rdce()
+{
+	if(!isrot){vio.style.margin= '0px';}
+	vio.height-=100;
+	shrinkbefore=true;
+}
+
 function paosa(){
 
-	if(vio.scrollWidth>1850){vio.height-=100;shrinkbefore=true;}
+	if(vio.scrollWidth>1700){rdce();}
 
 	document.onkeyup=kyfunc[0];
 	yput.rows=8;
@@ -387,9 +395,7 @@ return;
 		vio.currentTime+=2;
 		return;
 	case 100:
-		shrinkbefore=true;
-		if(!isrot){vio.style.margin= '0px';}
-		vio.height-=100;
+		rdce();
 		if(!calcscall()){if(!isnotpan){rmvpan();}}
 			
 		return;

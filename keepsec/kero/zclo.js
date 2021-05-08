@@ -80,7 +80,7 @@ function repg(ele)
 	timgarea.src='';
 	timgarea.style.maxHeight = '1%';
 
-	canfire=true;
+	
 	recarea.value+='\n\n'+erocount.toString(10);
 	var evv=curEro+(ele.value*10);
 	if(evv<0){evv=0;}
@@ -327,6 +327,7 @@ function symfire()
 {
 	apyed();
 	document.title=curEro*10;
+	canfire=true;
 }
 
 function kuriakey(){
@@ -336,7 +337,7 @@ function kuriakey(){
 		if(curEro<hardlim)
 		{
 			keyerocount=curEro+50;
-			setTimeout(function() {symfire(); canfire=true;}, 1200);
+			setTimeout(symfire, 1200);
 		}
 		
 		
