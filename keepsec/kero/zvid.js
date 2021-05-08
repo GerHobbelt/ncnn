@@ -1,5 +1,9 @@
 var vio=document.getElementById('media');
 
+// ==UserScript==
+// @name VidTool
+// @match https://video.twimg.com/*
+// ==/UserScript==
 
 var kyfunc = new Array(2);
 
@@ -16,6 +20,14 @@ vio.style.maxWidth='800%';
 vio.height=window.innerHeight-4;
 var intervalHandle = null;
 
+
+var shrinkbefore=false;
+
+function toclpb()
+{
+	yput.select();
+	document.execCommand('copy');
+}
 
 function effeci()
 {
@@ -38,6 +50,7 @@ if(sst)
 		
 		vio.currentTime=vsta;
 		intervalHandle=setInterval(function(){vio.currentTime=vsta;}, Math.ceil(fvend*(1000.5/plbrate)));
+		toclpb();
 	} else if(c0=='r') {
 		if(sst.length<3)
 		{
@@ -54,14 +67,34 @@ if(sst)
 	} else if(c0=='o') {
 		if(isrot){rotvi('0');}
 		rotvi(sst.substring(1));
+		vio.play();
+		return;
+	} else if(c0=='l') {
+		vio.height=parseInt(sst.substring(1),10);
+		if(calcscall()){installpan();}
+		vio.play();
+		return;
+	} else{
+		
+		vio.style.webkitFilter = sst.replace('\n',' ');
+		toclpb();
 
-	} else{vio.style.webkitFilter = sst.replace('\n',' ');}
+	}
 
-	vio.play();
-	return;
+	
+	
+
+	
 }
-	vio.style.webkitFilter = '';
-	vio.play();
+else {vio.style.webkitFilter = '';}
+
+if(shrinkbefore)
+{
+vio.height=window.innerHeight-4;
+shrinkbefore=false;
+}
+
+vio.play();
 }
 
 function paosa(){
@@ -119,20 +152,42 @@ var delayii=0x0;
 var mxw=0;
 var mxh=0;
 
+const sl1=1.1;
+const sl2=0.9;
+
 function calcscall()
 {
 var tmxw=vio.scrollWidth/window.outerWidth;
 var tmxh=vio.scrollHeight/window.outerHeight;
 
-if(tmxw>1.0&&tmxh>1.0)
+if(tmxw>sl1&&tmxh>sl1)
 {
-mxw=tmxw-0.9;
-mxh=tmxh-0.9;
+mxw=tmxw-sl2;
+mxh=tmxh-sl2;
 return true;
 } 
 return false;
 	
 }
+
+var isnotpan=true;
+function installpan()
+{
+	isnotpan=false;
+	vio.controls=false;
+	document.onmousemove=mufunc0;
+	document.body.style.overflow = "hidden";
+}
+
+function rmvpan()
+{
+	isnotpan=true;
+	vio.controls=true;
+	document.onmousemove=null;
+	document.body.style.overflow = "auto";
+}
+
+
 
 function ruu(x,y)
 {
@@ -172,8 +227,6 @@ else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0/\n';}
 }
 
 var panni=false;
-var notplu500=true;
-
 
 
 kyfunc[0]=function(e) {
@@ -183,7 +236,7 @@ kyfunc[0]=function(e) {
 	switch (e.keyCode) {
 
 	case 66:
-	yput.value+='rightness(1.5)\n';
+	yput.value+='rightness(1.2)\n';
 	return;
 case 67:
 yput.value+='ontrast(1.5)\n';
@@ -201,12 +254,9 @@ case 73:
 yput.value+='nvert(1)\n';
 return;
 
-case 76:
-yput.value+='blur(0px)\n';
-return;
 
 case 80:
-yput.value+='sepia(0)\n';
+yput.value+='sepia(0)\nblur(0px)\n';
 return;
 
 	}
@@ -214,7 +264,7 @@ return;
 
 
 kyfunc[1]=function(e) {
-vio.muted=false;
+//vio.muted=false;
 if(panni)
 {
 	switch (e.keyCode) {
@@ -230,9 +280,7 @@ if(panni)
 		return;
 	case 111:
 		panni=false;
-		vio.controls=true;
-		document.onmousemove=null;
-		document.body.style.overflow = "auto";
+		rmvpan();
 		return;
 	case 104:
 		document.body.scrollTop-=50;
@@ -252,15 +300,16 @@ if(panni)
 		document.body.scrollLeft-=50;
 		document.body.scrollTop-=50;
 		return;
-	case 99:
-		vio.currentTime+=2;
-		return;
+
 	case 105:
 		document.body.scrollLeft+=50;
 		document.body.scrollTop-=50;
 		return;
 	case 97:
 		vio.currentTime-=2;
+		return;
+	case 99:
+		vio.currentTime+=2;
 		return;
 	case 88:
 		plbrate-=0.1;
@@ -309,19 +358,14 @@ return;
 		klirlup();
 		return;
 	case 111:
-		if(!isrot){
-		vio.style.margin= '0px';
-		if(notplu500)
-		vio.height+=600;
-		notplu500=false;
+		shrinkbefore=false;
+		if(!isrot){vio.style.margin= '0px';
+		if(vio.scrollWidth<(window.innerWidth+50)){vio.height+=600;}
 		}
+		
 
 	
-		if(calcscall()){
-			vio.controls=false;
-			document.body.style.overflow = "hidden";
-			document.onmousemove=mufunc0;
-		}
+		if(calcscall()){installpan();}
 
 		panni=true;
 		return;
@@ -332,20 +376,33 @@ return;
 		{plbrate=0.2;}
 		ratechange();
 		return;
+	case 97:
+		vio.currentTime-=2;
+		return;
+	case 99:
+		vio.currentTime+=2;
+		return;
 	case 100:
-			if(!isrot){vio.style.margin= '0px';}
-			vio.height-=100;
+		shrinkbefore=true;
+		if(!isrot){vio.style.margin= '0px';}
+		vio.height-=100;
+		if(!calcscall()){if(!isnotpan){rmvpan();}}
 			
 		return;
 	case 101:
-			vio.style.margin='auto';
-			plbrate=1.0;
-			ratechange();
+		vio.style.margin='auto';
+		plbrate=1.0;
+		ratechange();
 		return;
 	case 102:
+		shrinkbefore=false;
 		if(!isrot){vio.style.margin= '0px';}
-		vio.height+=100;
-		notplu500=false;
+		vuvu=vio.height;
+		vuvu+=100;
+		yput.value='l'+vuvu;
+		vio.height=vuvu;
+		
+		if(calcscall()){if(isnotpan){installpan();}}
 		
 		return;
 	case 103:

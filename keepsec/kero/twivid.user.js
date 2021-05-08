@@ -1,4 +1,5 @@
 // ==UserScript==
+// @name VidTool
 // @match https://video.twimg.com/*
 // ==/UserScript==
 
@@ -22,6 +23,14 @@ vio.height=window.innerHeight-4;
 var intervalHandle = null;
 
 
+var shrinkbefore=false;
+
+function toclpb()
+{
+	yput.select();
+	document.execCommand('copy');
+}
+
 function effeci()
 {
 document.onkeyup=kyfunc[1];
@@ -43,6 +52,7 @@ if(sst)
 		
 		vio.currentTime=vsta;
 		intervalHandle=setInterval(function(){vio.currentTime=vsta;}, Math.ceil(fvend*(1000.5/plbrate)));
+		//toclpb();
 	} else if(c0=='r') {
 		if(sst.length<3)
 		{
@@ -59,14 +69,34 @@ if(sst)
 	} else if(c0=='o') {
 		if(isrot){rotvi('0');}
 		rotvi(sst.substring(1));
+		vio.play();
+		return;
+	} else if(c0=='l') {
+		vio.height=parseInt(sst.substring(1),10);
+		if(calcscall()){installpan();}
+		vio.play();
+		return;
+	} else{
+		
+		vio.style.webkitFilter = sst.replace('\n',' ');
+		//toclpb();
 
-	} else{vio.style.webkitFilter = sst.replace('\n',' ');}
+	}
 
-	vio.play();
-	return;
+	
+	
+
+	
 }
-	vio.style.webkitFilter = '';
-	vio.play();
+else {vio.style.webkitFilter = '';}
+
+if(shrinkbefore)
+{
+vio.height=window.innerHeight-4;
+shrinkbefore=false;
+}
+
+vio.play();
 }
 
 function paosa(){
@@ -226,12 +256,9 @@ case 73:
 yput.value+='nvert(1)\n';
 return;
 
-case 76:
-yput.value+='blur(0px)\n';
-return;
 
 case 80:
-yput.value+='sepia(0)\n';
+yput.value+='sepia(0)\nblur(0px)\n';
 return;
 
 	}
@@ -333,6 +360,7 @@ return;
 		klirlup();
 		return;
 	case 111:
+		shrinkbefore=false;
 		if(!isrot){vio.style.margin= '0px';
 		if(vio.scrollWidth<(window.innerWidth+50)){vio.height+=600;}
 		}
@@ -357,19 +385,25 @@ return;
 		vio.currentTime+=2;
 		return;
 	case 100:
-			if(!isrot){vio.style.margin= '0px';}
-			vio.height-=100;
-			if(!calcscall()){if(!isnotpan){rmvpan();}}
+		shrinkbefore=true;
+		if(!isrot){vio.style.margin= '0px';}
+		vio.height-=100;
+		if(!calcscall()){if(!isnotpan){rmvpan();}}
 			
 		return;
 	case 101:
-			vio.style.margin='auto';
-			plbrate=1.0;
-			ratechange();
+		vio.style.margin='auto';
+		plbrate=1.0;
+		ratechange();
 		return;
 	case 102:
+		shrinkbefore=false;
 		if(!isrot){vio.style.margin= '0px';}
-		vio.height+=100;
+		vuvu=vio.height;
+		vuvu+=100;
+		yput.value='l'+vuvu;
+		vio.height=vuvu;
+		
 		if(calcscall()){if(isnotpan){installpan();}}
 		
 		return;

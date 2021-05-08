@@ -466,6 +466,8 @@ switch (e.keyCode) {
 	case 65:
 		keyerocount=0;
 		hardlim=0;
+		setTimeout(function() {document.execCommand('copy');recarea.focus();}, 500);
+		
 	return;
 	case 81:
 		curEro=Math.floor(Math.random()*erocount);
@@ -473,6 +475,8 @@ switch (e.keyCode) {
 		document.body.background='';
 		timgarea.src='';
 		timgarea.style.maxHeight = '1%';
+
+		
 	return;
 	case 105:
 	case 106:

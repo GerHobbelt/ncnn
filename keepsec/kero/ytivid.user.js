@@ -20,6 +20,12 @@ var isrot=false;
 var intervalHandle = null;
 
 
+function toclpb()
+{
+	yput.select();
+	document.execCommand('copy');
+}
+
 function effeci(nkyfun)
 {
 document.onkeyup=kyfunc[nkyfun];
