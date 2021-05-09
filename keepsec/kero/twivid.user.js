@@ -4,10 +4,12 @@
 // @match file://*.mp4
 // ==/UserScript==
 
-//var vio=document.getElementById('media');
+
 
 var vio=document.getElementsByTagName("video")[0];
 if(vio=== undefined){setTimeout(close, 500);}
+
+//var vio=document.getElementById('media');
 
 var kyfunc = new Array(4);
 

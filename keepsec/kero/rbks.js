@@ -52,11 +52,12 @@ function gall(ele)
 function printlokal()
 {
 	var ll=locfi.length;
-	for(var i=0;i<ll;i++)
+	locfi[0]='<a href="vidtez.htm#0" target=_black>======mga======</a>';
+	for(var i=1;i<ll;i++)
 	{
-		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4" target=_black>'+locfi[i]+'</a>  ';
+		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4" target=_black>'+locfi[i]+'</a>';
 	}
-	ifmarea.innerHTML=locfi.join('');
+	ifmarea.innerHTML=locfi.join('  ');
 	donotgall=true;
 }
 
