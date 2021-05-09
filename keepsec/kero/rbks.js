@@ -6,7 +6,7 @@ var ifmarea = document.getElementById('ifm');
 function prepg()
 {
 	var dstr="<h2>";
-	for(var i=0;i<scril;i++){dstr+='<a href="../zzzkoero.html#'+i+'">Goto '+i+'</a><br>';}
+	for(var i=0;i<scril;i++){dstr+='<a href="../zzzkoero.html#'+i+'" target=_top>Goto '+i+'</a><br>';}
 	ifmarea.innerHTML=dstr+"</h2><br><br><br><h3 onclick=mklokal() >Mp4Disk</h3>";
 }
 
@@ -51,11 +51,12 @@ function gall(ele)
 }
 function printlokal()
 {
+	document.body.style.backgroundColor='black';
 	var ll=locfi.length;
-	locfi[0]='<a href="vidtez.htm#0" target=_black>======mga======</a>';
+	locfi[0]='<a href="vidmga.htm">======mga======</a>';
 	for(var i=1;i<ll;i++)
 	{
-		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4" target=_black>'+locfi[i]+'</a>';
+		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4">'+locfi[i]+'</a>';
 	}
 	ifmarea.innerHTML=locfi.join('  ');
 	donotgall=true;
