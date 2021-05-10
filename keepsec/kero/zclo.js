@@ -6,20 +6,18 @@ var erocount=0;
 var keyerocount=0;
 var hardlim=0;
 
-var noRDMarr=true;
+
 var RDMarr=null;
-var iRDMarr=0;
+var iRDMarr=0xF00000;
 
 function RDMcurEro()
 {
-	if(noRDMarr||iRDMarr>=erocount)
+	if(iRDMarr>=erocount)
 	{
-		noRDMarr=false;
 		iRDMarr=0;
 		RDMarr=mkRDMarr(erocount);
 	}
 	curEro=RDMarr[iRDMarr];
-	//if(curEro===undefined){curEro=iRDMarr;}
 	iRDMarr++;
 }
 
@@ -31,8 +29,8 @@ for(i=0;i<zsta;i++)
 	nx=1+((Math.random() *zsta)<<1);
 
 	y=i<<1;
-	izsta=y+1;
-	if(arr[izsta]===undefined){arr[izsta]=izsta;}
+	y1=y+1;
+	if(arr[y1]===undefined){arr[y1]=y1;}
 	adst=arr[nx];
 	if(adst===undefined){adst=nx;}
 
@@ -224,7 +222,7 @@ function xtp()
 
 	recarea.value+='\n^'+nymu;
 	document.body.scrollLeft+=2000;
-	setTimeout(function() {skrback();}, 1000);
+	setTimeout(skrback, 1000);
 	//recarea.value+='\nhttps://twitter.com/'+msgs[nymu];
 }
 
@@ -318,7 +316,7 @@ var iszrda = parseInt(ele.title.substring(1));
 		}
 		else if(ovrcount==1){
 			document.body.scrollLeft+=2000;
-			setTimeout(function() {skrback();}, 1000);
+			setTimeout(skrback, 1000);
 			
 
 		}
@@ -372,16 +370,19 @@ function symfire()
 	document.title=curEro+'0 end';
 	canfire=true;
 }
+var mouseRDM=false;
 
 function kuriakey(){
 	if(canfire)
 	{
 		canfire=false;
-		if(curEro<hardlim)
-		{
-			keyerocount=curEro+50;
-			setTimeout(symfire, 1200);
-		}
+		
+		if(mouseRDM){RDMcurEro();}
+		else if(curEro>=hardlim){return;}
+		
+		keyerocount=curEro+50;
+		setTimeout(symfire, 1200);
+		
 		
 		
 	}
@@ -473,7 +474,6 @@ switch (e.keyCode) {
 	case 112:
 		
 		RDMcurEro();
-		//iRDMarr=erocount-iRDMarr;
 		fullpg();
 	return;
 
@@ -527,9 +527,10 @@ switch (e.keyCode) {
 	return;
 	case 105:
 	case 106:
+		mouseRDM=false;
 		menuFunction();
 		document.body.scrollTop+=300;
-	break;
+	return;
 
 	case 90:
 	case 107:
@@ -549,6 +550,7 @@ switch (e.keyCode) {
 		document.body.scrollTop+=10;
 	break;
 	case 111:
+		mouseRDM=true;
 		RDMcurEro();
 		keyerocount=curEro+50;
 		hardlim=curEro+501;
