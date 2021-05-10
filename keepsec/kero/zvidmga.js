@@ -101,7 +101,9 @@ if(sst)
 		if(calcscall()){installpan();}
 
 	} else if(c0=='z') {
-		vio.src = 'tu/lu/mga/'+sst.substring(1)+'.mp4';
+		boz=sst.substring(1);
+		srcnum=parseInt(boz,10);
+		vio.src = 'tu/lu/mga/'+boz+'.mp4';
 		ratechange();
 	} else{
 		

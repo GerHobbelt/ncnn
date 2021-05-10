@@ -49,6 +49,9 @@ function gall(ele)
 	return;
 	
 }
+
+
+
 function printlokal()
 {
 	document.body.style.backgroundColor='black';
@@ -58,6 +61,15 @@ function printlokal()
 	{
 		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4">'+locfi[i]+'</a>';
 	}
+
+	for(var i=1;i<ll;i++)
+	{
+		nx=Math.floor(Math.random() *ll);
+		tmp=locfi[nx];
+		locfi[nx]=locfi[i];
+		locfi[i]=tmp;
+	}
+
 	ifmarea.innerHTML=locfi.join('  ');
 	donotgall=true;
 }

@@ -6,6 +6,36 @@ var erocount=0;
 var keyerocount=0;
 var hardlim=0;
 
+var noRDMarr=true;
+var RDMarr=null;
+var iRDMarr=0;
+
+function RDMcurEro()
+{
+	if(noRDMarr||iRDMarr>=erocount)
+	{
+		noRDMarr=false;
+		iRDMarr=0;
+		RDMarr=mkRDMarr(erocount);
+	}
+	curEro=RDMarr[iRDMarr];
+	iRDMarr++;
+}
+
+function mkRDMarr(num)
+{arr=new Array(num);
+for(i=0;i<num;i++)
+{
+	nx=Math.floor(Math.random() *num);
+	asrc=i;
+	adst=nx;
+	if(arr[i]!==undefined){asrc=arr[i];}
+	if(arr[nx]!=undefined){adst=arr[nx];}
+	arr[nx]=asrc;
+	arr[i]=adst;
+}
+
+return arr;}
 
 function findimgerr()
 {
@@ -316,7 +346,7 @@ function menuFunction() {
 	rmvimg();
 	keyerocount=curEro+50;
 	if(keyerocount>erocount){keyerocount=erocount;}
-	document.title=(curEro*10) + " to "+ (keyerocount*10);
+	document.title=curEro + "0 to "+ keyerocount+'0 key';
 	return false;}
 	
 }
@@ -326,7 +356,7 @@ function menuFunction() {
 function symfire()
 {
 	apyed();
-	document.title=curEro*10;
+	document.title=curEro+'0 end';
 	canfire=true;
 }
 
@@ -378,7 +408,7 @@ function partpg()
 	tblarea.appendChild(yina);
 	curEro++;
 	curEro++;
-	document.title='pfpg'+curEro;
+	document.title=curEro+'0--pfpg';
 }
 function fullpg()
 {
@@ -397,7 +427,7 @@ curEro+' onkeyup=fpt(event,this)>⛪</div><center>';
 	}
 	
 	tblarea.innerHTML =kole7+'</center>';
-	document.title='fpg'+curEro;
+	document.title=curEro+'0--fpg';
 	keyerocount=-100;
 	document.onmousemove=null;
 
@@ -429,7 +459,7 @@ switch (e.keyCode) {
 	case 106:
 	case 112:
 	
-		curEro=Math.floor(Math.random()*erocount);
+		RDMcurEro();
 		fullpg();
 	return;
 
@@ -473,7 +503,7 @@ switch (e.keyCode) {
 		
 	return;
 	case 81:
-		curEro=Math.floor(Math.random()*erocount);
+		RDMcurEro();
 		fullpg();
 		document.body.background='';
 		timgarea.src='';
@@ -505,15 +535,12 @@ switch (e.keyCode) {
 		document.body.scrollTop+=10;
 	break;
 	case 111:
-
-		var evv=curEro+Math.floor((Math.random()-0.5)*erocount/7);
-		if(evv>=0&&evv<erocount){
-		curEro=evv;
+		RDMcurEro();
+		keyerocount=curEro+50;
 		hardlim=curEro+501;
-		menuFunction();
+		symfire();
 		document.body.scrollTop+=300;
-		}
-	break;
+	return;
 
 	case 104:
 		document.body.scrollTop-=600;
