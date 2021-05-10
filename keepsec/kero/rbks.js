@@ -57,14 +57,14 @@ function printlokal()
 	document.body.style.backgroundColor='black';
 	var ll=locfi.length;
 	locfi[0]='<a href="vidmga.htm">======mga======</a>';
-	for(var i=1;i<ll;i++)
+	for(i=1;i<ll;i++)
 	{
 		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4">'+locfi[i]+'</a>';
 	}
 
-	for(var i=1;i<ll;i++)
+	for(i=(ll>>1);i<ll;i++)
 	{
-		nx=Math.floor(Math.random() *ll);
+		nx=(Math.random() *ll)>>1;
 		tmp=locfi[nx];
 		locfi[nx]=locfi[i];
 		locfi[i]=tmp;

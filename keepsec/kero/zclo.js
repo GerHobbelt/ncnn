@@ -19,18 +19,21 @@ function RDMcurEro()
 		RDMarr=mkRDMarr(erocount);
 	}
 	curEro=RDMarr[iRDMarr];
+	if(curEro===undefined){curEro=iRDMarr;}
 	iRDMarr++;
 }
 
 function mkRDMarr(num)
 {arr=new Array(num);
-for(i=0;i<num;i++)
+for(i=(num>>1);i<num;i++)
 {
-	nx=Math.floor(Math.random() *num);
-	asrc=i;
-	adst=nx;
-	if(arr[i]!==undefined){asrc=arr[i];}
-	if(arr[nx]!=undefined){adst=arr[nx];}
+	nx=(Math.random() *num)>>1;
+
+	asrc=arr[i];
+	if(asrc===undefined){asrc=i;}
+	adst=arr[nx];
+	if(adst===undefined){adst=nx;}
+
 	arr[nx]=asrc;
 	arr[i]=adst;
 }
