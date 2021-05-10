@@ -19,24 +19,34 @@ function RDMcurEro()
 		RDMarr=mkRDMarr(erocount);
 	}
 	curEro=RDMarr[iRDMarr];
-	if(curEro===undefined){curEro=iRDMarr;}
+	//if(curEro===undefined){curEro=iRDMarr;}
 	iRDMarr++;
 }
 
 function mkRDMarr(num)
 {arr=new Array(num);
-for(i=(num>>1);i<num;i++)
+zsta=(num>>1);
+for(i=0;i<zsta;i++)
 {
-	nx=(Math.random() *num)>>1;
+	nx=1+((Math.random() *zsta)<<1);
 
-	asrc=arr[i];
-	if(asrc===undefined){asrc=i;}
+	y=i<<1;
+	izsta=y+1;
+	if(arr[izsta]===undefined){arr[izsta]=izsta;}
 	adst=arr[nx];
 	if(adst===undefined){adst=nx;}
 
-	arr[nx]=asrc;
-	arr[i]=adst;
+	arr[nx]=y;
+	arr[y]=adst;
 }
+
+if(num&1){
+zsta=num-1;
+nx=(Math.random() *num)>>0;
+arr[zsta]=arr[nx];
+arr[nx]=zsta;
+}
+
 
 return arr;}
 
@@ -461,8 +471,9 @@ switch (e.keyCode) {
 	case 101:
 	case 106:
 	case 112:
-	
+		
 		RDMcurEro();
+		//iRDMarr=erocount-iRDMarr;
 		fullpg();
 	return;
 

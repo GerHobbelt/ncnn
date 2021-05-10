@@ -50,7 +50,28 @@ function gall(ele)
 	
 }
 
+function ShuffleArray(arr)
+{ll=arr.length;
 
+zsta=ll>>1;
+for(i=0;i<zsta;i++)
+{
+	y=i<<1;
+	nx=1+((Math.random() *zsta)<<1);
+	tmp=arr[nx];
+	arr[nx]=arr[y];
+	arr[y]=tmp;
+}
+if(ll&1){
+zsta=ll-1;
+nx=(Math.random() *ll)>>0;
+tmp=arr[nx];
+arr[nx]=arr[zsta];
+arr[zsta]=tmp;
+
+}
+
+return arr;}
 
 function printlokal()
 {
@@ -62,12 +83,22 @@ function printlokal()
 		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4">'+locfi[i]+'</a>';
 	}
 
-	for(i=(ll>>1);i<ll;i++)
+	zsta=ll>>1;
+	for(i=0;i<zsta;i++)
 	{
-		nx=(Math.random() *ll)>>1;
+		y=i<<1;
+		nx=1+((Math.random() *zsta)<<1);
 		tmp=locfi[nx];
-		locfi[nx]=locfi[i];
-		locfi[i]=tmp;
+		locfi[nx]=locfi[y];
+		locfi[y]=tmp;
+	}
+	if(ll&1){
+	zsta=ll-1;
+	nx=(Math.random() *ll)>>0;
+	tmp=locfi[nx];
+	locfi[nx]=locfi[zsta];
+	locfi[zsta]=tmp;
+
 	}
 
 	ifmarea.innerHTML=locfi.join('  ');
