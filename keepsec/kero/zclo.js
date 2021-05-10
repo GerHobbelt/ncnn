@@ -367,7 +367,6 @@ function menuFunction() {
 function symfire()
 {
 	apyed();
-	document.title=curEro+'0 end';
 	canfire=true;
 }
 var mouseRDM=false;
@@ -511,6 +510,7 @@ return;
 
 switch (e.keyCode) {
 	case 65:
+		mouseRDM=false;
 		keyerocount=0;
 		hardlim=0;
 		setTimeout(function() {document.execCommand('copy');recarea.focus();}, 500);
