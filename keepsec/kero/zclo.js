@@ -52,12 +52,30 @@ for(i=0;i<zsta;i++)
 	
 }
 
+
+yz=num-2;
+
 if(num&1){
+yz=num-3;
 zsta=num-1;
-nx=(Math.random() *num)>>0;
+nx=(Math.random() *num)>>1;
 arr[zsta]=arr[nx];
 arr[nx]=zsta;
+zsta=(num>>1);
 }
+
+zsta=(zsta<<1)-1;
+if(arr[zsta]==yz)
+{
+nx=(Math.random() *num)>>1;
+arr[zsta]=arr[nx];
+arr[nx]=yz;
+}
+
+
+
+
+
 
 
 return arr;}
