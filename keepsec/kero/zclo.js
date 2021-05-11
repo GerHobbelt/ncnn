@@ -21,6 +21,13 @@ function RDMcurEro()
 	iRDMarr++;
 }
 
+function chkdst(arr,y)
+{
+	adst=arr[y];
+	if(adst===undefined){return y;}
+	return adst;
+}
+
 function mkRDMarr(num)
 {arr=new Array(num);
 zsta=(num>>1);
@@ -29,13 +36,20 @@ for(i=0;i<zsta;i++)
 	nx=1+((Math.random() *zsta)<<1);
 
 	y=i<<1;
-	y1=y+1;
-	if(arr[y1]===undefined){arr[y1]=y1;}
-	adst=arr[nx];
-	if(adst===undefined){adst=nx;}
+	
 
-	arr[nx]=y;
-	arr[y]=adst;
+	//adst=arr[nx];
+	//if(adst===undefined){adst=nx;}
+	arr[y]=chkdst(arr,nx);//adst;
+
+	y1=y+1;
+
+	//adst=arr[y1];
+	//if(adst===undefined){adst=y1;}
+	arr[nx]=chkdst(arr,y1);//adst;
+
+	arr[y1]=y;
+	
 }
 
 if(num&1){

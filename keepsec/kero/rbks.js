@@ -58,9 +58,10 @@ for(i=0;i<zsta;i++)
 {
 	y=i<<1;
 	nx=1+((Math.random() *zsta)<<1);
-	tmp=arr[nx];
-	arr[nx]=arr[y];
-	arr[y]=tmp;
+	tmp=arr[y];
+	arr[y]=arr[nx];
+	arr[nx]=arr[y+1];
+	arr[y+1]=tmp;
 }
 if(ll&1){
 zsta=ll-1;
@@ -88,9 +89,10 @@ function printlokal()
 	{
 		y=i<<1;
 		nx=1+((Math.random() *zsta)<<1);
-		tmp=locfi[nx];
-		locfi[nx]=locfi[y];
-		locfi[y]=tmp;
+		tmp=locfi[y];
+		locfi[y]=locfi[nx];
+		locfi[nx]=locfi[y+1];
+		locfi[y+1]=tmp;
 	}
 	if(ll&1){
 	zsta=ll-1;
