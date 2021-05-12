@@ -25,6 +25,7 @@ body {
   -webkit-font-smoothing: antialiased;
   font-size: 100%;
 	margin: 0px;
+	height: 100%
 }
 
 [hidden] {
@@ -357,7 +358,7 @@ h1 {
 </style>
 </head>
 <body>
-<h1><a href='file:///Q:\z\bookpdf\zzzkoero.html'>kEro</a><br><br><a href='file:///Q:\z\bookpdf\0bak\bkero.html'>Bkupz</a><br><br><br><br><br><br><br><br></h1>
+<h1>=====<a href='file:///Q:\z\bookpdf\zzzkoero.html'>kEro</a>=====<a href='file:///Q:\z\bookpdf\0bak\bkero.html'>Bkupz</a>=====</h1>
 <div class="content">
   <div class="icon" role="presentation" alt=""></div>
 
