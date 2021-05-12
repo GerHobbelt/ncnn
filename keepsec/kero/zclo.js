@@ -519,7 +519,7 @@ curEro+' onkeyup=fpt(event,this)>⛪</div><center>';
 
 }
 
-
+function fastrscroll(ev) {return false;}
 
 function installclo(){
 
@@ -540,7 +540,7 @@ if(keyerocount<0){
 switch (e.keyCode) {
 	case 27:
 	case 90:
-	case 101:
+	case 102:
 	case 106:
 	case 112:
 		
@@ -548,15 +548,20 @@ switch (e.keyCode) {
 		fullpg();
 	return;
 
+	case 101:
+		document.elementFromPoint(960,540).click();
+		return;
+
 	case 81:
 		uv=tblarea.id.split('.');
 		if(uv.length>1) { curEro=parseInt(uv[1],10);}
 		else {curEro=0;}
-
+		
 		iRDMarr=0;
 		tblarea.innerHTML='';
 		chaglims();
 		menuFunction();
+		//window.onmousewheel = document.onmousewheel =null;
 		document.onmousemove=kuriakey;
 	return;
 
@@ -604,6 +609,8 @@ switch (e.keyCode) {
 		fullpg();
 		keyerocount=-100;
 		document.onmousemove=null;
+		//window.onmousewheel = document.onmousewheel =fastrscroll;
+		
 		document.body.background='';
 		timgarea.src='';
 		timgarea.style.maxHeight = '1%';
