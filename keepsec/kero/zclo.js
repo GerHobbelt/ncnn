@@ -10,7 +10,7 @@ var hardlim=0;
 var RDMarr=null;
 var iRDMarr=0xF00000;
 
-function RDMcurEro(reshuff)
+function RDMcurEro()
 {
 	if(iRDMarr>=erocount)
 	{
@@ -20,7 +20,7 @@ function RDMcurEro(reshuff)
 
 		iRDMarr=0;
 	}
-	else if(reshuff) {RDMarr=ShuffleArray(RDMarr);iRDMarr=0;}
+	
 	
 	
 	curEro=RDMarr[iRDMarr];
@@ -424,7 +424,7 @@ function apyed()
 function menuFunction() {
 
 	if(keyerocount<0){
-	RDMcurEro(false);
+	RDMcurEro();
 	fullpg();}
 	else if(curEro<erocount){apyed();
 	rmvimg();
@@ -450,7 +450,7 @@ function kuriakey(){
 	{
 		canfire=false;
 		
-		if(mouseRDM){RDMcurEro(false);}
+		if(mouseRDM){RDMcurEro();}
 		else if(curEro>=hardlim){return;}
 		
 		keyerocount=curEro+50;
@@ -544,7 +544,7 @@ switch (e.keyCode) {
 	case 106:
 	case 112:
 		
-		RDMcurEro(false);
+		RDMcurEro();
 		fullpg();
 	return;
 
@@ -553,6 +553,7 @@ switch (e.keyCode) {
 		if(uv.length>1) { curEro=parseInt(uv[1],10);}
 		else {curEro=0;}
 
+		iRDMarr=0;
 		tblarea.innerHTML='';
 		chaglims();
 		menuFunction();
@@ -593,7 +594,13 @@ switch (e.keyCode) {
 		
 	return;
 	case 81:
-		RDMcurEro(true);
+		if(iRDMarr==0xF00000){RDMcurEro();}
+
+		RDMarr=ShuffleArray(RDMarr);
+		iRDMarr=0;
+		curEro=RDMarr[iRDMarr];
+		iRDMarr++;
+
 		fullpg();
 		keyerocount=-100;
 		document.onmousemove=null;
@@ -629,7 +636,7 @@ switch (e.keyCode) {
 	break;
 	case 111:
 		mouseRDM=true;
-		RDMcurEro(false);
+		RDMcurEro();
 		chaglims();
 		symfire();
 		document.body.scrollTop+=300;
