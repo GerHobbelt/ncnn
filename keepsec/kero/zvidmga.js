@@ -40,7 +40,7 @@ return oyput;
 var yput=createeffctctrl();
 
 
-var dfheight=1200;
+var dfheight=1400;
 vio.height=dfheight;
 
 
@@ -50,7 +50,12 @@ var intervalHandle = null;
 var shrinkbefore=false;
 
 
-
+function rmvcursor()
+{
+ispause=false;
+document.body.style.cursor=null;
+vio.play();
+}
 
 function toclpb()
 {
@@ -126,8 +131,7 @@ if(sst)
 }
 else {vio.style.webkitFilter = '';}
 
-
-ispause=false;
+if(ispause){rmvcursor();}
 vio.play();
 }
 
@@ -165,7 +169,7 @@ function zm600()
 {
 	shrinkbefore=false;
 	if(!isrot){vio.style.margin= '0px';
-	vio.height+=1000;
+	vio.height+=800;
 	yput.style.left = yputleft+'px';
 	}
 
@@ -272,7 +276,7 @@ kyfunc[2]=function(ev) {
 
 delayii++;
 
-if(delayii > 0xA) {
+if(delayii > 0x10) {
 	delayii=0x0;
 	ruu(ev.clientX,ev.clientY);
 } };
@@ -301,10 +305,15 @@ else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0/\n';}
 
 }
 
+const nxpgcursor="url('nxpg.gif'), auto";
+
 function swipao()
 {
-if(ispause){vio.play(); ispause=false;}
-else {vio.pause(); ispause=true;}
+if(ispause){vio.currentTime+=0.7;}
+else {vio.pause();
+ispause=true;
+document.body.style.cursor = nxpgcursor;}
+
 return false;
 }
 
@@ -361,8 +370,6 @@ kyfunc[1]=function(e) {
 		iyk='tu/lu/mga/'+srcnum+'.mp4';
 		vio.src = iyk;
 		ratechange();
-		vio.play();
-		ispause=false;
 		yput.value=iyk;
 		return;
 
@@ -382,7 +389,9 @@ kyfunc[1]=function(e) {
 		ratechange();
 		return;
 	case 97:
+		if(ispause){rmvcursor();}
 		vio.currentTime-=0.7;
+
 		return;
 	case 99:
 		vio.currentTime+=0.7;
