@@ -16,6 +16,7 @@ vio.style.maxWidth='800%';
 var plbrate=0.1;
 
 var srcnum=0;
+var yputleft=3200;
 
 var delayii=0x0;
 var mxw=0;
@@ -23,6 +24,7 @@ var mxh=0;
 
 const sl1=1.1;
 const sl2=0.9;
+
 
 function createeffctctrl()
 {
@@ -38,8 +40,9 @@ return oyput;
 var yput=createeffctctrl();
 
 
-var dfheight=1500;
+var dfheight=1200;
 vio.height=dfheight;
+
 
 var intervalHandle = null;
 
@@ -62,6 +65,7 @@ document.onmousemove=kyfunc[2];
 document.onwheel=kyfunc[3];
 var sst=yput.value;
 yput.rows=1;
+yput.cols=2;
 if(sst)
 {
 	var c0=sst.charAt(0);
@@ -98,7 +102,10 @@ if(sst)
 
 	} else if(c0=='l') {
 		vio.height=parseInt(sst.substring(1),10);
+		yputleft=(vio.scrollWidth*0.9);
+		yput.style.left = yputleft+'px';
 		if(calcscall()){installpan();}
+
 
 	} else if(c0=='z') {
 		boz=sst.substring(1);
@@ -129,6 +136,8 @@ function rdce()
 {
 	if(!isrot){vio.style.margin= '0px';}
 	vio.height-=100;
+	yputleft-=150;
+	yput.style.left = yputleft+'px';
 	shrinkbefore=true;
 }
 
@@ -140,6 +149,8 @@ function zmin()
 	vuvu+=100;
 	yput.value='l'+vuvu;
 	vio.height=vuvu;
+	yputleft+=150;
+	yput.style.left = yputleft+'px';
 	
 	if(calcscall()){if(isnotpan){installpan();}}
 }
@@ -154,7 +165,8 @@ function zm600()
 {
 	shrinkbefore=false;
 	if(!isrot){vio.style.margin= '0px';
-	vio.height+=700;
+	vio.height+=1000;
+	yput.style.left = yputleft+'px';
 	}
 
 
@@ -171,6 +183,7 @@ function paosa(){
 	if(vio.scrollWidth>1700){rdce();}
 
 	document.onkeyup=kyfunc[0];
+	yput.cols=20;
 	yput.rows=8;
 	if(intervalHandle){return;}
 	else{vio.pause();}
@@ -194,6 +207,8 @@ else
 
 vio.style.webkitTransform = 'rotate('+krot+'deg)'; 
 vio.height=window.outerWidth-50;
+yputleft=(vio.scrollWidth*0.9);
+yput.style.left = yputleft+'px';
 
 
 isrot=true;

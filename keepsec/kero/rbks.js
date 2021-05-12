@@ -8,6 +8,8 @@ function prepg()
 	var dstr="<h2>";
 	for(var i=0;i<scril;i++){dstr+='<a href="../zzzkoero.html#'+i+'" target=_top>Goto '+i+'</a><br>';}
 	ifmarea.innerHTML=dstr+"</h2><br><br><br><h3 onclick=mklokal() >Mp4Disk</h3>";
+
+	document.body.style.backgroundColor='#400010';
 }
 
 prepg();
@@ -26,8 +28,13 @@ var donotgall=false;
 
 function gall(ele)
 {
-	if(donotgall){return;}
 	
+	if(donotgall){
+	shuflocfi(locfi.length);
+	return;}
+	
+
+	document.body.style.backgroundColor='white';
 	ifmarea.innerHTML='';
 	for(var i=0;i<scril;i++)
 	{
@@ -74,16 +81,8 @@ arr[zsta]=tmp;
 
 return arr;}
 
-function printlokal()
+function shuflocfi(ll)
 {
-	document.body.style.backgroundColor='black';
-	var ll=locfi.length;
-	locfi[0]='<a href="vidmga.htm">======mga======</a>';
-	for(i=1;i<ll;i++)
-	{
-		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4">'+locfi[i]+'</a>';
-	}
-
 	zsta=ll>>1;
 	for(i=0;i<zsta;i++)
 	{
@@ -94,16 +93,32 @@ function printlokal()
 		locfi[nx]=locfi[y+1];
 		locfi[y+1]=tmp;
 	}
-	if(ll&1){
-	zsta=ll-1;
-	nx=(Math.random() *ll)>>0;
-	tmp=locfi[nx];
-	locfi[nx]=locfi[zsta];
-	locfi[zsta]=tmp;
+	ibz=2;
+	if(ll&1){ibz=3;}
 
+	for(i=1;i<ibz;i++)
+	{
+		zsta=ll-i;
+		nx=(Math.random() *ll)>>1;
+		tmp=locfi[nx];
+		locfi[nx]=locfi[zsta];
+		locfi[zsta]=tmp;
 	}
 
 	ifmarea.innerHTML=locfi.join('  ');
+}
+
+function printlokal()
+{
+	document.body.style.backgroundColor='black';
+	var ll=locfi.length;
+	locfi[0]='<a href="vidmga.htm">======mga======</a>';
+	for(i=1;i<ll;i++)
+	{
+		locfi[i]='<a href="tu/lu/'+locfi[i]+'.mp4">'+locfi[i]+'</a>';
+	}
+
+	shuflocfi(ll);
 	donotgall=true;
 }
 

@@ -7,17 +7,61 @@ body {
     background-size: contain;
 }
 </style></head><body>
-<h1 style="background-color: #ffffff;" onclick="keyFunction()">www<br>www<br>www<br>www<br></h1>
+<h1 style="background-color: white;" onclick="keyFunction(this)">www<br>www<br>www<br>www<br></h1>
 <div id="team"></div>
-<h1 style="background-color: #ffffff;" onclick="keyFunction()">www<br>www<br>www<br>www<br></h1>
+<h1 style="background-color: white;" onclick="keyFunction(this)">www<br>www<br>www<br>www<br></h1>
 </body>
 <script src="aadata.js"></script>
 <script type="text/javascript">
 
 var tblarea = document.getElementById('team');
 var brk=document.createElement("p");
-var erocount=thumb.length/10;
+var erocount=Math.ceil(thumb.length/10);
 var keyerocount=curEro+20;
+
+var curEro=0;
+var noRDMarr=true;
+var RDMarr=null;
+var iRDMarr=0;
+
+function RDMcurEro()
+{
+	if(noRDMarr||iRDMarr>=erocount)
+	{
+		noRDMarr=false;
+		iRDMarr=0;
+		RDMarr=mkRDMarr(erocount);
+	}
+	curEro=RDMarr[iRDMarr];
+	iRDMarr++;
+}
+
+function mkRDMarr(num)
+{arr=new Array(num);
+zsta=(num>>1);
+for(i=0;i<zsta;i++)
+{
+	nx=1+((Math.random() *zsta)<<1);
+
+	y=i<<1;
+	y1=y+1;
+	if(arr[y1]===undefined){arr[y1]=y1;}
+	adst=arr[nx];
+	if(adst===undefined){adst=nx;}
+
+	arr[nx]=y;
+	arr[y]=adst;
+}
+
+if(num&1){
+zsta=num-1;
+nx=(Math.random() *num)>>0;
+arr[zsta]=arr[nx];
+arr[nx]=zsta;
+}
+
+
+return arr;}
 
 
 function vidstr(src)
@@ -69,19 +113,24 @@ function apyed()
 	
 }
 
-function keyFunction() {
+function keyFunction(ele) {
 
-curEro=Math.floor(Math.random()*erocount);
+RDMcurEro();
 
 apyed();
-document.title=curEro*10;
+document.title=curEro+'0--end';
+ele.innerHTML=curEro+'<br>'+curEro+'<br>'+curEro+'<br>'+curEro+'<br>';
 }
+
+//document.onclick=keyFunction;
+
+var puv1='<html><body><video controls autoplay muted id="media"><source src=';
+var puv2=' ></video></body><scr'+'ipt src="zvid.js"></scr'+'ipt></html>';
 
 function puppy(url)
 {
 var newWindow = window.open("", null, null);
-newWindow.document.write('<html><body><video controls autobuffer autoplay muted><source src='+url+
-' ></video></body></html>');
+newWindow.document.write(puv1+url+puv2);
 //status=no,toolbar=no,menubar=no,location=no
 }
 
@@ -89,11 +138,20 @@ function menuFunction() {
 	if(curEro<erocount){apyed();
 	keyerocount=curEro+20;
 	if(keyerocount>erocount){keyerocount=erocount;}
-	document.title=(curEro*10) + " to "+ (keyerocount*10);
+	document.title=curEro + "0 to "+ (keyerocount*10);
 	return false;}
 }
 
+function keyfunc2()
+{
+RDMcurEro();
+apyed();
+document.title=curEro+'0--end';
+return false;
+}
 
-keyFunction();
+window.oncontextmenu=keyfunc2;
+
+keyfunc2();
 
 </script></html>
