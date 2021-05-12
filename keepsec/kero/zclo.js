@@ -247,6 +247,7 @@ const kx3=' onmouseover=xt(this) onclick=xtp() >✨</a><br><a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width=205 /></a>0<br>';
 const kx5b='" /></a><br>';
+const kx5bl='" width=75% /></a><br>';
 
 function mydav(sta, endo,ag)
 {
@@ -502,16 +503,26 @@ function fullpg()
 
 
 
-	var kole7='<div class="nv">　　　　　　　　　　　<input type="number" value='+
-curEro+' onkeyup=fpt(event,this)>⛪</div><center>';
+	var kole7='<div class="nvmid"><input type="number" value='+
+curEro+' onkeyup=fpt(event,this)></div><center>';
 
-	for(var j=0;j<20;j++){
-		var iszrda=curEro*10+j;
+	iszrda=curEro*10;
+	kole7+=kx1+msgs[iszrda]+
+		kx2b+vidstr(vids[iszrda])+
+		kx4+thumbstr(thumb[iszrda])+
+		kx5bl;
+	for(var j=1;j<19;j++){
+		iszrda=curEro*10+j;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
 		kx5b;
 	}
+	iszrda=curEro*10+19;
+	kole7+=kx1+msgs[iszrda]+
+		kx2b+vidstr(vids[iszrda])+
+		kx4+thumbstr(thumb[iszrda])+
+		kx5bl;
 	
 	tblarea.innerHTML =kole7+'</center>';
 	document.title=curEro+'0--fpg';
@@ -541,6 +552,7 @@ switch (e.keyCode) {
 	case 27:
 	case 90:
 	case 102:
+	case 105:
 	case 106:
 	case 112:
 		
