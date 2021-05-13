@@ -426,10 +426,7 @@ function apyed()
 
 function menuFunction() {
 
-	if(keyerocount<0){
-	RDMcurEro();
-	fullpg();}
-	else if(curEro<erocount){apyed();
+	if(curEro<erocount){apyed();
 	rmvimg();
 	keyerocount=curEro+50;
 	if(keyerocount>erocount){keyerocount=erocount;}
@@ -448,12 +445,10 @@ function symfire()
 }
 function setPozCur(x,y)
 {
-	x-=20;
-	y-=20;
 	pozcur[0]=x;
 	pozcur[1]=y;
-	pozcurpic.style.left=x;
-	pozcurpic.style.top=y;
+	pozcurpic.style.left=x-32;
+	pozcurpic.style.top=y-32;
 }
 
 function PozCurKlicK()
