@@ -8,7 +8,8 @@ body {
 }
 
 center {
-    background-color: #400010;
+	background-color: #400010;
+	color: white;
 }
 .pz {
 	position:fixed;
@@ -21,6 +22,6 @@ center {
 }
 .nvmid {
 	position:fixed;
-	top:535px;
+	left:5px;
 	border:5px #0ff solid;
 }

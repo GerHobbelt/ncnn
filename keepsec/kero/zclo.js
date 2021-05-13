@@ -238,7 +238,8 @@ function thumbstr(src)
 	{return 'https://pbs.twimg.com/ext_tw_video_thumb/'+src;}
 }
 
-var agen=['left','right'];
+const pozimg='<img src="poz.gif" />';
+const pozinput='<input type="number" value=0 onkeyup=fpt(event,this)>';
 
 var speg=['　　','　','　　　　　','　　　','　　　　','　　','　','　　　　　','　　　','　　　　'];
 
@@ -454,6 +455,12 @@ function setPozCur(x,y)
 	pozcurpic.style.top=y-32;
 }
 
+function setPozCur2(y)
+{
+	pozcur[1]=y;
+	pozcurpic.style.top=y-5;
+}
+
 function PozCurKlicK()
 {document.elementFromPoint(pozcur[0],pozcur[1]).click();}
 
@@ -487,9 +494,9 @@ var settrue=function(){canfire=true;}
 var klyi=0x0;
 var kuriakeysimp=function(ev){
 	klyi++;
-	if(klyi>0x10) {
+	if(klyi>0x20) {
 	klyi=0;
-	setPozCur(ev.clientX,ev.clientY);
+	setPozCur2(ev.clientY);
 	}
 			
 	
@@ -557,34 +564,19 @@ kx5a;
 
 function fullpg()
 {
+	var kole7='<center><h1>'+iRDMarr+'</h1>';
 
-
-
-	var kole7='<div class="nvmid"><input type="number" value='+
-iRDMarr+' onkeyup=fpt(event,this)></div><center>';
-
-	iszrda=RDMarr[iRDMarr]*10;
-	kole7+=kx1+msgs[iszrda]+
-		kx2b+vidstr(vids[iszrda])+
-		kx4+thumbstr(thumb[iszrda])+
-		kx5bl;
-	for(var j=1;j<19;j++){
+	
+	for(var j=0;j<20;j++){
 		iszrda=RDMarr[iRDMarr+j]*10+j;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
 		kx5b;
 	}
-	iszrda=RDMarr[iRDMarr+19]*10+19;
-	kole7+=kx1+msgs[iszrda]+
-		kx2b+vidstr(vids[iszrda])+
-		kx4+thumbstr(thumb[iszrda])+
-		kx5bl;
+	
 	
 	tblarea.innerHTML =kole7+'</center>';
-	document.title=curEro+'0--fpg';
-	
-
 }
 
 function fastrscroll(ev) {return false;}
@@ -599,7 +591,7 @@ return false;
 function installclo(){
 
 
-erocount=Math.ceil(thumb.length/10);
+erocount=(thumb.length/10)<<0;
 
 if(curEro>erocount){curEro=erocount-10;}
 
@@ -623,7 +615,7 @@ switch (e.keyCode) {
 		
 	return;
 
-	case 13:
+	case 27:
 	case 101:
 		PozCurKlicK();
 		return;
@@ -633,6 +625,9 @@ switch (e.keyCode) {
 		if(uv.length>1) { curEro=parseInt(uv[1],10);}
 		else {curEro=0;}
 		
+		pozcurpic.innerHTML=pozimg;
+		pozcurpic.className='pz';
+
 		iRDMarr=0;
 		tblarea.innerHTML='';
 		chaglims();
@@ -678,6 +673,7 @@ switch (e.keyCode) {
 		
 	return;
 	case 13:
+	case 27:
 	case 101:
 		PozCurKlicK();
 		return;
@@ -687,6 +683,10 @@ switch (e.keyCode) {
 		RDMcurEro();
 		fullpg();
 		keyerocount=-100;
+		pozcur[0]=window.outerWidth>>1;
+		pozcurpic.innerHTML=pozinput;
+		pozcurpic.className='nvmid';
+		pozcurpic.style.left=5;
 		document.onmousemove=kuriakeysimp;
 		window.oncontextmenu=fullpgmenu;
 		//window.onmousewheel = document.onmousewheel =fastrscroll;
