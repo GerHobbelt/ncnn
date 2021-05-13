@@ -2,6 +2,8 @@
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
+var pozcur=new Array(2);
+var pozcurpic=timgarea.nextSibling;
 var erocount=0;
 var keyerocount=0;
 var hardlim=0;
@@ -444,13 +446,28 @@ function symfire()
 	apyed();
 	canfire=true;
 }
+function setPozCur(x,y)
+{
+	x-=20;
+	y-=20;
+	pozcur[0]=x;
+	pozcur[1]=y;
+	pozcurpic.style.left=x;
+	pozcurpic.style.top=y;
+}
+
+function PozCurKlicK()
+{document.elementFromPoint(pozcur[0],pozcur[1]).click();}
+
 var mouseRDM=false;
 
-function kuriakey(){
+var kuriakey=function(ev){
 	if(canfire)
 	{
 		canfire=false;
 		
+		setPozCur(ev.clientX,ev.clientY);
+
 		if(mouseRDM){RDMcurEro();}
 		else if(curEro>=hardlim){return;}
 		
@@ -462,6 +479,21 @@ function kuriakey(){
 	}
 	
 }
+
+var settrue=function(){canfire=true;}
+
+var klyi=0x0;
+var kuriakeysimp=function(ev){
+	klyi++;
+	if(klyi>0x10) {
+	klyi=0;
+	setPozCur(ev.clientX,ev.clientY);
+	}
+			
+	
+	
+}
+
 
 
 function fpt(e,ele)
@@ -560,8 +592,9 @@ switch (e.keyCode) {
 		fullpg();
 	return;
 
+	case 13:
 	case 101:
-		document.elementFromPoint(960,540).click();
+		PozCurKlicK();
 		return;
 
 	case 81:
@@ -610,6 +643,10 @@ switch (e.keyCode) {
 		setTimeout(function() {document.execCommand('copy');recarea.focus();}, 500);
 		
 	return;
+	case 13:
+	case 101:
+		PozCurKlicK();
+		return;
 	case 81:
 		if(iRDMarr==0xF00000){RDMcurEro();}
 
@@ -620,7 +657,7 @@ switch (e.keyCode) {
 
 		fullpg();
 		keyerocount=-100;
-		document.onmousemove=null;
+		document.onmousemove=kuriakeysimp;
 		//window.onmousewheel = document.onmousewheel =fastrscroll;
 		
 		document.body.background='';

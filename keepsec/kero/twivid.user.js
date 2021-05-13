@@ -166,6 +166,7 @@ document.body.insertBefore(oyput,vio);
 oyput=oyput.firstChild;
 oyput.onfocus=paosa;
 oyput.onblur=effeci;
+oyput.oncontextmenu=function(){close();return false;};
 
 
 return oyput;
