@@ -12,25 +12,16 @@ var hardlim=0;
 var RDMarr=null;
 var iRDMarr=0xF00000;
 
-function RDMcurEro()
-{
-	if(iRDMarr>=erocount)
-	{
-		
-		if(iRDMarr==0xF00000){RDMarr=mkRDMarr(erocount);}
-		else{RDMarr=ShuffleArray(RDMarr);}
 
-		iRDMarr=0;
-	}
-	
-	
-	
-	curEro=RDMarr[iRDMarr];
-	iRDMarr++;
+
+function flazt20(arr,num)
+{
+for(i=0;i<20;i++) {arr[num+i]=arr[i];}
+return arr;
 }
 
 function ShuffleArray(arr)
-{ll=arr.length;
+{ll=arr.length-20;
 
 zsta=ll>>1;
 for(i=0;i<zsta;i++)
@@ -56,7 +47,7 @@ for(i=1;i<ibz;i++)
 }
 
 
-return arr;}
+return flazt20(arr,ll);}
 
 function chkdst(arr,y)
 {
@@ -65,8 +56,10 @@ function chkdst(arr,y)
 	return adst;
 }
 
+
+
 function mkRDMarr(num)
-{arr=new Array(num);
+{arr=new Array(num+20);
 zsta=(num>>1);
 for(i=0;i<zsta;i++)
 {
@@ -109,18 +102,26 @@ arr[zsta]=arr[nx];
 arr[nx]=yz;
 }
 
-
-
-
-
-
-
-return arr;}
+return flazt20(arr,num);}
 
 function chaglims()
 {
 keyerocount=curEro+50;
 hardlim=curEro+501;
+}
+
+function RDMcurEro()
+{
+	if(iRDMarr>=erocount)
+	{
+		
+		if(iRDMarr==0xF00000){RDMarr=mkRDMarr(erocount);}
+		else{RDMarr=ShuffleArray(RDMarr);}
+
+		iRDMarr=-1;
+	}
+	
+	iRDMarr++;
 }
 
 function findimgerr()
@@ -270,6 +271,8 @@ kx5a;
 	yina.innerHTML = kole7;
 	tblarea.appendChild(yina);
 }
+
+
 
 var ovrcount=0;
 
@@ -463,7 +466,11 @@ var kuriakey=function(ev){
 		
 		setPozCur(ev.clientX,ev.clientY);
 
-		if(mouseRDM){RDMcurEro();}
+		if(mouseRDM){
+		RDMcurEro();
+		setTimeout(mydavRDM, 1200);
+		return;
+		}
 		else if(curEro>=hardlim){return;}
 		
 		keyerocount=curEro+50;
@@ -496,11 +503,11 @@ function fpt(e,ele)
 if(e.keyCode==13)
 {
 var evv=ele.value;
-	if(evv<0){curEro+=evv;}
+	if(evv<0){iRDMarr+=evv;}
 	else
 	{
 		if(evv>erocount){evv=erocount-10;}
-		curEro=evv;
+		iRDMarr=evv;
 	}
 
 
@@ -521,31 +528,54 @@ function partpg()
 	}
 	yina.innerHTML = kole7;
 	tblarea.appendChild(yina);
-	curEro++;
-	curEro++;
+
 	document.title=curEro+'0--pfpg';
 }
+
+function mydavRDM()
+{
+	yina = document.createElement('div');
+	yina.style['float'] = 'right';
+
+	
+	var kole7="";
+	for(var j=0;j<10;j++){
+var iszrda=RDMarr[iRDMarr+j]*10+j;
+kole7+=kx1+msgs[iszrda]+
+kx2a1+speg[j]+kx2a2+iszrda+
+kx3+vidstr(vids[iszrda])+
+kx4+thumbstr(thumb[iszrda])+
+kx5a;
+
+	}
+	yina.innerHTML = kole7;
+	tblarea.appendChild(yina);
+
+	canfire=true;
+}
+
+
 function fullpg()
 {
 
 
 
 	var kole7='<div class="nvmid"><input type="number" value='+
-curEro+' onkeyup=fpt(event,this)></div><center>';
+iRDMarr+' onkeyup=fpt(event,this)></div><center>';
 
-	iszrda=curEro*10;
+	iszrda=RDMarr[iRDMarr]*10;
 	kole7+=kx1+msgs[iszrda]+
 		kx2b+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
 		kx5bl;
 	for(var j=1;j<19;j++){
-		iszrda=curEro*10+j;
+		iszrda=RDMarr[iRDMarr+j]*10+j;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
 		kx5b;
 	}
-	iszrda=curEro*10+19;
+	iszrda=RDMarr[iRDMarr+19]*10+19;
 	kole7+=kx1+msgs[iszrda]+
 		kx2b+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
@@ -558,6 +588,13 @@ curEro+' onkeyup=fpt(event,this)></div><center>';
 }
 
 function fastrscroll(ev) {return false;}
+
+function fullpgmenu()
+{
+RDMcurEro();
+fullpg();
+return false;
+}
 
 function installclo(){
 
@@ -582,9 +619,8 @@ switch (e.keyCode) {
 	case 105:
 	case 106:
 	case 112:
+		fullpgmenu();
 		
-		RDMcurEro();
-		fullpg();
 	return;
 
 	case 13:
@@ -602,20 +638,23 @@ switch (e.keyCode) {
 		chaglims();
 		menuFunction();
 		//window.onmousewheel = document.onmousewheel =null;
+		window.oncontextmenu=menuFunction;
 		document.onmousemove=kuriakey;
 	return;
 
+	
 	case 109:
+		partpg();
 		curEro--;
 		curEro--;
-		fullpg();
 	return;
 
 	case 107:
+		partpg();
 		curEro++;
 		curEro++;
-		fullpg();
 	return;
+	
 
 	case 104:
 		document.body.scrollTop-=600;
@@ -643,16 +682,13 @@ switch (e.keyCode) {
 		PozCurKlicK();
 		return;
 	case 81:
-		if(iRDMarr==0xF00000){RDMcurEro();}
-
-		RDMarr=ShuffleArray(RDMarr);
-		iRDMarr=0;
-		curEro=RDMarr[iRDMarr];
-		iRDMarr++;
-
+		if(iRDMarr!=0xF00000){iRDMarr=erocount+100;}
+		
+		RDMcurEro();
 		fullpg();
 		keyerocount=-100;
 		document.onmousemove=kuriakeysimp;
+		window.oncontextmenu=fullpgmenu;
 		//window.onmousewheel = document.onmousewheel =fastrscroll;
 		
 		document.body.background='';
@@ -671,6 +707,8 @@ switch (e.keyCode) {
 	case 90:
 	case 107:
 		partpg();
+		curEro++;
+		curEro++;
 		document.body.scrollTop+=1000;
 	return;
 
@@ -688,8 +726,7 @@ switch (e.keyCode) {
 	case 111:
 		mouseRDM=true;
 		RDMcurEro();
-		chaglims();
-		symfire();
+		mydavRDM();
 		document.body.scrollTop+=300;
 	return;
 
