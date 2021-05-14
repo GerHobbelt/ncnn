@@ -249,7 +249,7 @@ const kx2a1='" >⛪　　　　';
 const kx2a2='</a><a title=i';
 const kx3=' onmouseover=xt(this) onclick=xtp() >✨</a><br><a href="';
 const kx4='" ><img src="';
-const kx5a=':thumb" width=205 /></a>0<br>';
+const kx5a=':thumb" width=211 /></a>.<br>';
 const kx5b='" /></a><br>';
 const kx5bl='" width=75% /></a><br>';
 
@@ -259,7 +259,7 @@ function mydav(sta, endo,ag)
 	yina.style['float'] = 'right';
 
 	
-	var kole7="";
+	var kole7=curEro+"<br>";
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+=kx1+msgs[iszrda]+
@@ -525,7 +525,7 @@ fullpg();
 function partpg()
 {
 	yina = document.createElement('center');
-	var kole7='<br>';
+	var kole7='<h1>++'+curEro+'++</h1>';
 	for(var j=0;j<20;j++){
 		var iszrda=curEro*10+j;
 		kole7+=kx1+msgs[iszrda]+
@@ -536,7 +536,7 @@ function partpg()
 	yina.innerHTML = kole7;
 	tblarea.appendChild(yina);
 
-	document.title=curEro+'0--pfpg';
+	curEro+=2;
 }
 
 function mydavRDM()
@@ -545,7 +545,7 @@ function mydavRDM()
 	yina.style['float'] = 'right';
 
 	
-	var kole7="";
+	var kole7=iRDMarr+"@<br>";;
 	for(var j=0;j<10;j++){
 var iszrda=RDMarr[iRDMarr+j]*10+j;
 kole7+=kx1+msgs[iszrda]+
@@ -603,8 +603,30 @@ document.onmousemove=kuriakey;
 
 document.onkeydown=function(e) {
 
+ekeyCode=e.keyCode;
+
+switch (ekeyCode) {
+	case 27:
+	case 101:
+		PozCurKlicK();
+		return;
+	case 109:
+		curEro-=4;
+		partpg();
+	return;
+
+	case 107:
+		partpg();
+		document.body.scrollTop+=1000;
+	return;
+
+	case 104:
+		document.body.scrollTop-=600;
+	break;
+}
+
 if(keyerocount<0){
-switch (e.keyCode) {
+switch (ekeyCode) {
 	case 27:
 	case 90:
 	case 102:
@@ -615,10 +637,7 @@ switch (e.keyCode) {
 		
 	return;
 
-	case 27:
-	case 101:
-		PozCurKlicK();
-		return;
+
 
 	case 81:
 		uv=tblarea.id.split('.');
@@ -637,23 +656,6 @@ switch (e.keyCode) {
 		document.onmousemove=kuriakey;
 	return;
 
-	
-	case 109:
-		partpg();
-		curEro--;
-		curEro--;
-	return;
-
-	case 107:
-		partpg();
-		curEro++;
-		curEro++;
-	return;
-	
-
-	case 104:
-		document.body.scrollTop-=600;
-	return;
 
 	case 98:
 		document.body.scrollTop+=600;
@@ -664,7 +666,7 @@ return;
 }
 
 
-switch (e.keyCode) {
+switch (ekeyCode) {
 	case 65:
 		mouseRDM=false;
 		keyerocount=0;
@@ -672,11 +674,7 @@ switch (e.keyCode) {
 		setTimeout(function() {document.execCommand('copy');recarea.focus();}, 500);
 		
 	return;
-	case 13:
-	case 27:
-	case 101:
-		PozCurKlicK();
-		return;
+
 	case 81:
 		if(iRDMarr!=0xF00000){iRDMarr=erocount+100;}
 		
@@ -704,13 +702,6 @@ switch (e.keyCode) {
 		document.body.scrollTop+=300;
 	return;
 
-	case 90:
-	case 107:
-		partpg();
-		curEro++;
-		curEro++;
-		document.body.scrollTop+=1000;
-	return;
 
 	case 102:
 	case 39:
@@ -730,9 +721,6 @@ switch (e.keyCode) {
 		document.body.scrollTop+=300;
 	return;
 
-	case 104:
-		document.body.scrollTop-=600;
-	break;
 
 	case 98:
 		document.body.scrollTop+=300;
