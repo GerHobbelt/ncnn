@@ -12,6 +12,9 @@ body {
 center {
 	background-color: #400010;
 }
+.fl {
+float:right;
+}
 .pz {
 	position:fixed;
 	pointer-events: none;

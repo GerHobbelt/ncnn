@@ -238,30 +238,59 @@ function thumbstr(src)
 	{return 'https://pbs.twimg.com/ext_tw_video_thumb/'+src;}
 }
 
+var PozMode=0x100;
 const pozimg='<img src="poz.gif" />';
 const pozinput='<input type="number" value=0 onkeyup=fpt(event,this)>';
+const pozinputN='<input type="number" value="5" onfocus=disabsk() ondblclick=repg(this)>';
 
 var speg=[	'====','=','=======','===','======',
 	'==','===','=====','=====','===='];
 
-const kx1='<a href="https://twitter.com/';
+const kx1='<br><a href="https://twitter.com/';
 const kx2b1='" >==========<br>==>';
 const kx2b2='<==</a><br><a href="';
 const kx2a1='" >===';
 const kx2a2='</a><a onmouseover=xt(this)>i';
 const kx3='</a><br><a href="';
 const kx4='" ><img src="';
-const kx5a=':thumb" width=211 /></a>.<br>';
-const kx5b='" /></a><br>';
-const kx5bl='" width=75% /></a><br>';
+const kx5a=':thumb" width=211 /></a>.';
+const kx5b='" /></a>';
+const kx5bl='" width=75% /></a>';
+
+
+function SetPozMode()
+{
+	switch(PozMode)
+	{
+		case 1:
+		pozcurpic.innerHTML=pozimg;
+		pozcurpic.className='pz';
+		pozcurpic.style.bottom=null;
+		return;
+		case 100:
+		pozcurpic.innerHTML=pozinput;
+		pozcurpic.className='nvmid';
+		pozcurpic.style.bottom=null;
+		pozcurpic.style.left=5;
+		return;
+		default:
+		pozcurpic.innerHTML=pozinputN;
+		pozcurpic.className='nv';
+		pozcurpic.style.top=null;
+		pozcurpic.style.left=0;
+		pozcurpic.style.bottom=10;
+		PozMode=0;
+		return;
+	}
+}
 
 function mydav(sta, endo,ag)
 {
 	yina = document.createElement('div');
-	yina.style['float'] = 'right';
+	yina.className = 'fl';
 
 	
-	var kole7=curEro+"<br>";
+	var kole7=curEro;
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+=kx1+msgs[iszrda]+
@@ -476,7 +505,7 @@ var kuriakey=function(ev){
 	{
 		canfire=false;
 		
-		setPozCur(ev.clientX,ev.clientY);
+		if(PozMode==1){setPozCur(ev.clientX,ev.clientY);}
 
 		if(mouseRDM){
 		RDMcurEro();
@@ -547,10 +576,10 @@ function partpg()
 function mydavRDM()
 {
 	yina = document.createElement('div');
-	yina.style['float'] = 'right';
+	yina.className = 'fl';
 
 	
-	var kole7=iRDMarr+"@<br>";;
+	var kole7='**'+iRDMarr;;
 	for(var j=0;j<10;j++){
 var iszrda=RDMarr[iRDMarr+j]*10+j;
 kole7+=kx1+msgs[iszrda]+
@@ -611,14 +640,18 @@ document.onkeydown=function(e) {
 ekeyCode=e.keyCode;
 
 switch (ekeyCode) {
-	case 27:
-	case 101:
-		PozCurKlicK();
-		return;
+	
 	case 109:
 		curEro-=4;
 		partpg();
 	return;
+
+	case 27:
+	case 101:
+		if(PozMode==1||PozMode==100){
+		PozCurKlicK();
+		return;}
+		break;
 
 	case 107:
 		partpg();
@@ -642,15 +675,14 @@ switch (ekeyCode) {
 		
 	return;
 
-
-
 	case 81:
 		uv=tblarea.id.split('.');
 		if(uv.length>1) { curEro=parseInt(uv[1],10);}
 		else {curEro=0;}
 		
-		pozcurpic.innerHTML=pozimg;
-		pozcurpic.className='pz';
+		PozMode=0;
+		SetPozMode();
+		
 
 		iRDMarr=0;
 		tblarea.innerHTML='';
@@ -679,7 +711,10 @@ switch (ekeyCode) {
 		setTimeout(function() {document.execCommand('copy');recarea.focus();}, 500);
 		
 	return;
-
+	case 80:
+		PozMode++;
+		SetPozMode();
+	return;
 	case 81:
 		if(iRDMarr!=0xF00000){iRDMarr=erocount+100;}
 		
@@ -687,9 +722,8 @@ switch (ekeyCode) {
 		fullpg();
 		keyerocount=-100;
 		pozcur[0]=window.outerWidth>>1;
-		pozcurpic.innerHTML=pozinput;
-		pozcurpic.className='nvmid';
-		pozcurpic.style.left=5;
+		PozMode=100;
+		SetPozMode();
 		document.onmousemove=kuriakeysimp;
 		window.oncontextmenu=fullpgmenu;
 		//window.onmousewheel = document.onmousewheel =fastrscroll;
