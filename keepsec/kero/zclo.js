@@ -238,7 +238,7 @@ function thumbstr(src)
 	{return 'https://pbs.twimg.com/ext_tw_video_thumb/'+src;}
 }
 
-var PozMode=0x100;
+var PozMode=0x5;
 const pozimg='<img src="poz.gif" />';
 const pozinput='<input type="number" value=0 onkeyup=fpt(event,this)>';
 const pozinputN='<input type="number" value="5" onfocus=disabsk() ondblclick=repg(this)>';
@@ -257,30 +257,40 @@ const kx5a=':thumb" width=211 /></a>.';
 const kx5b='" /></a>';
 const kx5bl='" width=75% /></a>';
 
+function SetPozMode00()
+{
+	switch(PozMode)
+	{
+		case 0:
+		pozcurpic.innerHTML=pozinputN;
+		pozcurpic.className='nv';
+		pozcurpic.style.top=null;
+		pozcurpic.style.left=0;
+		pozcurpic.style.bottom=10;
+		return;
+		//case 0x100:
+		//return;
+	}
+}
 
 function SetPozMode()
 {
 	switch(PozMode)
 	{
-		case 1:
+		case 0x1:
 		pozcurpic.innerHTML=pozimg;
 		pozcurpic.className='pz';
 		pozcurpic.style.bottom=null;
 		return;
-		case 100:
+		case 0x101:
 		pozcurpic.innerHTML=pozinput;
 		pozcurpic.className='nvmid';
 		pozcurpic.style.bottom=null;
 		pozcurpic.style.left=5;
 		return;
 		default:
-		pozcurpic.innerHTML=pozinputN;
-		pozcurpic.className='nv';
-		pozcurpic.style.top=null;
-		pozcurpic.style.left=0;
-		pozcurpic.style.bottom=10;
-		PozMode=0;
-		return;
+		PozMode=(PozMode&0xffffff00);
+		return SetPozMode00();
 	}
 }
 
@@ -648,7 +658,7 @@ switch (ekeyCode) {
 
 	case 27:
 	case 101:
-		if(PozMode==1||PozMode==100){
+		if((PozMode&0xff)==1){
 		PozCurKlicK();
 		return;}
 		break;
@@ -680,7 +690,7 @@ switch (ekeyCode) {
 		if(uv.length>1) { curEro=parseInt(uv[1],10);}
 		else {curEro=0;}
 		
-		PozMode=0;
+		PozMode=0x0;
 		SetPozMode();
 		
 
@@ -722,7 +732,7 @@ switch (ekeyCode) {
 		fullpg();
 		keyerocount=-100;
 		pozcur[0]=window.outerWidth>>1;
-		PozMode=100;
+		PozMode=0x101;
 		SetPozMode();
 		document.onmousemove=kuriakeysimp;
 		window.oncontextmenu=fullpgmenu;
