@@ -156,7 +156,7 @@ function printsele()
 	for(var i=0;i<lynzl;i++)
 	{
 		var c0=lynz[i].charAt(0);
-		if(c0=='^')
+		if(c0==':')
 		{
 			var yr=parseInt(lynz[i],10);
 			zsrcrec+=thumb[i]+'\t'+vids[i]+'\t'+msgs[i]+'\t'+lynz[i]+'\n';
@@ -241,13 +241,15 @@ function thumbstr(src)
 const pozimg='<img src="poz.gif" />';
 const pozinput='<input type="number" value=0 onkeyup=fpt(event,this)>';
 
-var speg=['　　','　','　　　　　','　　　','　　　　','　　','　','　　　　　','　　　','　　　　'];
+var speg=[	'====','=','=======','===','======',
+	'==','===','=====','=====','===='];
 
 const kx1='<a href="https://twitter.com/';
-const kx2b='" >====<br>====</a><br><a href="';
-const kx2a1='" >⛪　　　　';
-const kx2a2='</a><a title=i';
-const kx3=' onmouseover=xt(this) onclick=xtp() >✨</a><br><a href="';
+const kx2b1='" >==========<br>==>';
+const kx2b2='<==</a><br><a href="';
+const kx2a1='" >===';
+const kx2a2='</a><a onmouseover=xt(this)>i';
+const kx3='</a><br><a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width=211 /></a>.<br>';
 const kx5b='" /></a><br>';
@@ -300,7 +302,7 @@ function xtp()
 		timgarea.style.maxHeight = '800%';
 	}
 
-	recarea.value+='\n^'+nymu;
+	recarea.value+='\n:'+nymu;
 	document.body.scrollLeft+=2000;
 	setTimeout(skrback, 1000);
 	//recarea.value+='\nhttps://twitter.com/'+msgs[nymu];
@@ -312,11 +314,10 @@ function xt(ele)
 {
 
 
-var c0=ele.title.charAt(0);
+var c0=ele.innerText.charAt(0);
 
-//if(c0=='z'){return;}
 
-var iszrda = parseInt(ele.title.substring(1));
+var iszrda = parseInt(ele.innerText.substring(1));
 
 
 	if(nymu!=iszrda)
@@ -337,12 +338,12 @@ var iszrda = parseInt(ele.title.substring(1));
 					ymgg.alt=msgs[iszrda];
 					ymgg.src=syyr;
 					ymgg.height=ymgg.width;
-					ele.title='r'+iszrda;
+					ele.innerText='r'+iszrda;
 					
 				}
 				else
 				{
-					ele.title='g'+iszrda;
+					ele.innerText='g'+iszrda;
 					
 				}
 				nymu=-10;
@@ -356,16 +357,15 @@ var iszrda = parseInt(ele.title.substring(1));
 					var niki=msgs[iszrda].split('/')[0];
 					
 					
-					if(niki=='i'){niki=' >⛔</a>';}
-					else{
-						ymgg.alt+='\n^'+niki+'\n';
-						niki=' href="https://twitter.com/'+niki+'/with_replies">⛔</a>'};
-					ele.outerHTML='<a title=z'+iszrda+niki;
+					if(niki=='i'){niki=' ';}
+					else{ymgg.alt+='\n:'+niki+'\n';
+					niki=' href="https://twitter.com/'+niki+'/with_replies"'};
+					ele.outerHTML='<a'+niki+'>⛔'+iszrda+'</a>';
 				}
 				else
 				{
 					ymgg.alt='';
-					ele.title='g'+iszrda;
+					ele.innerText='g'+iszrda;
 					timgarea.src=syyr;
 				}
 				
@@ -466,6 +466,9 @@ function PozCurKlicK()
 
 var mouseRDM=false;
 
+
+
+
 var kuriakey=function(ev){
 	if(canfire)
 	{
@@ -529,7 +532,7 @@ function partpg()
 	for(var j=0;j<20;j++){
 		var iszrda=curEro*10+j;
 		kole7+=kx1+msgs[iszrda]+
-		kx2b+vidstr(vids[iszrda])+
+		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
 		kx5b;
 	}
@@ -570,7 +573,7 @@ function fullpg()
 	for(var j=0;j<20;j++){
 		iszrda=RDMarr[iRDMarr+j]*10+j;
 		kole7+=kx1+msgs[iszrda]+
-		kx2b+vidstr(vids[iszrda])+
+		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
 		kx5b;
 	}
