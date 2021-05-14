@@ -324,11 +324,11 @@ var iszrda = parseInt(ele.innerText.substring(1));
 	{
 		nymu=iszrda;
 		ovrcount=0;
-		var syyr=thumbstr(thumb[iszrda]);
+		
 		switch(c0)
 		{
 			case 'g':
-				timgarea.src=syyr;
+				timgarea.src=thumbstr(thumb[iszrda]);
 			return;
 			case 'i':
 			{
@@ -336,7 +336,7 @@ var iszrda = parseInt(ele.innerText.substring(1));
 				if(ymgg.naturalWidth==0)
 				{
 					ymgg.alt=msgs[iszrda];
-					ymgg.src=syyr;
+					ymgg.src=thumbstr(thumb[iszrda]);
 					ymgg.height=ymgg.width;
 					ele.innerText='r'+iszrda;
 					
@@ -361,13 +361,15 @@ var iszrda = parseInt(ele.innerText.substring(1));
 					else{ymgg.alt+='\n:'+niki+'\n';
 					niki=' href="https://twitter.com/'+niki+'/with_replies"'};
 					ele.outerHTML='<a'+niki+'>⛔'+iszrda+'</a>';
+					nymu=-10;
 				}
 				else
 				{
 					ymgg.alt='';
 					ele.innerText='g'+iszrda;
-					timgarea.src=syyr;
+					timgarea.src=ymgg.src;
 				}
+				
 				
 			}
 			return;
