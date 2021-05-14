@@ -360,7 +360,7 @@ var iszrda = parseInt(ele.innerText.substring(1));
 					if(niki=='i'){niki=' ';}
 					else{ymgg.alt+='\n:'+niki+'\n';
 					niki=' href="https://twitter.com/'+niki+'/with_replies"'};
-					ele.outerHTML='<a'+niki+'>⛔'+iszrda+'</a>';
+					ele.outerHTML='<a'+niki+'>...X'+iszrda+'</a>';
 					nymu=-10;
 				}
 				else
