@@ -10,7 +10,8 @@ body {
 }
 
 center {
-	background-color: #400010;
+	background-color: #401;
+	box-shadow: inset 0 0 400px 100px #000;
 }
 .fl {
 float:right;

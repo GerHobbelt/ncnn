@@ -209,7 +209,7 @@ function repg(ele)
 
 	
 		curEro=evv;
-		hardlim=curEro+501;
+		chaglims();
 		tblarea.innerHTML="";
 		
 		
@@ -239,7 +239,7 @@ function thumbstr(src)
 
 var PozMode=0x5;
 const pozimg='<img src="poz.gif" />';
-const pozinput='<input type="number" value=0 onkeyup=fpt(event,this)>';
+const pozinput='<input type="number" value=0 onfocus=disabsk() onkeyup=fpt(event,this)>';
 const pozinputN='<input type="number" value="5" onfocus=disabsk() ondblclick=repg(this)>';
 
 
@@ -549,7 +549,7 @@ function fpt(e,ele)
 {
 if(e.keyCode==13)
 {
-var evv=ele.value;
+var evv=ele.value<<0;
 	if(evv<0){iRDMarr+=evv;}
 	else
 	{
@@ -560,6 +560,7 @@ var evv=ele.value;
 
 ele.blur();
 fullpg();
+keyerocount=-100;
 }
 }
 function partpg()
@@ -645,34 +646,14 @@ document.onkeydown=function(e) {
 
 ekeyCode=e.keyCode;
 
-switch (ekeyCode) {
-	
-	case 109:
-		curEro-=4;
-		partpg();
-	return;
 
-	case 27:
-	case 101:
-		if((PozMode&0xff)==1){
-		PozCurKlicK();
-		return;}
-		break;
 
-	case 107:
-		partpg();
-		document.body.scrollTop+=1000;
-	return;
-
-	case 104:
-		document.body.scrollTop-=600;
-	break;
-}
-
-if(keyerocount<0){
+if(keyerocount==0){return;}
+else if(keyerocount<0){
 switch (ekeyCode) {
 	case 27:
 	case 90:
+	case 99:
 	case 102:
 	case 105:
 	case 106:
@@ -682,9 +663,7 @@ switch (ekeyCode) {
 	return;
 
 	case 81:
-		uv=tblarea.id.split('.');
-		if(uv.length>1) { curEro=parseInt(uv[1],10);}
-		else {curEro=0;}
+		
 		
 		PozMode=0x0;
 		SetPozMode00();
@@ -705,14 +684,12 @@ switch (ekeyCode) {
 	return;
 
 }
-return;
-}
 
-
+} else  {
 switch (ekeyCode) {
 	case 65:
 		mouseRDM=false;
-		keyerocount=0;
+		keyerocount=1;
 		hardlim=0;
 		setTimeout(function() {document.execCommand('copy');recarea.focus();}, 500);
 		
@@ -737,6 +714,10 @@ switch (ekeyCode) {
 		document.body.background='';
 		timgarea.src='';
 		timgarea.style.maxHeight = '20%';
+
+		uv=tblarea.id.split('.');
+		if(uv.length>1) { curEro=parseInt(uv[1],10);}
+		else {curEro=0;}
 
 		
 	return;
@@ -773,9 +754,36 @@ switch (ekeyCode) {
 }
 
 	if(curEro<keyerocount){symfire();}
-	//rmvimg();
+}
+
+switch (ekeyCode) {
+	
+	case 109:
+		curEro-=4;
+		partpg();
+	return;
+
+	case 27:
+	case 101:
+		if((PozMode&0xff)==1){
+		PozCurKlicK();
+		return;}
+		break;
+
+	case 107:
+		partpg();
+		document.body.scrollTop+=1000;
+	return;
+
+	case 104:
+		document.body.scrollTop-=600;
+	break;
+}
 
 }
+
+
+
 }
 
 function mkscript(sksrc)
