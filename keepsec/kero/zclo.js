@@ -147,6 +147,10 @@ function findimgerr()
 	return zsrcrec;
 
 }
+function prtcsvll(i)
+{
+	return thumb[i]+'\t'+vids[i]+'\t'+msgs[i]+'\n';
+}
 
 function printsele()
 {
@@ -158,8 +162,8 @@ function printsele()
 		var c0=lynz[i].charAt(0);
 		if(c0==':')
 		{
-			var yr=parseInt(lynz[i],10);
-			zsrcrec+=thumb[i]+'\t'+vids[i]+'\t'+msgs[i]+'\t'+lynz[i]+'\n';
+			var yr=parseInt(lynz[i].substring(1),10);
+			zsrcrec+=prtcsvll(yr);
 
 		}
 		
@@ -214,28 +218,23 @@ function repg(ele)
 
 }
 
+const vtwsig=	['',				'@',				'!',			'+'];
+const vtwimg=['https://pbs.twimg.com/ext_tw_video_thumb/',	'https://pbs.twimg.com/amplify_video_thumb/',	'https://pbs.twimg.com/tweet_video_thumb/','https://pbs.twimg.com/media/'];
+const vtwvid=['https://video.twimg.com/ext_tw_video/',		'https://video.twimg.com/amplify_video/',		'https://video.twimg.com/tweet_video/'];
+
+
 function vidstr(src)
 {
 	var c0=src.charAt(0);
-	if(c0=='@')
-	{return 'https://video.twimg.com/amplify_video/'+src.substring(1);}
-	else if(c0=='!')
-	{return 'https://video.twimg.com/tweet_video/'+src.substring(1);}
-	else
-	{return 'https://video.twimg.com/ext_tw_video/'+src;}
+	for(i=1;i<3;i++){if(c0==vtwsig[i]){return vtwvid[i]+src.substring(1);}}
+	return vtwvid[0]+src;
 }
 
 function thumbstr(src)
 {
 	var c0=src.charAt(0);
-	if(c0=='@')
-	{return 'https://pbs.twimg.com/amplify_video_thumb/'+src.substring(1);}
-	else if(c0=='!')
-	{return 'https://pbs.twimg.com/tweet_video_thumb/'+src.substring(1);}
-	else if(c0=='h')
-	{return src;}
-	else
-	{return 'https://pbs.twimg.com/ext_tw_video_thumb/'+src;}
+	for(i=1;i<4;i++){if(c0==vtwsig[i]){return vtwimg[i]+src.substring(1);}}
+	return vtwimg[0]+src;
 }
 
 var PozMode=0x5;
@@ -243,14 +242,11 @@ const pozimg='<img src="poz.gif" />';
 const pozinput='<input type="number" value=0 onkeyup=fpt(event,this)>';
 const pozinputN='<input type="number" value="5" onfocus=disabsk() ondblclick=repg(this)>';
 
-var speg=[	'====','=','=======','===','======',
-	'==','===','=====','=====','===='];
 
 const kx1='<br><a href="https://twitter.com/';
 const kx2b1='" >==========<br>==>';
 const kx2b2='<==</a><br><a href="';
-const kx2a1='" >===';
-const kx2a2='</a><a onmouseover=xt(this)>i';
+const kx2a='" >====</a><a onmouseover=xt(this)>i';
 const kx3='</a><br><a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width=211 /></a>.';
@@ -300,11 +296,11 @@ function mydav(sta, endo,ag)
 	yina.className = 'fl';
 
 	
-	var kole7=curEro;
+	var kole7='=';
 	for(var j=sta;j<endo;j++){
 var iszrda=curEro*10+j;
 kole7+=kx1+msgs[iszrda]+
-kx2a1+speg[j]+kx2a2+iszrda+
+kx2a+iszrda+
 kx3+vidstr(vids[iszrda])+
 kx4+thumbstr(thumb[iszrda])+
 kx5a;
@@ -397,7 +393,7 @@ var iszrda = parseInt(ele.innerText.substring(1));
 					
 					
 					if(niki=='i'){niki=' ';}
-					else{ymgg.alt+='\n:'+niki+'\n';
+					else{ymgg.alt='\n:'+niki+'\n';
 					niki=' href="https://twitter.com/'+niki+'/with_replies"'};
 					ele.outerHTML='<a'+niki+'>...X'+iszrda+'</a>';
 					nymu=-10;
@@ -593,7 +589,7 @@ function mydavRDM()
 	for(var j=0;j<10;j++){
 var iszrda=RDMarr[iRDMarr+j]*10+j;
 kole7+=kx1+msgs[iszrda]+
-kx2a1+speg[j]+kx2a2+iszrda+
+kx2a+iszrda+
 kx3+vidstr(vids[iszrda])+
 kx4+thumbstr(thumb[iszrda])+
 kx5a;
@@ -691,7 +687,7 @@ switch (ekeyCode) {
 		else {curEro=0;}
 		
 		PozMode=0x0;
-		SetPozMode();
+		SetPozMode00();
 		
 
 		iRDMarr=0;
@@ -740,7 +736,7 @@ switch (ekeyCode) {
 		
 		document.body.background='';
 		timgarea.src='';
-		timgarea.style.maxHeight = '1%';
+		timgarea.style.maxHeight = '20%';
 
 		
 	return;
