@@ -105,10 +105,8 @@ arr[nx]=yz;
 return flazt20(arr,num);}
 
 function chaglims()
-{
-keyerocount=curEro+50;
-hardlim=curEro+501;
-}
+{keyerocount=curEro+50;
+hardlim=curEro+501;}
 
 function RDMcurEro()
 {
@@ -240,7 +238,7 @@ function thumbstr(src)
 var PozMode=0x5;
 const pozimg='<img src="poz.gif" />';
 const pozinput='<input type="number" value=0 onfocus=disabsk() onkeyup=fpt(event,this)>';
-const pozinputN='<input type="number" value="5" onfocus=disabsk() ondblclick=repg(this)>';
+const pozinputN='<input type="number" value=-5 onfocus=disabsk() ondblclick=repg(this)>';
 
 
 const kx1='<br><a href="https://twitter.com/';
@@ -504,7 +502,19 @@ function PozCurKlicK()
 var mouseRDM=false;
 
 
+function symfireCon(t)
+{
+if(mouseRDM){
+RDMcurEro();
+setTimeout(mydavRDM, t);
+return;
+}
+else if(curEro>=hardlim){return;}
 
+
+setTimeout(symfire, t);
+
+}
 
 var kuriakey=function(ev){
 	if(canfire)
@@ -512,16 +522,12 @@ var kuriakey=function(ev){
 		canfire=false;
 		
 		if(PozMode==1){setPozCur(ev.clientX,ev.clientY);}
-
-		if(mouseRDM){
-		RDMcurEro();
-		setTimeout(mydavRDM, 1200);
-		return;
-		}
-		else if(curEro>=hardlim){return;}
 		
+		symfireCon(1200);
+
+		
+
 		keyerocount=curEro+50;
-		setTimeout(symfire, 1200);
 		
 		
 		
@@ -650,6 +656,8 @@ ekeyCode=e.keyCode;
 
 if(keyerocount==0){return;}
 else if(keyerocount<0){
+klyi++;
+
 switch (ekeyCode) {
 	case 27:
 	case 90:
@@ -681,9 +689,16 @@ switch (ekeyCode) {
 
 	case 98:
 		document.body.scrollTop+=600;
+		
+		if(klyi>0x10)
+		{klyi=0;
+		partpg();}
+		
+		
 	return;
 
 }
+
 
 } else  {
 switch (ekeyCode) {
@@ -713,7 +728,7 @@ switch (ekeyCode) {
 		
 		document.body.background='';
 		timgarea.src='';
-		timgarea.style.maxHeight = '20%';
+		timgarea.style.maxHeight = '1%';
 
 		uv=tblarea.id.split('.');
 		if(uv.length>1) { curEro=parseInt(uv[1],10);}
@@ -753,7 +768,8 @@ switch (ekeyCode) {
 	break;
 }
 
-	if(curEro<keyerocount){symfire();}
+	if(canfire){canfire=false;
+	symfireCon(500);}
 }
 
 switch (ekeyCode) {
