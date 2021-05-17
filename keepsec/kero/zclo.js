@@ -16,12 +16,12 @@ var iRDMarr=0xF00000;
 
 function flazt20(arr,num)
 {
-for(i=0;i<20;i++) {arr[num+i]=arr[i];}
+for(i=0;i<16;i++) {arr[num+i]=arr[i];}
 return arr;
 }
 
 function ShuffleArray(arr)
-{ll=arr.length-20;
+{ll=arr.length-16;
 
 zsta=ll>>1;
 for(i=0;i<zsta;i++)
@@ -59,7 +59,7 @@ function chkdst(arr,y)
 
 
 function mkRDMarr(num)
-{arr=new Array(num+20);
+{arr=new Array(num+16);
 zsta=(num>>1);
 for(i=0;i<zsta;i++)
 {
@@ -201,9 +201,9 @@ function repg(ele)
 
 	
 	recarea.value+='\n\n'+erocount.toString(10);
-	var evv=curEro+(ele.value*10);
+	var evv=curEro+(ele.value)<<0;
 	if(evv<0){evv=0;}
-	if(evv>erocount){evv=erocount-10;}
+	else if(evv>erocount){evv=erocount-8;}
 
 	
 		curEro=evv;
@@ -237,8 +237,8 @@ function thumbstr(src)
 
 var PozMode=0x5;
 const pozimg='<img src="poz.gif" />';
-const pozinput='<input type="number" value=0 onfocus=disabsk() onkeyup=fpt(event,this)>';
-const pozinputN='<input type="number" value=-5 onfocus=disabsk() ondblclick=repg(this)>';
+const pozinput='<input type="number" value=0 onfocus=disabsk() ondblclick=fpt(this)>';
+const pozinputN='<input type="number" value=50 onfocus=disabsk() ondblclick=repg(this)>';
 
 
 const kx1='<br><a href="https://twitter.com/';
@@ -288,15 +288,15 @@ function SetPozMode()
 	}
 }
 
-function mydav(sta, endo,ag)
+function mydav()
 {
 	yina = document.createElement('div');
 	yina.className = 'fl';
 
-	
 	var kole7='=';
-	for(var j=sta;j<endo;j++){
-var iszrda=curEro*10+j;
+	zko=(curEro<<3);
+	endo=zko+8;
+	for(var iszrda=zko;iszrda<endo;iszrda++){
 kole7+=kx1+msgs[iszrda]+
 kx2a+iszrda+
 kx3+vidstr(vids[iszrda])+
@@ -450,7 +450,7 @@ if(nymu>=0){
 
 function apyed()
 {
-	mydav(0,10,0);
+	mydav();
 	
 	//mydav(0,4,0);
 	//mydav(4,6,1);
@@ -551,30 +551,32 @@ var kuriakeysimp=function(ev){
 
 
 
-function fpt(e,ele)
+function fpt(ele)
 {
-if(e.keyCode==13)
-{
+//if(e.keyCode==13){
+ele.blur();
 var evv=ele.value<<0;
 	if(evv<0){iRDMarr+=evv;}
 	else
 	{
-		if(evv>erocount){evv=erocount-10;}
+		if(evv>erocount){evv=erocount-8;}
 		iRDMarr=evv;
 	}
 
 
-ele.blur();
+
 fullpg();
 keyerocount=-100;
-}
+//}
 }
 function partpg()
 {
 	yina = document.createElement('center');
 	var kole7='<h1>++'+curEro+'++</h1>';
-	for(var j=0;j<20;j++){
-		var iszrda=curEro*10+j;
+	zko=(curEro<<3);
+	endo=zko+16;
+	
+	for(var iszrda=zko;iszrda<endo;iszrda++){
 		kole7+=kx1+msgs[iszrda]+
 		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
@@ -593,8 +595,10 @@ function mydavRDM()
 
 	
 	var kole7='**'+iRDMarr;;
-	for(var j=0;j<10;j++){
-var iszrda=RDMarr[iRDMarr+j]*10+j;
+	xma=(iRDMarr&7);
+	iRDMarrendo=iRDMarr+8;
+	for(var j=iRDMarr;j<iRDMarrendo;j++){
+var iszrda=(RDMarr[j]<<3)+xma;
 kole7+=kx1+msgs[iszrda]+
 kx2a+iszrda+
 kx3+vidstr(vids[iszrda])+
@@ -611,11 +615,11 @@ kx5a;
 
 function fullpg()
 {
-	var kole7='<center><h1>'+iRDMarr+'</h1>';
+	var kole7='<center><h1>**'+iRDMarr+'**</h1>';
 
 	
-	for(var j=0;j<20;j++){
-		iszrda=RDMarr[iRDMarr+j]*10+j;
+	for(var j=0;j<16;j++){
+		iszrda=(RDMarr[iRDMarr+j]<<3)+j;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
@@ -638,9 +642,9 @@ return false;
 function installclo(){
 
 
-erocount=(thumb.length/10)<<0;
+erocount=thumb.length>>3;
 
-if(curEro>erocount){curEro=erocount-10;}
+if(curEro>erocount){curEro=erocount-8;}
 
 chaglims();
 
@@ -756,6 +760,12 @@ switch (ekeyCode) {
 		document.body.scrollTop+=10;
 	break;
 	case 111:
+		if(mouseRDM)
+		{
+			mouseRDM=false;
+			break;
+		}
+		tblarea.innerHTML='';
 		mouseRDM=true;
 		RDMcurEro();
 		mydavRDM();
