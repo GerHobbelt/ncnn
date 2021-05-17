@@ -1,4 +1,10 @@
 
+var PozMode=0x5;
+const pozimg='<img src="poz.gif" />';
+const pozinput='<input type="number" value=0 onfocus=disabsk() ondblclick=fpt(this)>';
+const pozinputN='<input type="number" value=50 onfocus=disabsk() ondblclick=repg(this)>';
+
+
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
@@ -16,12 +22,12 @@ var iRDMarr=0xF00000;
 
 function flazt20(arr,num)
 {
-for(i=0;i<16;i++) {arr[num+i]=arr[i];}
+for(i=0;i<8;i++) {arr[num+i]=arr[i];}
 return arr;
 }
 
 function ShuffleArray(arr)
-{ll=arr.length-16;
+{ll=arr.length-8;
 
 zsta=ll>>1;
 for(i=0;i<zsta;i++)
@@ -59,7 +65,7 @@ function chkdst(arr,y)
 
 
 function mkRDMarr(num)
-{arr=new Array(num+16);
+{arr=new Array(num+8);
 zsta=(num>>1);
 for(i=0;i<zsta;i++)
 {
@@ -235,10 +241,6 @@ function thumbstr(src)
 	return vtwimg[0]+src;
 }
 
-var PozMode=0x5;
-const pozimg='<img src="poz.gif" />';
-const pozinput='<input type="number" value=0 onfocus=disabsk() ondblclick=fpt(this)>';
-const pozinputN='<input type="number" value=50 onfocus=disabsk() ondblclick=repg(this)>';
 
 
 const kx1='<br><a href="https://twitter.com/';
@@ -594,7 +596,7 @@ function mydavRDM()
 	yina.className = 'fl';
 
 	
-	var kole7='**'+iRDMarr;;
+	var kole7=iRDMarr.toString(16);
 	xma=(iRDMarr&7);
 	iRDMarrendo=iRDMarr+8;
 	for(var j=iRDMarr;j<iRDMarrendo;j++){
@@ -617,9 +619,17 @@ function fullpg()
 {
 	var kole7='<center><h1>**'+iRDMarr+'**</h1>';
 
-	
-	for(var j=0;j<16;j++){
-		iszrda=(RDMarr[iRDMarr+j]<<3)+j;
+
+	xma=(iRDMarr&7);
+	iRDMarrendo=iRDMarr+8;
+	for(var j=iRDMarr;j<iRDMarrendo;j++){
+		iszrda=(RDMarr[j]<<3)+xma;
+		kole7+=kx1+msgs[iszrda]+
+		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
+		kx4+thumbstr(thumb[iszrda])+
+		kx5b;
+
+		iszrda=(RDMarr[erocount-j]<<3)+xma;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
