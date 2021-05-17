@@ -557,8 +557,18 @@ function fpt(ele)
 {
 //if(e.keyCode==13){
 ele.blur();
+keyerocount=-100;
 var evv=ele.value<<0;
-	if(evv<0){iRDMarr+=evv;}
+	if(evv<0){
+		iRDMarr+=evv;
+		if(iRDMarr<=0)
+		{
+			iRDMarr=0;
+			//fullpg();
+			//return;
+		}
+		
+	}
 	else
 	{
 		if(evv>erocount){evv=erocount-8;}
@@ -568,7 +578,7 @@ var evv=ele.value<<0;
 
 
 fullpg();
-keyerocount=-100;
+
 //}
 }
 function partpg()
@@ -598,8 +608,8 @@ function mydavRDM()
 	
 	var kole7=iRDMarr.toString(16);
 	xma=(iRDMarr&7);
-	iRDMarrendo=iRDMarr+8;
-	for(var j=iRDMarr;j<iRDMarrendo;j++){
+	endo=iRDMarr+8;
+	for(var j=iRDMarr;j<endo;j++){
 var iszrda=(RDMarr[j]<<3)+xma;
 kole7+=kx1+msgs[iszrda]+
 kx2a+iszrda+
@@ -615,20 +625,22 @@ kx5a;
 }
 
 
+
 function fullpg()
 {
 	var kole7='<center><h1>**'+iRDMarr+'**</h1>';
 
 
 	xma=(iRDMarr&7);
-	iRDMarrendo=iRDMarr+8;
-	for(var j=iRDMarr;j<iRDMarrendo;j++){
+	zko=iRDMarr-xma;
+	endo=zko+8;
+	for(j=zko;j<endo;){
 		iszrda=(RDMarr[j]<<3)+xma;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
 		kx5b;
-
+		j++;
 		iszrda=(RDMarr[erocount-j]<<3)+xma;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
