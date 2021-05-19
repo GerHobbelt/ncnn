@@ -181,7 +181,8 @@ function printsele()
 
 function disabsk()
 {
-	keyerocount=0;
+	if(keyerocount<0){keyerocount=-200;}
+	else{keyerocount=0;}
 }
 
 
@@ -205,9 +206,16 @@ function repg(ele)
 	timgarea.src='';
 	timgarea.style.maxHeight = '1%';
 
-	
+	if(keyerocount<0)
+	{
+		curEro=parseInt(ele.value,10);
+		setTimeout(fullpgALL, 0);
+		return;
+	}
+
+
 	recarea.value+='\n\n'+erocount.toString(10);
-	var evv=curEro+parseInt(ele.value,10);
+	evv=curEro+parseInt(ele.value,10);
 	if(evv<0){evv=0;}
 	else if(evv>erocount){evv=erocount-8;}
 
@@ -654,24 +662,27 @@ document.body.scrollTop+=100;
 }
 const mgx1='<img src="poz.gif" alt=';
 const mgx3=' onmouseover=hv(this) onclick=kv(this) />';
+const cxh1a='</center><h1>******';
+const cxh1b='***</h1><center>';
 
 function fullpgALLcur()
 {
-var kole7='<center>';
+
 
 dvvsta=(curEro>>3);
 dvvendo=dvvsta+8;
+var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>*<br>512+64*'+dvvendo+'<br>*<br>*<br>*<br>*<br>*</h1>';
 
 for(jj=dvvsta;jj<dvvendo;jj++)
 {
 	
 	zko=jj<<3;
 	endo=zko+8;
-	kole7+='<h1>***'+zko+'***</h1>';
+	kole7+=cxh1a+zko+cxh1b;
 	for(jjx=0;jjx<8;jjx++)
 	{
 		
-		kole7+='</center><h1>+'+jjx+'</h1><center>';
+		kole7+='<br>'+jjx;
 		
 		
 		for(j=zko;j<endo;j++){
@@ -692,21 +703,22 @@ curEro=(dvvendo+8)<<3;
 
 function fullpgALLrdm()
 {
-var kole7='<center>';
+
 
 dvvsta=(iRDMarr>>3);
 dvvendo=dvvsta+8;
+var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>*<br>128*'+dvvendo+'<br>*<br>*<br>*<br>*<br>*</h1>';
 
 for(jj=dvvsta;jj<dvvendo;jj++)
 {
 	
 	zko=jj<<3;
 	endo=zko+8;
-	kole7+='<h1>***'+zko+'***</h1>';
+	kole7+=cxh1a+zko+cxh1b;
 	for(jjx=0;jjx<8;jjx++)
 	{
 		
-		kole7+='</center><h1>+'+jjx+'</h1><center>';
+		kole7+='<br>'+jjx;
 		
 		
 		for(j=zko;j<endo;){
@@ -783,7 +795,7 @@ ekeyCode=e.keyCode;
 
 
 if(keyerocount==0){return;}
-else if(keyerocount<0){
+else if(keyerocount==-100){
 klyi++;
 
 switch (ekeyCode) {
@@ -798,7 +810,7 @@ switch (ekeyCode) {
 	return;
 
 	case 90:
-		if(PozMode!=0x2){
+		if(PozMode>0x100){
 			PozMode=0x2;
 			SetPozMode();
 			document.onmousemove=null;
@@ -840,7 +852,7 @@ switch (ekeyCode) {
 }
 
 
-} else  {
+} else if(keyerocount>0)  {
 switch (ekeyCode) {
 	case 65:
 		mouseRDM=false;
@@ -855,7 +867,7 @@ switch (ekeyCode) {
 	return;
 	case 90:
 		
-		if(PozMode!=0x2){PozMode=0x2; SetPozMode();}
+		if(PozMode!=0){PozMode=0x0; SetPozMode00();}
 		document.onmousemove=null;
 		window.oncontextmenu=null;
 		keyerocount=-100;
@@ -937,6 +949,14 @@ switch (ekeyCode) {
 		curEro-=4;
 		partpg();
 	return;
+
+	case 37:
+		document.body.scrollLeft-=100;
+	break;
+
+	case 39:
+		document.body.scrollLeft+=100;
+	break;
 
 	case 27:
 	case 101:
