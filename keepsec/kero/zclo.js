@@ -208,6 +208,7 @@ function repg(ele)
 
 	if(keyerocount<0)
 	{
+		keyerocount=-100;
 		curEro=parseInt(ele.value,10);
 		setTimeout(fullpgALL, 0);
 		return;
