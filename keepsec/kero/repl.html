@@ -6,8 +6,15 @@
 var klyk=-1;
 var lynks=null;
 
-function kypre(e) {
+function kypreDOWN(e) {
 klyk++;
+document.title=klyk;
+lynks[klyk].click();
+lynks[klyk].innerText='0';
+}
+
+function kypreUP(e) {
+klyk--;
 document.title=klyk;
 lynks[klyk].click();
 lynks[klyk].innerText='0';
@@ -79,22 +86,29 @@ yza=yina.value.split('\n');
 yzal=yza.length;
 sti="";
 
+k_up=false;
+
 if(yza[0].charAt(0)=='v')
 {
 	for(i=1;i<yzal;i++)
 	{
 	sti+=kx1+yza[i]+kx2;
 	}
+	document.onkeydown=kypreUP;
+	k_up=true;
 } else {
 	for(i=0;i<yzal;i++)
 	{
 	if(yza[i].charAt(0)==';'){sti+=kx1+yza[i].substring(1)+kx2;}
 	else{sti+=mkymg(yza[i]);}
 	}
+	document.onkeydown=kypreDOWN;
 }
 yina.outerHTML=sti;
 lynks=document.getElementsByTagName("a");
-document.onkeydown=kypre;
+
+if(k_up){klyk=lynks.length}
+
 }
 
 
