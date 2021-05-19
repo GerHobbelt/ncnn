@@ -649,7 +649,7 @@ function hv(ele)
 //ele.removeAttribute('width');
 ele.src=thumbstr(thumb[parseInt(ele.alt,10)]);
 ele.onmouseover=null;
-
+document.body.scrollTop+=100;
 
 }
 const mgx1='<img src="poz.gif" alt=';
