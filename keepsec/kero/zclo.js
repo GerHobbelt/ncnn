@@ -638,8 +638,7 @@ sig=parseInt(ele.alt,10);
 vidurl=vidstr(vids[sig]);
 thumburl=ele.src;
 
-ele.outerHTML='<br><a href="https://twitter.com/'+msgs[sig]+'">'+sig+'=====></a><a href="'+vidurl+'"><img src="'+thumburl+'" ></a><br>';
-
+ele.outerHTML=kx1+msgs[sig]+kx2b1+iszrda+kx2b2+vidurl+kx4+thumburl+kx5b;
 
 window.open(vidurl, null, null);
 
@@ -672,7 +671,7 @@ for(jj=dvvsta;jj<dvvendo;jj++)
 	for(jjx=0;jjx<8;jjx++)
 	{
 		
-		kole7+='<h1>*+'+jjx+'*</h1>';
+		kole7+='</center><h1>+'+jjx+'</h1><center>';
 		
 		
 		for(j=zko;j<endo;j++){
@@ -687,6 +686,7 @@ for(jj=dvvsta;jj<dvvendo;jj++)
 }
 
 tblarea.innerHTML=kole7+'</center>';
+document.body.scrollLeft=100;
 curEro=(dvvendo+8)<<3;
 }
 
@@ -706,7 +706,7 @@ for(jj=dvvsta;jj<dvvendo;jj++)
 	for(jjx=0;jjx<8;jjx++)
 	{
 		
-		kole7+='<h1>*+'+jjx+'*</h1>';
+		kole7+='</center><h1>+'+jjx+'</h1><center>';
 		
 		
 		for(j=zko;j<endo;){
@@ -721,6 +721,7 @@ for(jj=dvvsta;jj<dvvendo;jj++)
 }
 
 tblarea.innerHTML=kole7+'</center>';
+document.body.scrollLeft=100;
 iRDMarr=dvvendo<<3;
 }
 
@@ -750,6 +751,7 @@ function fullpg()
 	
 	
 	tblarea.innerHTML =kole7+'</center>';
+	document.body.scrollLeft=100;
 }
 
 function fastrscroll(ev) {return false;}
@@ -821,6 +823,7 @@ switch (ekeyCode) {
 		window.oncontextmenu=menuFunction;
 		document.onmousemove=kuriakey;
 		fullpgALL=fullpgALLcur;
+		document.body.scrollLeft=0;
 	return;
 
 
