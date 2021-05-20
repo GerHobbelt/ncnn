@@ -657,12 +657,13 @@ if(ele.tagName=='IMG'&&ele.src.endsWith('.jpg'))
 	var vidurl=vidstr(vids[sig]);
 	var thumburl=ele.src;
 	ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5t+msgs[sig]+'" >@'+iszrda+aTAGend;
-	return false;
+	
 	}
 	else
 	{
 	ele.width=200;
 	}
+	return false;
 	
 
 }
@@ -690,6 +691,7 @@ function hv2(ele)
 {
 ele.src=thumbstr(thumb[parseInt(ele.alt,10)]);
 ele.onmouseover=null;
+ele.onclick=kv;
 }
 
 function llimgThis(ele,nx,depth)
@@ -749,6 +751,7 @@ klyi+=0x200;
 setTimeout(function(){llimgThis(ele.previousSibling,false,0);}, klyi);
 
 ele.src=thumbstr(thumb[parseInt(ele.alt,10)]);
+ele.onclick=kv;
 ele.onmouseover=null;
 document.body.scrollTop+=100;
 
@@ -778,7 +781,7 @@ function asgn()
 	for(var i=1;i<1025;i++)
 	{
 		ymgs[i].onmouseover=hv;
-		ymgs[i].onclick=kv;
+		
 	}
 	document.body.scrollLeft=100;
 }
