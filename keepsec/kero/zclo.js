@@ -650,9 +650,6 @@ var thumburl=ele.src;
 window.open(vidurl, null, null);
 
 
-var px=document.getElementById(ele.parentNode.id+(sig&7));
-if(px){px.remove();}
-
 ele.outerHTML=kx1+msgs[sig]+kx2b1+iszrda+kx2b2+vidurl+kx4+thumburl+kx5b;
 
 
@@ -661,14 +658,47 @@ ele.outerHTML=kx1+msgs[sig]+kx2b1+iszrda+kx2b2+vidurl+kx4+thumburl+kx5b;
 
 const llgif='0bak/longbar.gif';
 
+function hv2(ele)
+{
+ele.src=thumbstr(thumb[parseInt(ele.alt,10)]);
+ele.onmouseover=null;
+}
+
 function llimgThis(ele,nx,depth)
 {
 	if(ele)
 	{
-		if(ele.tagName=='IMG'&&ele.src.endsWith('/poz.gif')) {ele.src=llgif;}
+		var tgg=ele.tagName;
+		var isIMG=(tgg=='IMG');
+		if(isIMG&&ele.src.endsWith('/poz.gif')) {ele.src=llgif;}
 		else if(depth<5)
 		{
 			depth++;
+			
+
+			if(isIMG)
+			{
+				if(ele.src.endsWith(llgif))
+				{
+				hv2(ele);
+				klyi-=0x200;
+				return;
+				}
+			}
+			else
+			{
+				if(tgg=='B')
+				{
+				var nux=null;
+				if(nx){nux=ele.nextSibling;}
+				else {nux=ele.previousSibling;}
+				ele.remove();
+				if(nx){llimgThis(nux,true,depth);}
+				else{llimgThis(nux,false,depth);}
+				return;
+				}
+			}
+			
 			if(nx){llimgThis(ele.nextSibling,true,depth);}
 			else{llimgThis(ele.previousSibling,false,depth);}
 			return;
@@ -683,8 +713,10 @@ function llimgThis(ele,nx,depth)
 function hv(ele)
 {
 //ele.removeAttribute('width');
-klyi+=0x400;
-setTimeout(function(){llimgThis(ele.nextSibling,true,0); llimgThis(ele.previousSibling,false,0);}, klyi);
+klyi+=0x200;
+setTimeout(function(){llimgThis(ele.nextSibling,true,0);}, klyi);
+klyi+=0x200;
+setTimeout(function(){llimgThis(ele.previousSibling,false,0);}, klyi);
 
 ele.src=thumbstr(thumb[parseInt(ele.alt,10)]);
 ele.onmouseover=null;
@@ -703,7 +735,7 @@ function sixbkmark(dvvsta)
 	var stiaa="";
 	for(var i=0;i<6;i++)
 	{
-		stiaa+='<br><a href="#'+sugg+'x" target=_self >**'+(sugg<<3)+'**<a>';
+		stiaa+='<br><a href="#'+sugg+'x" target=_self >**'+(sugg<<3)+'**</a>';
 		sugg+=8;
 	}
 	return stiaa+'</h1>';
@@ -712,7 +744,7 @@ function sixbkmark(dvvsta)
 function fullpgALLcur()
 {
 
-klyi=0;
+klyi=0x400;
 var dvvsta=(curEro>>3);
 var dvvendo=dvvsta+8;
 var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>512+64*'+dvvendo+sixbkmark(dvvsta);//'<br>*<br>*<br>*<br>*<br>*<br>*</h1>';
@@ -725,8 +757,8 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 	kole7+=cxh1a+zko+cxh1b+zko+'x >';
 	for(var jjx=0;jjx<8;jjx++)
 	{
-		var yvd=zko+'x'+jjx;
-		kole7+='<b id='+yvd+' ><br>+'+jjx+'</b>';
+		
+		kole7+='<b><br>+'+jjx+'</b>';
 		
 		
 		for(j=zko;j<endo;j++){
@@ -748,7 +780,7 @@ curEro=(dvvendo+8)<<3;
 function fullpgALLrdm()
 {
 
-klyi=0;
+klyi=0x400;
 var dvvsta=(iRDMarr>>3);
 var dvvendo=dvvsta+8;
 var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>128*'+dvvendo+sixbkmark(dvvsta);//'<br>*<br>*<br>*<br>*<br>*</h1>';
@@ -761,8 +793,8 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 	kole7+=cxh1a+zko+cxh1b+zko+'x >';
 	for(var jjx=0;jjx<8;jjx++)
 	{
-		var yvd=zko+'x'+jjx;
-		kole7+='<b id='+yvd+' ><br>+'+jjx+'</b>';
+		
+		kole7+='<b><br>+'+jjx+'</b>';
 		
 		
 		for(j=zko;j<endo;){
