@@ -258,10 +258,13 @@ const kx2b1='" >==========<br>==>';
 const kx2b2='<==</a><br><a href="';
 const kx2a='" >====</a><a onmouseover=xt(this)>i';
 const kx3='</a><br><a href="';
+const kx3t='<a href="';
 const kx4='" ><img src="';
 const kx5a=':thumb" width=211 /></a>.';
 const kx5b='" /></a>';
+const kx5t=':thumb" /></a><a href="https://twitter.com/';
 const kx5bl='" width=75% /></a>';
+const aTAGend='</a>';
 
 function SetPozMode00()
 {
@@ -412,7 +415,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 					else{ymgg.alt='\n:'+niki+'\n';
 					niki=' href="https://nitter.kavin.rocks/'+niki+'/media" '; //' href="https://twitter.com/'+niki+'/with_replies"';
 					}
-					ele.outerHTML='<a'+niki+'>...X'+iszrda+'</a>';
+					ele.outerHTML='<a'+niki+'>...X'+iszrda+aTAGend;
 					nymu=-10;
 				}
 				else
@@ -642,6 +645,25 @@ kx5a;
 	canfire=true;
 }
 
+
+var dsmall=function(e){
+var ele=e.target;
+if(ele.tagName=='IMG'&&ele.src.endsWith('.jpg'))
+{
+	var naa=ele.alt;
+	if(naa)
+	{
+	var sig=parseInt(naa,10);
+	var vidurl=vidstr(vids[sig]);
+	var thumburl=ele.src;
+	ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5t+msgs[sig]+'" >@'+iszrda+aTAGend;
+	return false;
+	}
+
+}
+return true;
+}
+
 function kv(ele){
 var sig=parseInt(ele.alt,10);
 var vidurl=vidstr(vids[sig]);
@@ -673,9 +695,9 @@ function llimgThis(ele,nx,depth)
 		if(isIMG&&ele.src.endsWith('/poz.gif')) {ele.src=llgif;}
 		else if(depth<5)
 		{
-			depth++;
 			
-
+			
+			depth++;
 			if(isIMG)
 			{
 				if(ele.src.endsWith(llgif))
@@ -689,6 +711,7 @@ function llimgThis(ele,nx,depth)
 			{
 				if(tgg=='B')
 				{
+				
 				var nux=null;
 				if(nx){nux=ele.nextSibling;}
 				else {nux=ele.previousSibling;}
@@ -697,7 +720,9 @@ function llimgThis(ele,nx,depth)
 				else{llimgThis(nux,false,depth);}
 				return;
 				}
+				else if(tgg=='A'||tgg=='BR'){depth--;}
 			}
+
 			
 			if(nx){llimgThis(ele.nextSibling,true,depth);}
 			else{llimgThis(ele.previousSibling,false,depth);}
@@ -890,7 +915,7 @@ switch (ekeyCode) {
 			PozMode=0x2;
 			SetPozMode();
 			document.onmousemove=null;
-			window.oncontextmenu=null;
+			window.oncontextmenu=dsmall;
 		}
 
 		setTimeout(fullpgALL, 0);
@@ -945,7 +970,7 @@ switch (ekeyCode) {
 		
 		if(PozMode!=0){PozMode=0x0; SetPozMode00();}
 		document.onmousemove=null;
-		window.oncontextmenu=null;
+		window.oncontextmenu=dsmall;
 		keyerocount=-100;
 		document.body.background='';
 		timgarea.src='';
