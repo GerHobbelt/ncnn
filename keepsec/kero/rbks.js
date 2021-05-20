@@ -61,8 +61,8 @@ function gall(ele)
 
 function shuflocfi(ll)
 {
-	zsta=ll>>1;
-	for(i=0;i<zsta;i++)
+	var zsta=ll>>1;
+	for(var i=0;i<zsta;i++)
 	{
 		y=i<<1;
 		nx=1+((Math.random() *zsta)<<1);
@@ -74,7 +74,7 @@ function shuflocfi(ll)
 	ibz=2;
 	if(ll&1){ibz=3;}
 
-	for(i=1;i<ibz;i++)
+	for(var i=1;i<ibz;i++)
 	{
 		zsta=ll-i;
 		nx=(Math.random() *ll)>>1;
@@ -102,7 +102,7 @@ function printlokal()
 
 function mklokal()
 {
-	sk = document.createElement('script');
+	var sk = document.createElement('script');
 	sk.src='locfi.js';
 	document.body.append(sk);
 	sk.onload=printlokal;
