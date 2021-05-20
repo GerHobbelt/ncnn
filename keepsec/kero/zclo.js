@@ -835,9 +835,9 @@ var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>128*'+dvvendo+sixbkmark(dvv
 for(var jj=dvvsta;jj<dvvendo;jj++)
 {
 	
-	zko=jj<<3;
+	var zko=jj<<3;
 	var endo=zko+8;
-	var kole7+=cxh1a+zko+cxh1b+zko+'x >';
+	kole7+=cxh1a+zko+cxh1b+zko+'x >';
 	for(var jjx=0;jjx<8;jjx++)
 	{
 		
