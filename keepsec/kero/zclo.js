@@ -13,7 +13,7 @@ var pozcurpic=timgarea.nextSibling;
 var erocount=0;
 var keyerocount=0;
 var hardlim=0;
-
+var klyi=0x0;
 
 var RDMarr=null;
 var iRDMarr=0xF00000;
@@ -557,7 +557,7 @@ var kuriakey=function(ev){
 
 var settrue=function(){canfire=true;}
 
-var klyi=0x0;
+
 var kuriakeysimp=function(ev){
 	klyi++;
 	if(klyi>0x20) {
@@ -659,9 +659,33 @@ ele.outerHTML=kx1+msgs[sig]+kx2b1+iszrda+kx2b2+vidurl+kx4+thumburl+kx5b;
 
 }
 
+const llgif='0bak/longbar.gif';
+
+function llimgThis(ele,nx,depth)
+{
+	if(ele)
+	{
+		if(ele.tagName=='IMG'&&ele.src.endsWith('/poz.gif')) {ele.src=llgif;}
+		else if(depth<5)
+		{
+			depth++;
+			if(nx){llimgThis(ele.nextSibling,true,depth);}
+			else{llimgThis(ele.previousSibling,false,depth);}
+			return;
+
+		}
+	}
+	
+	klyi-=0x200;
+}
+
+
 function hv(ele)
 {
 //ele.removeAttribute('width');
+klyi+=0x400;
+setTimeout(function(){llimgThis(ele.nextSibling,true,0); llimgThis(ele.previousSibling,false,0);}, klyi);
+
 ele.src=thumbstr(thumb[parseInt(ele.alt,10)]);
 ele.onmouseover=null;
 document.body.scrollTop+=100;
@@ -673,13 +697,25 @@ const mgx3=' onmouseover=hv(this) onclick=kv(this) />';
 const cxh1a='</center><h1>******';
 const cxh1b='***</h1><center id=';
 
+function sixbkmark(dvvsta)
+{
+	var sugg=8+(dvvsta<<3);
+	var stiaa="";
+	for(var i=0;i<6;i++)
+	{
+		stiaa+='<br><a href="#'+sugg+'x" target=_self >**'+(sugg<<3)+'**<a>';
+		sugg+=8;
+	}
+	return stiaa+'</h1>';
+}
+
 function fullpgALLcur()
 {
 
-
+klyi=0;
 var dvvsta=(curEro>>3);
 var dvvendo=dvvsta+8;
-var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>*<br>512+64*'+dvvendo+'<br>*<br>*<br>*<br>*<br>*</h1>';
+var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>512+64*'+dvvendo+sixbkmark(dvvsta);//'<br>*<br>*<br>*<br>*<br>*<br>*</h1>';
 
 for(var jj=dvvsta;jj<dvvendo;jj++)
 {
@@ -690,7 +726,7 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 	for(var jjx=0;jjx<8;jjx++)
 	{
 		var yvd=zko+'x'+jjx;
-		kole7+='<span id='+yvd+' ><br>+'+jjx+'</span>';
+		kole7+='<b id='+yvd+' ><br>+'+jjx+'</b>';
 		
 		
 		for(j=zko;j<endo;j++){
@@ -712,10 +748,10 @@ curEro=(dvvendo+8)<<3;
 function fullpgALLrdm()
 {
 
-
+klyi=0;
 var dvvsta=(iRDMarr>>3);
 var dvvendo=dvvsta+8;
-var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>*<br>128*'+dvvendo+'<br>*<br>*<br>*<br>*<br>*</h1>';
+var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>128*'+dvvendo+sixbkmark(dvvsta);//'<br>*<br>*<br>*<br>*<br>*</h1>';
 
 for(var jj=dvvsta;jj<dvvendo;jj++)
 {
@@ -726,7 +762,7 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 	for(var jjx=0;jjx<8;jjx++)
 	{
 		var yvd=zko+'x'+jjx;
-		kole7+='<span id='+yvd+' ><br>+'+jjx+'</span>';
+		kole7+='<b id='+yvd+' ><br>+'+jjx+'</b>';
 		
 		
 		for(j=zko;j<endo;){
