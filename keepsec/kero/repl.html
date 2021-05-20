@@ -1,4 +1,4 @@
-<html><head><base target="_blank"></head><body><textarea rows=200 cols=200 ondblclick=repurl(this)>
+<html><head><base target="_blank"></head><body><textarea rows=40 cols=300 ondblclick=repurl(this)>
 ==
 ==
 </textarea></body>
@@ -28,14 +28,14 @@ const vtwvid=['https://video.twimg.com/ext_tw_video/',		'https://video.twimg.com
 function vidstr(src)
 {
 	var c0=src.charAt(0);
-	for(i=1;i<3;i++){if(c0==vtwsig[i]){return vtwvid[i]+src.substring(1);}}
+	for(var i=1;i<3;i++){if(c0==vtwsig[i]){return vtwvid[i]+src.substring(1);}}
 	return vtwvid[0]+src;
 }
 
 function thumbstr(src)
 {
 	var c0=src.charAt(0);
-	for(i=1;i<4;i++){if(c0==vtwsig[i]){return vtwimg[i]+src.substring(1);}}
+	for(var i=1;i<4;i++){if(c0==vtwsig[i]){return vtwimg[i]+src.substring(1);}}
 	return vtwimg[0]+src;
 }
 
@@ -52,7 +52,7 @@ window.open(vidstr(ele.alt), null, null);
 
 function hv(ele)
 {
-sig=ele.title;
+var sig=ele.title;
 if(sig=='i')
 {
 if(ele.naturalWidth==0)
@@ -71,7 +71,7 @@ ele.title='i';
 
 function mkymg(str)
 {
-	jk=str.split('\t');
+	var jk=str.split('\t');
 	if(jk.length>2)
 	{
 		return '<img title="'+jk[0]+'" alt="'+jk[1]+mgx3;
@@ -82,11 +82,11 @@ function mkymg(str)
 
 function repurl(yina)
 {
-yza=yina.value.split('\n');
-yzal=yza.length;
-sti="";
+var yza=yina.value.split('\n');
+var yzal=yza.length;
+var sti="";
 
-k_up=false;
+var k_up=false;
 
 if(yza[0].charAt(0)=='v')
 {
@@ -107,7 +107,7 @@ if(yza[0].charAt(0)=='v')
 yina.outerHTML=sti;
 lynks=document.getElementsByTagName("a");
 
-if(k_up){klyk=lynks.length}
+if(k_up){klyk=lynks.length-1}
 
 }
 
