@@ -648,11 +648,14 @@ kx5a;
 
 var dsmall=function(e){
 var ele=e.target;
-if(ele.tagName=='IMG'&&ele.src.endsWith('.jpg'))
+if(ele.tagName=='IMG')
+{
+if(ele.src.endsWith('.jpg'))
 {
 	var naa=ele.alt;
 	if(naa)
 	{
+	ele.onmouseover=null;
 	var sig=parseInt(naa,10);
 	var vidurl=vidstr(vids[sig]);
 	var thumburl=ele.src;
@@ -664,10 +667,11 @@ if(ele.tagName=='IMG'&&ele.src.endsWith('.jpg'))
 	ele.width=200;
 	}
 	return false;
-	
-
-}
+}	
 return true;
+}
+document.body.scrollTop+=1000;
+return false;
 }
 
 var kv=function(e){
@@ -915,7 +919,7 @@ document.onmousemove=kuriakey;
 
 document.onkeydown=function(e) {
 
-ekeyCode=e.keyCode;
+var ekeyCode=e.keyCode;
 
 
 
