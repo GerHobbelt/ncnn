@@ -656,7 +656,7 @@ if(ele.tagName=='IMG'&&ele.src.endsWith('.jpg'))
 	var sig=parseInt(naa,10);
 	var vidurl=vidstr(vids[sig]);
 	var thumburl=ele.src;
-	ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5t+msgs[sig]+'" >@'+iszrda+aTAGend;
+	ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5t+msgs[sig]+'" >@'+sig+aTAGend;
 	
 	}
 	else
@@ -679,7 +679,7 @@ var thumburl=ele.src;
 window.open(vidurl, null, null);
 
 
-ele.outerHTML=kx1+msgs[sig]+kx2b1+iszrda+kx2b2+vidurl+kx4+thumburl+kx5b;
+ele.outerHTML=kx1+msgs[sig]+kx2b1+sig+kx2b2+vidurl+kx4+thumburl+kx5b;
 
 
 
@@ -797,8 +797,8 @@ var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>512+64*'+dvvendo+sixbkmark(
 for(var jj=dvvsta;jj<dvvendo;jj++)
 {
 	
-	zko=jj<<3;
-	endo=zko+8;
+	var zko=jj<<3;
+	var endo=zko+8;
 	kole7+=cxh1a+zko+cxh1b+zko+'x >';
 	for(var jjx=0;jjx<8;jjx++)
 	{
@@ -806,8 +806,8 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 		kole7+='<b><br>+'+jjx+'</b>';
 		
 		
-		for(j=zko;j<endo;j++){
-			iszrda=(j<<3)+jjx;
+		for(var j=zko;j<endo;j++){
+			var iszrda=(j<<3)+jjx;
 			kole7+=mgx1+iszrda+mgx3;
 			
 			iszrda=((j+64)<<3)+jjx;
@@ -836,16 +836,16 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 {
 	
 	zko=jj<<3;
-	endo=zko+8;
-	kole7+=cxh1a+zko+cxh1b+zko+'x >';
+	var endo=zko+8;
+	var kole7+=cxh1a+zko+cxh1b+zko+'x >';
 	for(var jjx=0;jjx<8;jjx++)
 	{
 		
 		kole7+='<b><br>+'+jjx+'</b>';
 		
 		
-		for(j=zko;j<endo;){
-			iszrda=(RDMarr[j]<<3)+jjx;
+		for(var j=zko;j<endo;){
+			var iszrda=(RDMarr[j]<<3)+jjx;
 			kole7+=mgx1+iszrda+mgx3;
 			j++;
 			iszrda=(RDMarr[erocount-j]<<3)+jjx;
@@ -873,7 +873,7 @@ function fullpg()
 	var zko=iRDMarr-xma;
 	var endo=zko+8;
 	for(var j=zko;j<endo;){
-		iszrda=(RDMarr[j]<<3)+xma;
+		var iszrda=(RDMarr[j]<<3)+xma;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
 		kx4+thumbstr(thumb[iszrda])+
