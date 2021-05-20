@@ -1,8 +1,8 @@
 
 var PozMode=0x2;
 const pozimg='<img src="poz.gif" />';
-const pozinput='<input type="number" value=0 onfocus=disabsk() ondblclick=fpt(this)>';
-const pozinputN='<input type="number" value=50 onfocus=disabsk() ondblclick=repg(this)>';
+const pozinput='<input type="number" value=0 onfocus=disabsk() onblur=fpt(this)>';
+const pozinputN='<input type="number" value=50 onfocus=disabsk() onblur=repg(this)>';
 
 
 var tblarea = document.getElementById('team');
@@ -27,7 +27,7 @@ return arr;
 }
 
 function ShuffleArray(arr)
-{ll=arr.length-8;
+{var ll=arr.length-8;
 
 zsta=ll>>1;
 for(i=0;i<zsta;i++)
@@ -57,7 +57,7 @@ return flazt20(arr,ll);}
 
 function chkdst(arr,y)
 {
-	adst=arr[y];
+	var adst=arr[y];
 	if(adst===undefined){return y;}
 	return adst;
 }
@@ -65,20 +65,20 @@ function chkdst(arr,y)
 
 
 function mkRDMarr(num)
-{arr=new Array(num+8);
-zsta=(num>>1);
-for(i=0;i<zsta;i++)
+{var arr=new Array(num+8);
+var zsta=(num>>1);
+for(var i=0;i<zsta;i++)
 {
-	nx=1+((Math.random() *zsta)<<1);
+	var nx=1+((Math.random() *zsta)<<1);
 
-	y=i<<1;
+	var y=i<<1;
 	
 
 	//adst=arr[nx];
 	//if(adst===undefined){adst=nx;}
 	arr[y]=chkdst(arr,nx);//adst;
 
-	y1=y+1;
+	var y1=y+1;
 
 	//adst=arr[y1];
 	//if(adst===undefined){adst=y1;}
@@ -89,7 +89,7 @@ for(i=0;i<zsta;i++)
 }
 
 
-yz=num-2;
+var yz=num-2;
 
 if(num&1){
 yz=num-3;
@@ -202,7 +202,7 @@ var canfire=true;
 
 function repg(ele)
 {
-	ele.blur();
+	
 	timgarea.src='';
 	timgarea.style.maxHeight = '1%';
 
@@ -240,14 +240,14 @@ const vtwvid=['https://video.twimg.com/ext_tw_video/',		'https://video.twimg.com
 function vidstr(src)
 {
 	var c0=src.charAt(0);
-	for(i=1;i<3;i++){if(c0==vtwsig[i]){return vtwvid[i]+src.substring(1);}}
+	for(var i=1;i<3;i++){if(c0==vtwsig[i]){return vtwvid[i]+src.substring(1);}}
 	return vtwvid[0]+src;
 }
 
 function thumbstr(src)
 {
 	var c0=src.charAt(0);
-	for(i=1;i<4;i++){if(c0==vtwsig[i]){return vtwimg[i]+src.substring(1);}}
+	for(var i=1;i<4;i++){if(c0==vtwsig[i]){return vtwimg[i]+src.substring(1);}}
 	return vtwimg[0]+src;
 }
 
@@ -308,12 +308,12 @@ function SetPozMode()
 
 function mydav()
 {
-	yina = document.createElement('div');
+	var yina = document.createElement('div');
 	yina.className = 'fl';
 
 	var kole7='=';
-	zko=(curEro<<3);
-	endo=zko+8;
+	var zko=(curEro<<3);
+	var endo=zko+8;
 	for(var iszrda=zko;iszrda<endo;iszrda++){
 kole7+=kx1+msgs[iszrda]+
 kx2a+iszrda+
@@ -574,7 +574,7 @@ var kuriakeysimp=function(ev){
 function fpt(ele)
 {
 //if(e.keyCode==13){
-ele.blur();
+
 keyerocount=-100;
 var evv=ele.value<<0;
 	if(evv<0){
@@ -601,10 +601,10 @@ fullpg();
 }
 function partpg()
 {
-	yina = document.createElement('center');
+	var yina = document.createElement('center');
 	var kole7='<h1>++'+curEro+'++</h1>';
-	zko=(curEro<<3);
-	endo=zko+16;
+	var zko=(curEro<<3);
+	var endo=zko+16;
 	
 	for(var iszrda=zko;iszrda<endo;iszrda++){
 		kole7+=kx1+msgs[iszrda]+
@@ -620,13 +620,13 @@ function partpg()
 
 function mydavRDM()
 {
-	yina = document.createElement('div');
+	var yina = document.createElement('div');
 	yina.className = 'fl';
 
 	
 	var kole7=iRDMarr.toString(16);
-	xma=(iRDMarr&7);
-	endo=iRDMarr+8;
+	var xma=(iRDMarr&7);
+	var endo=iRDMarr+8;
 	for(var j=iRDMarr;j<endo;j++){
 var iszrda=(RDMarr[j]<<3)+xma;
 kole7+=kx1+msgs[iszrda]+
@@ -643,13 +643,19 @@ kx5a;
 }
 
 function kv(ele){
-sig=parseInt(ele.alt,10);
-vidurl=vidstr(vids[sig]);
-thumburl=ele.src;
+var sig=parseInt(ele.alt,10);
+var vidurl=vidstr(vids[sig]);
+var thumburl=ele.src;
+
+window.open(vidurl, null, null);
+
+
+var px=document.getElementById(ele.parentNode.id+(sig&7));
+if(px){px.remove();}
 
 ele.outerHTML=kx1+msgs[sig]+kx2b1+iszrda+kx2b2+vidurl+kx4+thumburl+kx5b;
 
-window.open(vidurl, null, null);
+
 
 }
 
@@ -662,28 +668,29 @@ document.body.scrollTop+=100;
 
 }
 const mgx1='<img src="poz.gif" alt=';
+const mgx2=' title=';
 const mgx3=' onmouseover=hv(this) onclick=kv(this) />';
 const cxh1a='</center><h1>******';
-const cxh1b='***</h1><center>';
+const cxh1b='***</h1><center id=';
 
 function fullpgALLcur()
 {
 
 
-dvvsta=(curEro>>3);
-dvvendo=dvvsta+8;
+var dvvsta=(curEro>>3);
+var dvvendo=dvvsta+8;
 var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>*<br>512+64*'+dvvendo+'<br>*<br>*<br>*<br>*<br>*</h1>';
 
-for(jj=dvvsta;jj<dvvendo;jj++)
+for(var jj=dvvsta;jj<dvvendo;jj++)
 {
 	
 	zko=jj<<3;
 	endo=zko+8;
-	kole7+=cxh1a+zko+cxh1b;
-	for(jjx=0;jjx<8;jjx++)
+	kole7+=cxh1a+zko+cxh1b+zko+'x >';
+	for(var jjx=0;jjx<8;jjx++)
 	{
-		
-		kole7+='<br>'+jjx;
+		var yvd=zko+'x'+jjx;
+		kole7+='<span id='+yvd+' ><br>+'+jjx+'</span>';
 		
 		
 		for(j=zko;j<endo;j++){
@@ -706,20 +713,20 @@ function fullpgALLrdm()
 {
 
 
-dvvsta=(iRDMarr>>3);
-dvvendo=dvvsta+8;
+var dvvsta=(iRDMarr>>3);
+var dvvendo=dvvsta+8;
 var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>*<br>128*'+dvvendo+'<br>*<br>*<br>*<br>*<br>*</h1>';
 
-for(jj=dvvsta;jj<dvvendo;jj++)
+for(var jj=dvvsta;jj<dvvendo;jj++)
 {
 	
 	zko=jj<<3;
 	endo=zko+8;
-	kole7+=cxh1a+zko+cxh1b;
-	for(jjx=0;jjx<8;jjx++)
+	kole7+=cxh1a+zko+cxh1b+zko+'x >';
+	for(var jjx=0;jjx<8;jjx++)
 	{
-		
-		kole7+='<br>'+jjx;
+		var yvd=zko+'x'+jjx;
+		kole7+='<span id='+yvd+' ><br>+'+jjx+'</span>';
 		
 		
 		for(j=zko;j<endo;){
@@ -745,10 +752,10 @@ function fullpg()
 	var kole7='<center><h1>**'+iRDMarr+'**</h1>';
 
 
-	xma=(iRDMarr&7);
-	zko=iRDMarr-xma;
-	endo=zko+8;
-	for(j=zko;j<endo;){
+	var xma=(iRDMarr&7);
+	var zko=iRDMarr-xma;
+	var endo=zko+8;
+	for(var j=zko;j<endo;){
 		iszrda=(RDMarr[j]<<3)+xma;
 		kole7+=kx1+msgs[iszrda]+
 		kx2b1+iszrda+kx2b2+vidstr(vids[iszrda])+
@@ -896,7 +903,7 @@ switch (ekeyCode) {
 		timgarea.src='';
 		timgarea.style.maxHeight = '1%';
 
-		uv=tblarea.id.split('.');
+		var uv=tblarea.id.split('.');
 		if(uv.length>1) { curEro=parseInt(uv[1],10);}
 		else {curEro=0;}
 
@@ -984,7 +991,7 @@ switch (ekeyCode) {
 
 function mkscript(sksrc)
 {
-	sk = document.createElement('script');
+	var sk = document.createElement('script');
 	sk.src=sksrc;
 	document.body.append(sk);
 	return sk;
@@ -994,9 +1001,9 @@ function mkscript(sksrc)
 function insp(apa)
 {
 
-uv=location.href.split('#');
+var uv=location.href.split('#');
 if(uv.length>1){
-uvv1=uv[1];
+var uvv1=uv[1];
 tblarea.id=uvv1;
 
 uv=uvv1.split('.');
