@@ -23,8 +23,9 @@ center {
 	
 }
 .tFlo {
-	width: 250;
-	-webkit-transform: rotate(45deg);
+	width: 260;
+	border:2px #800 solid;
+	-webkit-transform: rotate(30deg);
 }
 .fl {
 float:right;

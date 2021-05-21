@@ -211,7 +211,7 @@ function repg(ele)
 	{
 		keyerocount=-100;
 		curEro=parseInt(ele.value,10);
-		setTimeout(fullpgALL, 0);
+		setTimeout(fullpgALL[fpgMode], 0);
 		return;
 	}
 
@@ -650,9 +650,10 @@ kx5a;
 
 var dsmall=function(e){
 var ele=e.target;
-if(ele.tagName=='IMG')
+var tgg=ele.tagName;
+if(tgg=='IMG')
 {
-if(ele.src.endsWith('.jpg'))
+if(fpgMode==0&&ele.src.endsWith('.jpg'))
 {
 	var naa=ele.alt;
 	if(naa)
@@ -672,6 +673,8 @@ if(ele.src.endsWith('.jpg'))
 }	
 return true;
 }
+else if(tgg=='A'){return true;}
+
 document.body.scrollTop+=1000;
 return false;
 }
@@ -842,8 +845,7 @@ function asgn()
 
 function asgn_s(ym)
 {
-	tblarea.innerHTML=ym.join('O');
-	window.oncontextmenu=null;
+	tblarea.innerHTML=ym.join('U');
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
 	for(var i=1;i<1025;i++)
