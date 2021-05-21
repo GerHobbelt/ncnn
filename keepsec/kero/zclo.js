@@ -721,6 +721,7 @@ function llimgThis(ele,nx,depth)
 			}
 			else
 			{
+				depth--;
 				if(tgg=='B')
 				{
 				
@@ -732,7 +733,7 @@ function llimgThis(ele,nx,depth)
 				else{llimgThis(nux,false,depth);}
 				return;
 				}
-				else if(tgg=='A'||tgg=='BR'){depth--;}
+				
 			}
 
 			
@@ -749,7 +750,7 @@ function llimgThis(ele,nx,depth)
 
 var hv =function(e) {
 var ele=e.currentTarget;
-klyi+=0x200;
+klyi+=0x201;
 setTimeout(function(){llimgThis(ele.nextSibling,true,0);}, klyi);
 klyi+=0x200;
 setTimeout(function(){llimgThis(ele.previousSibling,false,0);}, klyi);
@@ -780,6 +781,8 @@ function sixbkmark(dvvsta)
 
 function asgn()
 {
+
+	klyi=0x200;
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
 	for(var i=1;i<1025;i++)
@@ -793,7 +796,7 @@ function asgn()
 function fullpgALLcur()
 {
 
-klyi=0x400;
+
 var dvvsta=(curEro>>3);
 var dvvendo=dvvsta+8;
 var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>512+64*'+dvvendo+sixbkmark(dvvsta);//'<br>*<br>*<br>*<br>*<br>*<br>*</h1>';
@@ -831,7 +834,7 @@ asgn();
 function fullpgALLrdm()
 {
 
-klyi=0x400;
+
 var dvvsta=(iRDMarr>>3);
 var dvvendo=dvvsta+8;
 var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>128*'+dvvendo+sixbkmark(dvvsta);//'<br>*<br>*<br>*<br>*<br>*</h1>';
@@ -971,7 +974,7 @@ switch (ekeyCode) {
 	case 98:
 		document.body.scrollTop+=600;
 		
-		if(klyi>0x10)
+		if(klyi>0x10&&klyi<0x100)
 		{klyi=0;
 		partpg();}
 		
