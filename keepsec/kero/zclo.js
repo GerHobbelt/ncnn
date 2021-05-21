@@ -112,7 +112,8 @@ arr[nx]=yz;
 return flazt20(arr,num);}
 
 function chaglims()
-{keyerocount=curEro+50;
+{klyi=0x0;
+keyerocount=curEro+50;
 hardlim=curEro+501;}
 
 function RDMcurEro()
@@ -211,6 +212,7 @@ function repg(ele)
 	{
 		keyerocount=-100;
 		curEro=parseInt(ele.value,10);
+		klyi=0x400;
 		setTimeout(fullpgALL[fpgMode], 0);
 		return;
 	}
@@ -567,7 +569,7 @@ var settrue=function(){canfire=true;}
 var kuriakeysimp=function(ev){
 	klyi++;
 	if(klyi>0x20) {
-	klyi=0;
+	klyi=0x0;
 	setPozCur2(ev.clientY);
 	}
 			
@@ -678,6 +680,8 @@ else if(fpgMode==1)
 	if(ele.src.endsWith(':thumb'))
 	{
 		ele.src=ele.src.slice(0,-6);
+		return false;
+		
 	}
 	else if(ele.width==200)
 	{
@@ -686,9 +690,11 @@ else if(fpgMode==1)
 	}
 	else
 	{
+		document.body.background=ele.src;
 		setTimeout(function(){ele.src=ele.src+':thumb';}, 1500);
-
 	}
+	return true;
+	
 
 }	
 return true;
@@ -869,6 +875,7 @@ function asgn()
 
 function asgn_s(ym)
 {
+	document.body.scrollLeft=0;
 	tblarea.innerHTML=ym.join('W');
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
@@ -1057,7 +1064,7 @@ return false;
 
 function chgfpgMode()
 {
-	document.body.scrollLeft=0;
+	
 	fpgMode++;
 	if(fpgMode>1){fpgMode=0;}
 	recarea.value='miningMode '+fpgMode;
@@ -1093,9 +1100,12 @@ switch (ekeyCode) {
 	case 105:
 	case 106:
 	case 112:
+		if(klyi<0x100)
+		{
 		fullpgmenu();
-		
-	return;
+		return;
+		}
+		break;
 
 	case 87:
 		chgfpgMode();
@@ -1106,7 +1116,7 @@ switch (ekeyCode) {
 			document.onmousemove=null;
 			document.oncontextmenu=dsmall;
 		}
-
+		klyi=0x400;
 		setTimeout(fullpgALL[fpgMode], 0);
 	return;
 
@@ -1133,7 +1143,7 @@ switch (ekeyCode) {
 		document.body.scrollTop+=600;
 		
 		if(klyi>0x10&&klyi<0x100)
-		{klyi=0;
+		{klyi=0x0;
 		partpg();}
 		
 		
@@ -1167,7 +1177,7 @@ switch (ekeyCode) {
 		timgarea.src='';
 		timgarea.style.maxHeight = '1%';
 		
-		
+		klyi=0x400;
 		setTimeout(fullpgALL[fpgMode], 0);
 	return;
 	
@@ -1201,17 +1211,8 @@ switch (ekeyCode) {
 	return;
 
 
-	case 102:
-	case 39:
-		document.body.scrollLeft+=500;
-		document.body.scrollTop+=10;
-	break;
-	case 100:
-	case 37:
-		document.body.scrollLeft-=500;
-		if(document.body.scrollLeft<600){document.body.background='';}
-		document.body.scrollTop+=10;
-	break;
+	
+	
 	case 111:
 		if(mouseRDM)
 		{
@@ -1242,7 +1243,16 @@ switch (ekeyCode) {
 		partpg();
 	return;
 
-	
+	case 100:
+		document.body.scrollLeft-=500;
+		if(document.body.scrollLeft<600){document.body.background='';}
+		document.body.scrollTop+=10;
+	break;
+
+	case 102:
+		document.body.scrollLeft+=500;
+		document.body.scrollTop+=10;
+	break;
 	
 
 	case 37:
