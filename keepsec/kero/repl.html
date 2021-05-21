@@ -1,4 +1,4 @@
-<html><head><base target="_blank"></head><body><textarea rows=40 cols=300 ondblclick=repurl(this)>
+<html><head><base target="_blank"><style>img {width: 200px;}</style></head><body><textarea rows=40 cols=300 ondblclick=repurl(this)>
 ==
 ==
 </textarea></body>
@@ -43,15 +43,17 @@ function thumbstr(src)
 const kx1='<a href="https://twitter.com/i/status/';
 const kx2='"><br>====</a>';
 
-const mgx3='" width=200 onmouseover=hv(this) onclick=kl(this) />';
+const mgx3='" />';
 
-function kl(ele)
+var kv=function(e)
 {
+var ele=e.currentTarget;
 window.open(vidstr(ele.alt), null, null);
 }
 
-function hv(ele)
+var hv=function(e)
 {
+var ele=e.currentTarget;
 var sig=ele.title;
 if(sig=='i')
 {
@@ -61,11 +63,13 @@ ele.src=ele.src.slice(0,-6);
 ele.dta='r';
 }
 
+ele.title='';
 ele.onmouseover=null;
 return;
 }
 ele.src=thumbstr(sig)+':thumb';
 ele.title='i';
+ele.onclick=kv;
 
 }
 
@@ -105,9 +109,19 @@ if(yza[0].charAt(0)=='v')
 	document.onkeydown=kypreDOWN;
 }
 yina.outerHTML=sti;
-lynks=document.getElementsByTagName("a");
+
+lynks=document.getElementsByTagName('img');
+klyk=lynks.length;
+
+for(var i=0;i<klyk;i++)
+{
+lynks[i].onmouseover=hv;
+}
+
+lynks=document.getElementsByTagName('a');
 
 if(k_up){klyk=lynks.length-1}
+else{klyk=0;}
 
 }
 
