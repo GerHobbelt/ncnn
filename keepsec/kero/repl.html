@@ -1,17 +1,7 @@
-<html><head><base target="_blank"><style>img {width: 200px;}</style></head><body><textarea rows=40 cols=300 ondblclick=repurl(this)>
-==
-==
-</textarea></body>
-<script>
+<html><head><base target="_blank"><style>img {width: 200px;}</style><script>
 var klyk=-1;
 var lynks=null;
 
-function kypreDOWN(e) {
-klyk++;
-document.title=klyk;
-lynks[klyk].click();
-lynks[klyk].innerText='0';
-}
 
 function kypreUP(e) {
 klyk--;
@@ -41,7 +31,7 @@ function thumbstr(src)
 
 
 const kx1='<a href="https://twitter.com/i/status/';
-const kx2='"><br>====</a>';
+const kx2='">====<br></a>';
 
 const mgx3='" />';
 
@@ -90,41 +80,51 @@ var yza=yina.value.split('\n');
 var yzal=yza.length;
 var sti="";
 
-var k_up=false;
+document.onkeydown=kypreUP;
 
 if(yza[0].charAt(0)=='v')
 {
+//yzal--;
 	for(i=1;i<yzal;i++)
 	{
-	sti+=kx1+yza[i]+kx2;
+		if(yza[i].length>15){yza[i]=kx1+yza[i]+kx2;}
+		else{yza[i]='++++++';}
 	}
-	document.onkeydown=kypreUP;
-	k_up=true;
+	yina.outerHTML=yza.join(' ');
+	
 } else {
+	var imgarr=new Array(yzal);
+	yzal--;
 	for(i=0;i<yzal;i++)
 	{
-	if(yza[i].charAt(0)==';'){sti+=kx1+yza[i].substring(1)+kx2;}
-	else{sti+=mkymg(yza[i]);}
+	if(yza[i].charAt(0)==';'){yza[i]=kx1+yza[i].substring(1)+kx2;}
+	else{
+
+		imgarr[yzal-i]=mkymg(yza[i]);
+		yza[i]=null;
 	}
-	document.onkeydown=kypreDOWN;
-}
-yina.outerHTML=sti;
+	}
+
+	yina.outerHTML=imgarr.join('x')+yza.join(' ');
 
 lynks=document.getElementsByTagName('img');
 klyk=lynks.length;
 
 for(var i=0;i<klyk;i++)
-{
-lynks[i].onmouseover=hv;
+{lynks[i].onmouseover=hv;}
+	
 }
+
 
 lynks=document.getElementsByTagName('a');
 
-if(k_up){klyk=lynks.length-1}
-else{klyk=0;}
+klyk=lynks.length;
 
 }
 
 
 
-</script></html>
+</script></head><body><textarea rows=40 cols=300 ondblclick=repurl(this)>
+==
+==
+</textarea></body></html>
