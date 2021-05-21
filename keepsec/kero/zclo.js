@@ -265,6 +265,7 @@ const kx5a=':thumb" width=211 /></a>.';
 const kx5b='" /></a>';
 const kx5t=':thumb" /></a><a href="https://twitter.com/';
 const kx5t2='" /></a><a href="https://twitter.com/';
+const kx5t3='" width=200 /></a><a href="https://twitter.com/';
 const kx5bl='" width=75% /></a>';
 const aTAGend='</a>';
 
@@ -783,13 +784,17 @@ if(c0=='x')
 	return;
 }
 
-
+ele.onmouseover=null;
 if(ele.naturalWidth==0)
 {
-ele.src=ele.src.slice(0,-6);
+ele.onclick=null;
+var sigN=parseInt(sig,10);
+var thumburl=ele.src.slice(0,-6);
+ele.outerHTML=kx3t+vidstr(vids[sigN])+kx4+thumburl+kx5t3+msgs[sigN]+'" >'+sig+aTAGend;
+
 }
 
-ele.onmouseover=null;
+
 return;
 
 
@@ -845,7 +850,7 @@ function asgn()
 
 function asgn_s(ym)
 {
-	tblarea.innerHTML=ym.join('U');
+	tblarea.innerHTML=ym.join('W');
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
 	for(var i=1;i<1025;i++)
@@ -1048,7 +1053,7 @@ if(curEro>erocount){curEro=erocount-8;}
 
 chaglims();
 
-window.oncontextmenu=menuFunction;
+document.oncontextmenu=menuFunction;
 menuFunction();
 document.onmousemove=kuriakey;
 
@@ -1073,14 +1078,14 @@ switch (ekeyCode) {
 		
 	return;
 
-	case 85:
+	case 87:
 		chgfpgMode();
 	case 90:
 		if(PozMode>0x100){
 			PozMode=0x2;
 			SetPozMode();
 			document.onmousemove=null;
-			window.oncontextmenu=dsmall;
+			document.oncontextmenu=dsmall;
 		}
 
 		setTimeout(fullpgALL[fpgMode], 0);
@@ -1098,7 +1103,7 @@ switch (ekeyCode) {
 		chaglims();
 		menuFunction();
 		//window.onmousewheel = document.onmousewheel =null;
-		window.oncontextmenu=menuFunction;
+		document.oncontextmenu=menuFunction;
 		document.onmousemove=kuriakey;
 		fullpgALL=fullpgALLcur;
 		document.body.scrollLeft=0;
@@ -1131,13 +1136,13 @@ switch (ekeyCode) {
 		PozMode++;
 		SetPozMode();
 	return;
-	case 85:
+	case 87:
 		chgfpgMode();
 	case 90:
 		
 		if(PozMode!=0){PozMode=0x0; SetPozMode00();}
 		document.onmousemove=null;
-		window.oncontextmenu=dsmall;
+		document.oncontextmenu=dsmall;
 		keyerocount=-100;
 		document.body.background='';
 		timgarea.src='';
@@ -1156,7 +1161,7 @@ switch (ekeyCode) {
 		PozMode=0x101;
 		SetPozMode();
 		document.onmousemove=kuriakeysimp;
-		window.oncontextmenu=fullpgmenu;
+		document.oncontextmenu=fullpgmenu;
 		//window.onmousewheel = document.onmousewheel =fastrscroll;
 		
 		document.body.background='';

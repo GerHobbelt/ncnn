@@ -25,7 +25,7 @@ center {
 .tFlo {
 	width: 260;
 	border:2px #800 solid;
-	-webkit-transform: rotate(30deg);
+	-webkit-transform: matrix(1,0.5,-0.5,1,0,0);
 }
 .fl {
 float:right;
