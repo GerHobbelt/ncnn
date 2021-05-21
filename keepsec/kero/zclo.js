@@ -14,6 +14,7 @@ var erocount=0;
 var keyerocount=0;
 var hardlim=0;
 var klyi=0x0;
+var fpgMode=0;
 
 var RDMarr=null;
 var iRDMarr=0xF00000;
@@ -263,6 +264,7 @@ const kx4='" ><img src="';
 const kx5a=':thumb" width=211 /></a>.';
 const kx5b='" /></a>';
 const kx5t=':thumb" /></a><a href="https://twitter.com/';
+const kx5t2='" /></a><a href="https://twitter.com/';
 const kx5bl='" width=75% /></a>';
 const aTAGend='</a>';
 
@@ -747,6 +749,50 @@ function llimgThis(ele,nx,depth)
 	klyi-=0x200;
 }
 
+var kv_s=function(e){
+var ele=e.currentTarget;
+var sig=parseInt(ele.alt,10);
+var vidurl=vidstr(vids[sig]);
+var thumburl=ele.src;
+
+window.open(vidurl, null, null);
+
+
+
+ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5t2+msgs[sig]+'" >'+sig+aTAGend;
+
+
+
+}
+
+var hv_s=function(e)
+{
+var ele=e.currentTarget;
+var sig=ele.alt;
+var c0=sig.charAt(0);
+if(c0=='x')
+{
+	sig=sig.substring(1);
+	ele.alt=sig;
+
+	ele.src=thumbstr(thumb[parseInt(sig,10)])+':thumb';
+	ele.onclick=kv_s;
+	return;
+}
+
+
+if(ele.naturalWidth==0)
+{
+ele.src=ele.src.slice(0,-6);
+}
+
+ele.onmouseover=null;
+return;
+
+
+
+
+}
 
 var hv =function(e) {
 var ele=e.currentTarget;
@@ -761,10 +807,11 @@ ele.onmouseover=null;
 document.body.scrollTop+=100;
 
 }
+const mgx1sma='<img class=tFlo alt=x';
 const mgx1='<img src="poz.gif" alt=';
 const mgx2=' title=';
 const mgx3=' />';	// onmouseover=hv(this) onclick=kv(this)
-const cxh1a='</center><h1>******';
+const cxh1a='</center><h1>*****8x';
 const cxh1b='***</h1><center id=';
 
 function sixbkmark(dvvsta)
@@ -773,7 +820,7 @@ function sixbkmark(dvvsta)
 	var stiaa="";
 	for(var i=0;i<6;i++)
 	{
-		stiaa+='<br><a href="#'+sugg+'x" target=_self >**'+(sugg<<3)+'**</a>';
+		stiaa+='<br><a href="#'+sugg+'x" target=_self >**8x'+sugg+'**</a>';
 		sugg+=8;
 	}
 	return stiaa+'</h1>';
@@ -793,7 +840,20 @@ function asgn()
 	document.body.scrollLeft=100;
 }
 
-function fullpgALLcur()
+function asgn_s(ym)
+{
+	tblarea.innerHTML=ym.join('O');
+	window.oncontextmenu=null;
+	var ymgs=document.getElementsByTagName('img');
+	var ymgsl=ymgs.length;
+	for(var i=1;i<1025;i++)
+	{
+		ymgs[i].onmouseover=hv_s;
+		
+	}
+}
+
+function fullpgALLcur0()
 {
 
 
@@ -831,7 +891,36 @@ asgn();
 
 }
 
-function fullpgALLrdm()
+function fullpgALLcur1()
+{
+	
+	var dvvsta=(curEro>>3);
+	var dvvendo=dvvsta+8;
+	var pidx=0;
+	var ym=new Array(1024);
+for(var jj=dvvsta;jj<dvvendo;jj++)
+{
+	var zko=jj<<3;
+	var endo=zko+8;
+	for(var jjx=0;jjx<8;jjx++)
+	{
+		for(var j=zko;j<endo;j++){
+			var iszrda=(j<<3)+jjx;
+			ym[pidx]=mgx1sma+iszrda+mgx3;
+			pidx++;
+			
+			iszrda=((j+64)<<3)+jjx;
+			ym[pidx]=mgx1sma+iszrda+mgx3;
+			pidx++;
+		}
+	}
+}
+	
+	asgn_s(ym);
+	curEro=(dvvendo+8)<<3;
+}
+
+function fullpgALLrdm0()
 {
 
 
@@ -868,6 +957,39 @@ iRDMarr=dvvendo<<3;
 asgn();
 
 }
+
+function fullpgALLrdm1()
+{
+	
+	var dvvsta=(iRDMarr>>3);
+	var dvvendo=dvvsta+8;
+	var pidx=0;
+	var ym=new Array(1024);
+for(var jj=dvvsta;jj<dvvendo;jj++)
+{
+
+	var zko=jj<<3;
+	var endo=zko+8;
+	for(var jjx=0;jjx<8;jjx++)
+	{
+		for(var j=zko;j<endo;){
+			var iszrda=(RDMarr[j]<<3)+jjx;
+			ym[pidx]=mgx1sma+iszrda+mgx3;
+			pidx++;
+			j++;
+			iszrda=(RDMarr[erocount-j]<<3)+jjx;
+			ym[pidx]=mgx1sma+iszrda+mgx3;
+			pidx++;
+		}
+	}
+}
+
+	asgn_s(ym);
+	iRDMarr=dvvendo<<3;
+}
+
+var fullpgALLcur=[fullpgALLcur0,fullpgALLcur1];
+var fullpgALLrdm=[fullpgALLrdm0,fullpgALLrdm1];
 
 var fullpgALL=fullpgALLcur;
 
@@ -907,6 +1029,14 @@ fullpg();
 return false;
 }
 
+function chgfpgMode()
+{
+	document.body.scrollLeft=0;
+	fpgMode++;
+	if(fpgMode>1){fpgMode=0;}
+	recarea.value='miningMode '+fpgMode;
+}
+
 function installclo(){
 
 
@@ -941,6 +1071,8 @@ switch (ekeyCode) {
 		
 	return;
 
+	case 85:
+		chgfpgMode();
 	case 90:
 		if(PozMode>0x100){
 			PozMode=0x2;
@@ -949,7 +1081,7 @@ switch (ekeyCode) {
 			window.oncontextmenu=dsmall;
 		}
 
-		setTimeout(fullpgALL, 0);
+		setTimeout(fullpgALL[fpgMode], 0);
 	return;
 
 	case 81:
@@ -997,6 +1129,8 @@ switch (ekeyCode) {
 		PozMode++;
 		SetPozMode();
 	return;
+	case 85:
+		chgfpgMode();
 	case 90:
 		
 		if(PozMode!=0){PozMode=0x0; SetPozMode00();}
@@ -1008,7 +1142,7 @@ switch (ekeyCode) {
 		timgarea.style.maxHeight = '1%';
 		
 		
-		setTimeout(fullpgALL, 0);
+		setTimeout(fullpgALL[fpgMode], 0);
 	return;
 	
 	case 81:
@@ -1081,6 +1215,9 @@ switch (ekeyCode) {
 		curEro-=4;
 		partpg();
 	return;
+
+	
+	
 
 	case 37:
 		document.body.scrollLeft-=100;
