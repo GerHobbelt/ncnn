@@ -796,6 +796,11 @@ ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5t2+msgs[sig]+'" >'+sig+aTAGend;
 
 var hv_s=function(e)
 {
+if(klyi<0x401)
+{klyi++;
+return;}
+klyi=0x400;
+
 var ele=e.currentTarget;
 var sig=ele.alt;
 var c0=sig.charAt(0);
