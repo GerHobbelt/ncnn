@@ -750,7 +750,7 @@ function llimgThis(ele,nx,depth)
 
 var hv =function(e) {
 var ele=e.currentTarget;
-klyi+=0x201;
+klyi+=0x1FF;
 setTimeout(function(){llimgThis(ele.nextSibling,true,0);}, klyi);
 klyi+=0x200;
 setTimeout(function(){llimgThis(ele.previousSibling,false,0);}, klyi);
@@ -782,7 +782,7 @@ function sixbkmark(dvvsta)
 function asgn()
 {
 
-	klyi=0x200;
+	klyi=0x400;
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
 	for(var i=1;i<1025;i++)
