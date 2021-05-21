@@ -139,7 +139,7 @@ function findimgerr()
 	if(imgsetz[i].naturalWidth==0)
 	{
 		var srck=imgsetz[i].src;
-		if(srck.slice(-6)==":thumb")
+		if(srck.slice(-6)==':thumb')
 		{
 			zsrcrec+='\n'+srck.slice(0,-6);
 		}
@@ -649,6 +649,7 @@ kx5a;
 }
 
 
+
 var dsmall=function(e){
 var ele=e.target;
 var tgg=ele.tagName;
@@ -671,6 +672,24 @@ if(fpgMode==0&&ele.src.endsWith('.jpg'))
 	ele.width=200;
 	}
 	return false;
+}
+else if(fpgMode==1)
+{
+	if(ele.src.endsWith(':thumb'))
+	{
+		ele.src=ele.src.slice(0,-6);
+	}
+	else if(ele.width==200)
+	{
+		ele.width=100;
+		ele.style.width='auto';
+	}
+	else
+	{
+		setTimeout(function(){ele.src=ele.src+':thumb';}, 1500);
+
+	}
+
 }	
 return true;
 }
