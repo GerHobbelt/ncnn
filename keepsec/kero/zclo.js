@@ -14,7 +14,7 @@ var erocount=0;
 var keyerocount=0;
 var hardlim=0;
 var klyi=0x0;
-var fpgMode=0;
+var fpgMode=1;
 
 var RDMarr=null;
 var iRDMarr=0xF00000;
@@ -1079,6 +1079,7 @@ return false;
 
 function chgfpgMode()
 {
+	if(fullpgALL===fullpgALLcur&&curEro>0x7F){curEro-=0x80;}
 	
 	fpgMode++;
 	if(fpgMode>1){fpgMode=0;}
@@ -1094,9 +1095,7 @@ if(curEro>erocount){curEro=erocount-8;}
 
 chaglims();
 
-document.oncontextmenu=menuFunction;
-menuFunction();
-document.onmousemove=kuriakey;
+
 
 document.onkeydown=function(e) {
 
@@ -1116,10 +1115,8 @@ switch (ekeyCode) {
 	case 106:
 	case 112:
 		if(klyi<0x100)
-		{
-		fullpgmenu();
-		return;
-		}
+		{fullpgmenu();
+		return;}
 		break;
 
 	case 87:
@@ -1136,10 +1133,12 @@ switch (ekeyCode) {
 	return;
 
 	case 81:
+		if(klyi>0x100&&curEro>0x7F){curEro-=0x80;}
 		
 		
 		PozMode=0x0;
 		SetPozMode00();
+		
 		
 		
 		if(iRDMarr!=0xF00000){iRDMarr=0;}
@@ -1297,7 +1296,15 @@ switch (ekeyCode) {
 
 }
 
+PozMode=0x0;
+SetPozMode00();
 
+document.oncontextmenu=dsmall;
+keyerocount=-100;
+timgarea.style.maxHeight = '1%';
+
+klyi=0x400;
+setTimeout(fullpgALL[fpgMode], 0);
 
 }
 
