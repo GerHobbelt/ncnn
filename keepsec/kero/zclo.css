@@ -24,7 +24,7 @@ center {
 }
 .tFlo {
 	width: 224;
-	border:2px #800 solid;
+	border:1px #fff solid;
 	-webkit-transform: matrix(1,0.5,-0.5,1,0,0); /* deg330= 1,-0.5,0.5,1 */
 }
 .fl {

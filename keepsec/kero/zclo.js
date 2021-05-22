@@ -257,6 +257,7 @@ function thumbstr(src)
 
 
 const kx1='<br><a href="https://twitter.com/';
+const kx1t='<a href="https://twitter.com/';
 const kx2b1='" >==========<br>==>';
 const kx2b2='<==</a><br><a href="';
 const kx2a='" >====</a><a onmouseover=xt(this)>i';
@@ -267,7 +268,7 @@ const kx5a=':thumb" width=211 /></a>.';
 const kx5b='" /></a>';
 const kx5t=':thumb" /></a><a href="https://twitter.com/';
 const kx5t2='" /></a><a href="https://twitter.com/';
-const kx5t3='" width=200 /></a><a href="https://twitter.com/';
+const kx5t3='" width=200 /></a>';
 const kx5bl='" width=75% /></a>';
 const aTAGend='</a>';
 
@@ -792,7 +793,7 @@ window.open(vidurl, null, null);
 
 
 
-ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5t2+msgs[sig]+'" >'+sig+aTAGend;
+ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5b;
 
 
 
@@ -825,7 +826,7 @@ if(ele.naturalWidth==0)
 ele.onclick=null;
 var sigN=parseInt(sig,10);
 var thumburl=ele.src.slice(0,-6);
-ele.outerHTML=kx3t+vidstr(vids[sigN])+kx4+thumburl+kx5t3+msgs[sigN]+'" >'+sig+aTAGend;
+ele.outerHTML=kx3t+vidstr(vids[sigN])+kx4+thumburl+kx5t3;
 
 }
 
@@ -850,7 +851,7 @@ ele.onmouseover=null;
 document.body.scrollTop+=100;
 
 }
-const mgx1sma='<img class=tFlo alt=x';
+const mgx1sma='</a><img class=tFlo alt=x';
 const mgx1='<img src="poz.gif" alt=';
 const mgx2=' title=';
 const mgx3=' />';	// onmouseover=hv(this) onclick=kv(this)
@@ -871,29 +872,21 @@ function sixbkmark(dvvsta)
 
 function asgn()
 {
-
+	document.body.scrollLeft=100;
 	klyi=0x400;
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
-	for(var i=1;i<1025;i++)
-	{
-		ymgs[i].onmouseover=hv;
-		
-	}
-	document.body.scrollLeft=100;
+	for(var i=1;i<1025;i++){ymgs[i].onmouseover=hv;}
+	
 }
 
 function asgn_s(ym)
 {
 	document.body.scrollLeft=0;
-	tblarea.innerHTML=ym.join('W');
+	tblarea.innerHTML=ym.join('=');
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
-	for(var i=1;i<1025;i++)
-	{
-		ymgs[i].onmouseover=hv_s;
-		
-	}
+	for(var i=1;i<1025;i++){ymgs[i].onmouseover=hv_s;}
 }
 
 function fullpgALLcur0()
@@ -949,11 +942,11 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 	{
 		for(var j=zko;j<endo;j++){
 			var iszrda=(j<<3)+jjx;
-			ym[pidx]=mgx1sma+iszrda+mgx3;
+			ym[pidx]=kx1t+msgs[iszrda]+'" >'+iszrda+mgx1sma+iszrda+mgx3;
 			pidx++;
 			
 			iszrda=((j+64)<<3)+jjx;
-			ym[pidx]=mgx1sma+iszrda+mgx3;
+			ym[pidx]=kx1t+msgs[iszrda]+'" >'+iszrda+mgx1sma+iszrda+mgx3;
 			pidx++;
 		}
 	}
@@ -1017,11 +1010,11 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 	{
 		for(var j=zko;j<endo;){
 			var iszrda=(RDMarr[j]<<3)+jjx;
-			ym[pidx]=mgx1sma+iszrda+mgx3;
+			ym[pidx]=kx1t+msgs[iszrda]+'" >'+iszrda+mgx1sma+iszrda+mgx3;
 			pidx++;
 			j++;
 			iszrda=(RDMarr[erocount-j]<<3)+jjx;
-			ym[pidx]=mgx1sma+iszrda+mgx3;
+			ym[pidx]=kx1t+msgs[iszrda]+'" >'+iszrda+mgx1sma+iszrda+mgx3;
 			pidx++;
 		}
 	}
