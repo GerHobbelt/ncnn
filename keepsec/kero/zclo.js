@@ -267,7 +267,7 @@ const kx4='" ><img src="';
 const kx5a=':thumb" width=211 /></a>.';
 const kx5b='" /></a>';
 const kx5t=':thumb" /></a><a href="https://twitter.com/';
-const kx5t2='" /></a><a href="https://twitter.com/';
+const kx5t2='" > #= </a><a href="https://twitter.com/';
 const kx5t3='" width=200 /></a>';
 const kx5bl='" width=75% /></a>';
 const aTAGend='</a>';
@@ -728,7 +728,9 @@ var thumburl=ele.src;
 window.open(vidurl, null, null);
 ele.onmouseover=null;
 ele.onclick=null;
-ele.outerHTML=kx1+msgs[sig]+kx2b1+sig+kx2b2+vidurl+kx4+thumburl+kx5b;
+if(ele.naturalWidth){ele.outerHTML=kx1+msgs[sig]+kx2b1+sig+kx2b2+vidurl+kx4+thumburl+kx5b;}
+else{ele.outerHTML=kx3t+vidurl+kx5t2+msgs[sig]+'" >'+sig+aTAGend;}
+
 
 
 
@@ -852,6 +854,8 @@ return;
 
 var hv =function(e) {
 var ele=e.currentTarget;
+if(klyi<0x200){klyi=0x400;}
+
 klyi+=0x1FF;
 setTimeout(function(){llimgThis(ele.nextSibling,true,0);}, klyi);
 klyi+=0x200;
