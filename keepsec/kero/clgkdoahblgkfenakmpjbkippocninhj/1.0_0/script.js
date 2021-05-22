@@ -1,0 +1,511 @@
+// ==UserScript==
+// @name VidTool
+// @match https://video.twimg.com/*
+// @match file://*.mp4
+// ==/UserScript==
+
+
+
+var vio=document.getElementsByTagName("video")[0];
+if(vio=== undefined){setTimeout(close, 500);}
+
+//var vio=document.getElementById('media');
+
+var kyfunc = new Array(4);
+
+var vioasp=0.0;
+var plbrate=1.0;
+var isrot=false;
+
+vio.loop=true;
+
+
+vio.style.maxHeight='800%';
+vio.style.maxWidth='800%';
+
+var dfheight=window.innerHeight-4;
+vio.height=dfheight;
+var intervalHandle = null;
+
+
+var shrinkbefore=false;
+
+
+
+
+function toclpb()
+{
+	yput.select();
+	document.execCommand('copy');
+}
+
+function effeci()
+{
+document.onkeyup=kyfunc[1];
+var sst=yput.value;
+yput.rows=1;
+if(sst)
+{
+	var c0=sst.charAt(0);
+	if(c0=='/')
+	{
+		if(intervalHandle){clearInterval(intervalHandle);intervalHandle=null;}
+		var sn=sst.split('/');
+		var vsta=parseFloat(sn[1]);
+		var fvend=parseFloat(sn[2]);
+		if(fvend<0){
+			fvend=-(vsta+fvend);
+			yput.value='/'+vsta.toFixed(2)+'/'+fvend.toFixed(2)+'/\n';
+		}
+		
+		vio.currentTime=vsta;
+		intervalHandle=setInterval(function(){vio.currentTime=vsta;}, Math.ceil(fvend*(1000.5/plbrate)));
+		//toclpb();
+	} else if(c0=='r') {
+		if(sst.length<3)
+		{
+			plbrate=1.0;
+			
+		}
+		else
+		{
+			plbrate=parseFloat(sst.substring(1));
+			
+		}
+		vio.playbackRate=plbrate;
+
+	} else if(c0=='o') {
+		if(isrot){rotvi(null);}
+		if(sst.charAt(1)=='m'){rotvi([0x2,sst.substring(2)]);}
+		else {rotvi([0x1,sst.substring(1)]);}
+		
+		vio.play();
+		return;
+	} else if(c0=='l') {
+		vio.height=parseInt(sst.substring(1),10);
+		if(calcscall()){installpan();}
+		vio.play();
+		return;
+	} else{
+		
+		vio.style.webkitFilter = sst.replace('\n',' ');
+		//toclpb();
+
+	}
+
+	
+	
+
+	
+}
+else {vio.style.webkitFilter = '';}
+
+if(shrinkbefore)
+{
+vio.height=dfheight;
+shrinkbefore=false;
+}
+
+vio.play();
+}
+
+
+function rdce()
+{
+	//if(!isrot){vio.style.margin= '0px';}
+	vio.style.margin= 0;
+	vio.height-=100;
+	shrinkbefore=true;
+}
+
+function zmin()
+{
+	shrinkbefore=false;
+	//if(!isrot){vio.style.margin= '0px';}
+	vio.style.margin= 0;
+	vuvu=vio.height;
+	vuvu+=100;
+	yput.value='l'+vuvu;
+	vio.height=vuvu;
+	
+	if(calcscall()){if(isnotpan){installpan();}}
+}
+
+function zmout()
+{
+	rdce();
+	if(!calcscall()){if(!isnotpan){rmvpan();}}
+}
+
+function zm600()
+{
+	shrinkbefore=false;
+	vio.style.margin= 0;
+	if(!isrot){//vio.style.margin= '0px';
+	if(vio.height<(dfheight+50)){vio.height+=600;}
+	}
+
+
+
+	if(calcscall()){installpan();}
+}
+
+
+
+
+function paosa(){
+	document.onwheel=null;
+	if(vio.scrollWidth>1700){rdce();}
+
+	document.onkeyup=kyfunc[0];
+	yput.rows=8;
+	if(intervalHandle){return;}
+	else{vio.pause();}
+}
+
+function createeffctctrl()
+{
+var oyput = document.createElement('div');
+oyput.style='position:fixed;right:0px;top:0px;color:white;';
+oyput.innerHTML='<textarea rows=1 ></textarea>';
+document.body.insertBefore(oyput,vio);
+oyput=oyput.firstChild;
+oyput.onfocus=paosa;
+oyput.onblur=effeci;
+oyput.oncontextmenu=function(){close();return false;};
+
+
+return oyput;
+}
+
+var yput=createeffctctrl();
+
+
+function rotvi(krot)
+{
+vio.style.margin='auto';
+if(vioasp==0.0){vioasp=(vio.videoWidth/vio.videoHeight);}
+if(isrot)
+{
+
+vio.style.webkitTransform='';
+vio.height=dfheight;
+
+isrot=false;
+}
+else if(krot)
+{
+var typ=krot[0];
+if(typ)
+{
+	var kleanvalue=krot[1].replace('\n','');
+	switch(typ)
+	{
+		case 0x1:
+			vio.style.webkitTransform = 'rotate('+kleanvalue+'deg)'; 
+		break;
+		case 0x2:
+			vio.style.webkitTransform = 'matrix('+kleanvalue+')';
+		break;
+	}
+}
+else
+{
+
+var vh=window.outerWidth-10;
+
+var skal=(window.outerHeight-10)/(vh*vioasp);
+var t1=krot[1]*skal;
+var t2=krot[2]*skal;
+
+vio.style.webkitTransform = 'matrix(0,'+t1+','+t2+',0,0,0)';//'rotate('+krot+'deg)'; 
+vio.height=vh;
+}
+
+
+isrot=true;
+}
+
+
+}
+
+
+
+var delayii=0x0;
+var mxw=0;
+var mxh=0;
+
+const sl1=1.1;
+const sl2=0.9;
+
+function calcscall()
+{
+var tmxw=vio.scrollWidth/window.outerWidth;
+var tmxh=vio.scrollHeight/window.outerHeight;
+
+if(tmxw>sl1&&tmxh>sl1)
+{
+mxw=tmxw-sl2;
+mxh=tmxh-sl2;
+return true;
+} 
+return false;
+	
+}
+
+var isnotpan=true;
+function installpan()
+{
+	isnotpan=false;
+	vio.controls=false;
+	document.onmousemove=kyfunc[2];
+	document.onwheel=kyfunc[3];
+	document.body.style.overflow = "hidden";
+}
+
+function rmvpan()
+{
+	isnotpan=true;
+	vio.controls=true;
+	document.onmousemove=null;
+	document.onwheel=null;
+	document.body.style.overflow = "auto";
+}
+
+
+
+function ruu(x,y)
+{
+document.scrollingElement.scrollLeft=x*mxw;
+document.scrollingElement.scrollTop=y*mxh;
+}
+
+
+
+
+
+
+kyfunc[2]=function(ev) {
+
+delayii++;
+
+if(delayii > 0x14) {
+	delayii=0x0;
+	ruu(ev.clientX,ev.clientY);
+} };
+
+
+kyfunc[3]=function(ev) { 
+dltay=ev.deltaY;
+if(dltay>50){
+vih=vio.height-200;
+if(vih>dfheight){zmout();}
+else if(vih<dfheight){vio.height=dfheight+70;}
+
+}
+else if(dltay<-50){zmin();}
+};
+
+function ratechange()
+{
+vio.playbackRate=plbrate;
+yput.value='r'+plbrate.toFixed(2);
+}
+
+function klirlup()
+{
+if(intervalHandle){
+clearInterval(intervalHandle);
+intervalHandle=null;
+}
+else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0/\n';}
+
+
+}
+
+var panni=false;
+
+
+kyfunc[0]=function(e) {
+
+
+
+	switch (e.keyCode) {
+
+	case 66:
+	yput.value+='rightness(1.2)\n';
+	return;
+case 67:
+yput.value+='ontrast(1.5)\n';
+return;
+
+case 83:
+yput.value+='aturate(2.5)\n';
+return;
+
+case 72:
+yput.value+='ue-rotate(30deg)\n';
+return;
+
+case 73:
+yput.value+='nvert(1)\n';
+return;
+
+
+case 80:
+yput.value+='sepia(0)\nblur(0px)\n';
+return;
+
+	}
+};
+
+
+kyfunc[1]=function(e) {
+//vio.muted=false;
+if(panni)
+{
+	switch (e.keyCode) {
+
+	case 27:
+	case 106:
+	case 112:
+		close();
+		return;
+
+	case 83:
+		klirlup();
+		return;
+	case 111:
+		panni=false;
+		rmvpan();
+		return;
+	case 104:
+		document.body.scrollTop-=50;
+		return;
+
+	case 98:
+		document.body.scrollTop+=50;
+		return;
+	case 100:
+		document.body.scrollLeft-=50;
+		return;
+	case 102:
+		document.body.scrollLeft+=50;
+		return;
+
+	case 103:
+		document.body.scrollLeft-=50;
+		document.body.scrollTop-=50;
+		return;
+
+	case 105:
+		document.body.scrollLeft+=50;
+		document.body.scrollTop-=50;
+		return;
+	case 97:
+		vio.currentTime-=2;
+		return;
+	case 99:
+		vio.currentTime+=2;
+		return;
+	case 88:
+		plbrate-=0.1;
+		if(plbrate<0.2)
+		{plbrate=0.2;}
+		ratechange();
+		return;
+	case 65:
+		
+
+		vio.height-=100;
+
+		calcscall();
+			
+		return;
+
+	case 68:
+		
+		vio.height+=100;
+
+		calcscall();
+		
+		return;
+
+	case 87:
+		plbrate+=0.1;
+		ratechange();
+		return;
+	}
+
+return;
+}
+
+
+	switch (e.keyCode) {
+
+
+
+	case 27:
+	case 106:
+	case 112:
+		close();
+		return;
+
+	case 83:
+		klirlup();
+		return;
+	case 111:
+		zm600();
+
+		//panni=true;
+		return;
+
+	case 98:
+		plbrate-=0.1;
+		if(plbrate<0.2)
+		{plbrate=0.2;}
+		ratechange();
+		return;
+	case 97:
+		vio.currentTime-=2;
+		return;
+	case 99:
+		vio.currentTime+=2;
+		return;
+	case 100:
+		zmout();
+			
+		return;
+	case 101:
+		vio.style.margin='auto';
+		plbrate=1.0;
+		ratechange();
+		return;
+	case 102:
+		zmin();
+		
+		
+		return;
+	case 103:
+		rotvi([null,-1,1]);	//270
+		break;
+	case 104:
+		plbrate+=0.1;
+		ratechange();
+		return;
+	case 105:
+		rotvi([null,1,-1]);	//90
+		return;
+
+
+
+	}
+};
+
+document.onkeyup=kyfunc[1];
+
+
+document.onwheel=function(e){
+if(e.deltaY<-100) {
+document.onwheel=null;
+zm600();}};
