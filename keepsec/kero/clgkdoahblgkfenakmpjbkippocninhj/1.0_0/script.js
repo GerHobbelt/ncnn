@@ -13,7 +13,7 @@ if(vio=== undefined){setTimeout(close, 500);}
 
 var kyfunc = new Array(4);
 
-var vioasp=0.0;
+var vioasp=-1.0;
 var plbrate=1.0;
 var isrot=false;
 
@@ -184,7 +184,7 @@ var yput=createeffctctrl();
 function rotvi(krot)
 {
 vio.style.margin='auto';
-if(vioasp==0.0){vioasp=(vio.videoWidth/vio.videoHeight);}
+
 if(isrot)
 {
 
@@ -212,13 +212,26 @@ if(typ)
 else
 {
 
-var vh=window.outerWidth-10;
+var vh=window.innerWidth-4;
+if(vioasp<0){
+document.onwheel=null;
+vioasp=(vio.videoWidth/vio.videoHeight);
+vioasp=dfheight/(vh*vioasp);
+if(Math.abs(vioasp-1.0)<0.005){vioasp=0;}
+}
 
-var skal=(window.outerHeight-10)/(vh*vioasp);
-var t1=krot[1]*skal;
-var t2=krot[2]*skal;
+if(vioasp)
+{
+	var t1=krot[1]*vioasp;
+	var t2=krot[2]*vioasp;
+	vio.style.webkitTransform = 'matrix(0,'+t1+','+t2+',0,0,0)';
+}
+else {vio.style.webkitTransform = 'matrix(0,'+krot[1]+','+krot[2]+',0,0,0)';}
 
-vio.style.webkitTransform = 'matrix(0,'+t1+','+t2+',0,0,0)';//'rotate('+krot+'deg)'; 
+
+
+
+
 vio.height=vh;
 }
 
