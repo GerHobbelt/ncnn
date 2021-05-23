@@ -50,8 +50,22 @@ function ParseSVGf(sst)
 	ftr_elem.id=ftr_id;
 	ftr_elem.innerHTML=sst.substring(syp);
 	SVGf.appendChild(ftr_elem);
+	yput.value='>>'+ftr_id;
 	vio.style.webkitFilter='url(#'+ftr_id+')';
 
+}
+
+function ParseSVGblock(sst)
+{
+SVGf.innerHTML=sst;
+var fltr_cot=SVGf.children.length;
+var fltr_names="";
+for(var i=0;i<fltr_cot;i++)
+{
+	fltr_names+='\n>>'+SVGf.children[i].id;
+}
+
+yput.value=fltr_names;
 }
 
 
@@ -92,8 +106,22 @@ switch(c0) {
 		}
 		vio.playbackRate=plbrate;
 	break;
-	case 60:	//==<
-		if(sst.charCodeAt(1)==60){vio.style.webkitFilter='url(#'+sst.substring(2)+')';}
+	case 62:	//==<
+		if(sst.charCodeAt(1)==62){
+
+			if(sst.charCodeAt(2)==62){
+				ParseSVGblock(sst.substring(3));
+				vio.play();
+				return;
+			}
+			else {
+			var syp=sst.indexOf('\n');
+			if(syp==2){vio.style.webkitFilter='';break;}
+			else if(syp>2){sst=sst.substring(2,syp);}
+			else{sst=sst.substring(2);}
+			vio.style.webkitFilter='url(#'+sst+')';
+			}
+		}
 		else{ParseSVGf(sst);}
 		
 	break;
