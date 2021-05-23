@@ -39,6 +39,22 @@ function toclpb()
 	document.execCommand('copy');
 }
 
+var SVGf=null;
+const SVGheader='http://www.w3.org/2000/svg';
+
+function ParseSVGf(sst)
+{
+	var ftr_elem=document.createElementNS(SVGheader, 'filter');
+	var syp= sst.indexOf('\n');
+	var ftr_id=sst.substring(1,syp);
+	ftr_elem.id=ftr_id;
+	ftr_elem.innerHTML=sst.substring(syp);
+	SVGf.appendChild(ftr_elem);
+	vio.style.webkitFilter='url(#'+ftr_id+')';
+
+}
+
+
 function effeci()
 {
 document.onkeyup=kyfunc[1];
@@ -76,7 +92,11 @@ switch(c0) {
 		}
 		vio.playbackRate=plbrate;
 	break;
-
+	case 60:	//==<
+		if(sst.charCodeAt(1)==60){vio.style.webkitFilter='url(#'+sst.substring(2)+')';}
+		else{ParseSVGf(sst);}
+		
+	break;
 	case 111:	//==o
 		if(isrot){rotvi(null);}
 
@@ -164,12 +184,14 @@ function paosa(){
 	else{vio.pause();}
 }
 
+
 function createeffctctrl()
 {
 var oyput = document.createElement('div');
 oyput.style='position:fixed;right:0px;top:0px;color:white;';
-oyput.innerHTML='<textarea rows=1 ></textarea>';
+oyput.innerHTML='<textarea rows=1 ></textarea><svg width=0 height=0 ><defs></defs></svg>';
 document.body.insertBefore(oyput,vio);
+SVGf=oyput.children[1].firstChild;
 oyput=oyput.firstChild;
 oyput.onfocus=paosa;
 oyput.onblur=effeci;
