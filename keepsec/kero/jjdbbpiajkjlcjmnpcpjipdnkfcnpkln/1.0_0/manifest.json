@@ -1,0 +1,15 @@
+{
+   "content_scripts": [ {
+      "exclude_globs": [  ],
+      "exclude_matches": [  ],
+      "include_globs": [  ],
+      "js": [ "script.js" ],
+      "matches": [ "http://embed.nicovideo.jp/watch/*", "https://www.youtube.com/embed/*", "https://www.youtube.com/watch?v=*" ],
+      "run_at": "document_idle"
+   } ],
+   "converted_from_user_script": true,
+   "description": "",
+   "key": "Po1Vm5WXlIClQL5xzz+f6xtQAwkh7dNab7HfUgbzX2U=",
+   "name": "YT&NiCo",
+   "version": "1.0"
+}
