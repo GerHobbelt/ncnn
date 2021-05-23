@@ -1,0 +1,15 @@
+{
+   "content_scripts": [ {
+      "exclude_globs": [  ],
+      "exclude_matches": [  ],
+      "include_globs": [  ],
+      "js": [ "script.js" ],
+      "matches": [ "file:///*.mp4", "https://video.twimg.com/*" ],
+      "run_at": "document_idle"
+   } ],
+   "converted_from_user_script": true,
+   "description": "",
+   "key": "1ATMG0/owzbI4f3k0lR+3yX2LTInBOvUR0OtUZmYjEI=",
+   "name": "VidTool",
+   "version": "1.0"
+}

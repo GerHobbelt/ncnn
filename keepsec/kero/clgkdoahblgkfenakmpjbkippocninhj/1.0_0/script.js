@@ -112,8 +112,8 @@ vio.play();
 
 function rdce()
 {
-	//if(!isrot){vio.style.margin= '0px';}
-	vio.style.margin= 0;
+	if(!isrot){vio.style.margin= 0;}
+
 	vio.height-=100;
 	shrinkbefore=true;
 }
@@ -121,8 +121,7 @@ function rdce()
 function zmin()
 {
 	shrinkbefore=false;
-	//if(!isrot){vio.style.margin= '0px';}
-	vio.style.margin= 0;
+	if(!isrot){vio.style.margin= 0;}
 	vuvu=vio.height;
 	vuvu+=100;
 	yput.value='l'+vuvu;
@@ -140,8 +139,8 @@ function zmout()
 function zm600()
 {
 	shrinkbefore=false;
-	vio.style.margin= 0;
-	if(!isrot){//vio.style.margin= '0px';
+	
+	if(!isrot){vio.style.margin= 0;
 	if(vio.height<(dfheight+50)){vio.height+=600;}
 	}
 
@@ -215,20 +214,16 @@ else
 var vh=window.innerWidth-4;
 if(vioasp<0){
 document.onwheel=null;
-vioasp=(vio.videoWidth/vio.videoHeight);
-vioasp=dfheight/(vh*vioasp);
-if(Math.abs(vioasp-1.0)<0.005){vioasp=0;}
+var lvioasp=dfheight/(vh*(vio.videoWidth/vio.videoHeight));
+if(lvioasp>1.0||(Math.abs(lvioasp-1.0)<0.005)){vioasp=0;}
+else {vioasp=lvioasp;}
 }
 
-if(vioasp)
-{
-	var t1=krot[1]*vioasp;
-	var t2=krot[2]*vioasp;
-	vio.style.webkitTransform = 'matrix(0,'+t1+','+t2+',0,0,0)';
-}
-else {vio.style.webkitTransform = 'matrix(0,'+krot[1]+','+krot[2]+',0,0,0)';}
+var t1=krot[1]?-1.0:1.0;
 
-
+if(vioasp){t1*=vioasp;}
+var t2=-t1;
+vio.style.webkitTransform = 'matrix(0,'+t1+','+t2+',0,0,0)';
 
 
 
@@ -500,14 +495,14 @@ return;
 		
 		return;
 	case 103:
-		rotvi([null,-1,1]);	//270
+		rotvi([null,true]);	//270,-1,1
 		break;
 	case 104:
 		plbrate+=0.1;
 		ratechange();
 		return;
 	case 105:
-		rotvi([null,1,-1]);	//90
+		rotvi([null,false]);	//90
 		return;
 
 
