@@ -50,6 +50,7 @@ switch(c0) {
 	case 47:	//==/
 	
 		if(intervalHandle){clearInterval(intervalHandle);intervalHandle=null;}
+		sst=sst.replace('2.0123/\n/','-');
 		var sn=sst.split('/');
 		var vsta=parseFloat(sn[1]);
 		var fvend=parseFloat(sn[2]);
@@ -323,8 +324,9 @@ function klirlup()
 if(intervalHandle){
 clearInterval(intervalHandle);
 intervalHandle=null;
+yput.value='';
 }
-else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0/\n';}
+else{yput.value+='/'+vio.currentTime.toFixed(2)+'/2.0123/\n';}
 
 
 }
