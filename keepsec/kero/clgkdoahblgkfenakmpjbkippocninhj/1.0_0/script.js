@@ -44,11 +44,11 @@ function effeci()
 document.onkeyup=kyfunc[1];
 var sst=yput.value;
 yput.rows=1;
-if(sst)
-{
-	var c0=sst.charAt(0);
-	if(c0=='/')
-	{
+if(sst) {
+var c0=sst.charCodeAt(0);
+switch(c0) {
+	case 47:	//==/
+	
 		if(intervalHandle){clearInterval(intervalHandle);intervalHandle=null;}
 		var sn=sst.split('/');
 		var vsta=parseFloat(sn[1]);
@@ -60,8 +60,9 @@ if(sst)
 		
 		vio.currentTime=vsta;
 		intervalHandle=setInterval(function(){vio.currentTime=vsta;}, Math.ceil(fvend*(1000.5/plbrate)));
-		//toclpb();
-	} else if(c0=='r') {
+	break;
+	
+	case 114:	//==r
 		if(sst.length<3)
 		{
 			plbrate=1.0;
@@ -73,26 +74,28 @@ if(sst)
 			
 		}
 		vio.playbackRate=plbrate;
+	break;
 
-	} else if(c0=='o') {
+	case 111:	//==o
 		if(isrot){rotvi(null);}
-		if(sst.charAt(1)=='m'){rotvi([0x2,sst.substring(2)]);}
+
+		sst=sst.split('\n')[0];	//==m
+		if(sst.charCodeAt(1)==109){rotvi([0x2,sst.substring(2)]);}
 		else {rotvi([0x1,sst.substring(1)]);}
 		
 		vio.play();
-		return;
-	} else if(c0=='l') {
+	return;
+	case 108:	//==l
 		vio.height=parseInt(sst.substring(1),10);
 		if(calcscall()){installpan();}
 		vio.play();
-		return;
-	} else{
-		
+	return;
+	default:
 		vio.style.webkitFilter = sst.replace('\n',' ');
 		//toclpb();
-
-	}
-
+	break;
+}
+	
 	
 	
 
@@ -100,11 +103,9 @@ if(sst)
 }
 else {vio.style.webkitFilter = '';}
 
-if(shrinkbefore)
-{
+if(shrinkbefore) {
 vio.height=dfheight;
-shrinkbefore=false;
-}
+shrinkbefore=false;}
 
 vio.play();
 }
@@ -184,27 +185,24 @@ function rotvi(krot)
 {
 vio.style.margin='auto';
 
-if(isrot)
-{
+if(isrot) {
+	vio.style.webkitTransform='';
+	vio.height=dfheight;
 
-vio.style.webkitTransform='';
-vio.height=dfheight;
+	isrot=false;
+} else if(krot) {
 
-isrot=false;
-}
-else if(krot)
-{
 var typ=krot[0];
 if(typ)
 {
-	var kleanvalue=krot[1].replace('\n','');
+	
 	switch(typ)
 	{
 		case 0x1:
-			vio.style.webkitTransform = 'rotate('+kleanvalue+'deg)'; 
+			vio.style.webkitTransform = 'rotate('+krot[1]+'deg)'; 
 		break;
 		case 0x2:
-			vio.style.webkitTransform = 'matrix('+kleanvalue+')';
+			vio.style.webkitTransform = 'matrix('+krot[1]+')';
 		break;
 	}
 }
@@ -308,7 +306,7 @@ dltay=ev.deltaY;
 if(dltay>50){
 vih=vio.height-200;
 if(vih>dfheight){zmout();}
-else if(vih<dfheight){vio.height=dfheight+70;}
+else {vio.height=dfheight+70;}
 
 }
 else if(dltay<-50){zmin();}
