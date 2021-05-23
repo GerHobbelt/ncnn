@@ -1,28 +1,148 @@
 >>@
-  <filter id="emboss" >
-    <feConvolveMatrix order="5 5"
-      preserveAlpha="true" 
-      kernelMatrix="-1 0 0 0 0 0 -2 0 0 0 0 0 3 0 0 0 0 0 0 0 0 0 0 0 0"/>
-  </filter>
-  
-  <filter id="sharpen">
-    <feConvolveMatrix order="3 3" preserveAlpha="true" kernelMatrix="0 -1 0 -1 5 -1 0 -1 0"/>
-  </filter>
-  
-  <filter id="EdgeDetect">
-    <feConvolveMatrix order="3 3" preserveAlpha="true" kernelMatrix="-5 0 0 0 0 0 0 0 5"/>
-  </filter>
-  
-  <filter id="LuminanceMask">
-    <feColorMatrix type="luminanceToAlpha"/>
-  </filter>
-  
-  <filter id="GaussianBlur">
-    <feGaussianBlur stdDeviation="10 1"/>
-  </filter>
-  
-  <filter id="GradientMap">
-   <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"> </feColorMatrix>
+
+
+
+
+<filter id="spotlighter" x="0%" y="0%" width="100%" height="100%" filterRes="550 370">
+
+       <feDiffuseLighting result = "diffOut" diffuseConstant = "1" lighting-color = "white">
+            <feSpotLight id="spotlight" x = "275" y = "200" z = "350" pointsAtX = "270" pointsAtY = "190" pointsAtZ = "40" specularExponent ="12" limitingConeAngle="70"/>
+      </feDiffuseLighting>
+
+     
+     <feColorMatrix in="diffOut" result="alphaMap" type="luminanceToAlpha"/>
+          <feComponentTransfer in="alphaMap" result="invertlight">
+               <feFuncA type="table" tableValues="1 0 0 0 0"/>
+          </feComponentTransfer>
+           
+     <feComposite operator="xor" result="infocus" in2="SourceGraphic" in="invertlight"/>
+               
+<feColorMatrix type="matrix" in="SourceGraphic" result="highContrast" values="2 0 0 0 -1
+                              0 2 0 0 -1                                           0 0 2 0 -1
+                              0 0 0 1 0"/>
+     <feComposite operator="over" in="infocus" in2="highContrast"/>     
+       
+</filter>
+
+<filter id="washout" filterUnits="objectBoundingBox" 
+              x=0 y=0 width="100%" height="100%">
+      <feFlood flood-color="#ffffff" flood-opacity="0.5" result="flood"/>
+      <feBlend mode="screen" in2="flood" in="SourceGraphic"/>   
+</filter>
+
+<filter id="unsharp" x="-20%" y="-20%" width="160%" height="160%">
+            <feGaussianBlur result="blurOut" in="SourceGraphic" stdDeviation=20 />
+            <feComposite operator="arithmetic" k1=0 k2=2 k3=-1 k4=0
+            in="SourceGraphic" in2="blurOut" />
+</filter>
+
+<filter id="bluefill" x="0%" y="0%" width="100%" height="100%">
+                  <feFlood  flood-color="blue" result="A"/>
+                  <feColorMatrix type="matrix" in="SourceGraphic" result="B"
+                  values=
+                          "1   0  0  0 0  
+                           0   1  0  0 0   
+                           0   0  1  0 0   
+                           1   1  1  0 0
+                  "/>
+                  <feMerge>
+                         <feMergeNode in="A"/>
+                         <feMergeNode in="B"/>
+                  </feMerge>
+</filter>
+
+<filter id="displacement" x="0%" y="0%" height="100%" width="100%">
+              <feDisplacementMap scale="100" in2="SourceGraphic" xChannelSelector="G"/>
+</filter>
+
+@===============
+
+>orton
+<feColorMatrix type="matrix" in="SourceGraphic" result="brighter" values="1.3 0 0 0 0.1
+                                         0 1.3 0 0 0.1
+                                         0 0 1.3 0 0.1
+                                         0 0 0 1 0"/>
+<feGaussianBlur in="brighter" stdDeviation="3" result="brightblur"/>
+<feBlend mode="multiply" in="brighter" in2="brightblur"/>
+
+>hiblur
+<feColorMatrix type="luminanceToAlpha" in="SourceGraphic" result="lumMap"/>
+<feComponentTransfer in="lumMap" result="highlightMask">
+ 		     <feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 1"/>
+</feComponentTransfer>
+<feComposite operator="in" in="SourceGraphic" in2="highlightMask" result="highlights"/>
+<feGaussianBlur in="highlights" stdDeviation="3" result="highBlur"/>
+<feComposite operator="over" in="highBlur" in2="SourceGraphic" result="final"/>
+
+
+
+>puru
+<feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" seed="46" numOctaves="1">
+<animate attributeName="baseFrequency" values="0.01; 0.015; 0.02; 0.025; 0.03; 0.025; 0.02; 0.015" repeatCount="indefinite" dur="0.25s"/>
+</feTurbulence>
+<feDisplacementMap xChannelSelector="R" yChannelSelector="G" in="SourceGraphic" scale="10" />
+
+
+
+
+>midsepia
+      <!-- generate mid-tone mask -->
+      <feColorMatrix type="luminanceToAlpha"/>
+      <feComponentTransfer >
+        <feFuncA type="table" tableValues="0 .2 0.5 .8 1 .8 0.5 .20 0"/>
+      </feComponentTransfer>
+     <feComposite operator="in" in="SourceGraphic"/>
+     <!-- apply sepia effect -->
+       <feColorMatrix type="matrix" result="sepia-clip"
+      values="0.39 0.769 0.189 0  0 
+              0.349 0.686 0.168 0  0  
+              0.272 0.534 0.131 0  0 
+                0  0 0 1  0" />
+      <!-- generate greyscale from original -->
+      <feColorMatrix in="SourceGraphic" type="matrix" result="gscale"
+                    values="0.2126 0.7152 0.0722 0 0 
+                            0.2126 0.7152 0.0722 0 0 
+                            0.2126 0.7152 0.0722 0 0 
+                            0 0 0 1 0" />
+      <!-- composite the sepia over the greyscale -->
+      <feComposite operator="over" in="sepia-clip" in2="gscale"/>     
+
+
+>redcoat
+<feColorMatrix in="SourceGraphic" result="BigRed"type="matrix" values="0 0 0 0 0
+						0 0 0 0 0
+						0 0 0 0 0
+						3.8 -4 -4 0 -0.5" />      
+<feColorMatrix type="saturate" values="0" in="SourceGraphic" result="GreySource"/>
+<feComposite operator="in" in="SourceGraphic" in2="BigRed" result="RedOriginal"/>
+<feComposite operator="atop" in="RedOriginal" in2="GreySource" result="final"/>
+
+
+>waves
+<feTurbulence type="turbulence" baseFrequency="0.01 0.05" numOctaves="2" seed="2" stitchTiles="noStitch" result="turbulence"/>
+<feDisplacementMap in="SourceGraphic" in2="turbulence" scale="20" xChannelSelector="G" yChannelSelector="A" result="displacementMap"/>
+
+>noir
+<feGaussianBlur stdDeviation="1.5" />
+               <feComponentTransfer>
+                 <feFuncR type="discrete" tableValues="0 .5 1 1"/>
+                 <feFuncG type="discrete" tableValues="0 .5 1"/>
+                 <feFuncB type="discrete" tableValues="0"/>
+               </feComponentTransfer>
+
+
+>EdgeDetect
+<feConvolveMatrix order="3 3" preserveAlpha="true" kernelMatrix="-5 0 0 0 0 0 0 0 5"/>
+
+
+>LuminanceMask
+<feColorMatrix type="luminanceToAlpha"/>
+
+>GaussianBlur
+<feGaussianBlur stdDeviation="10 1"/>
+
+>GradientMap
+<feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"> </feColorMatrix>
    <feComponentTransfer >
       <feFuncR type="table" 
         tableValues="0 1 0 1"/>
@@ -31,10 +151,9 @@
       <feFuncB type="table" 
         tableValues="0 0 .4 1"/>
    </feComponentTransfer>
-  </filter>  
-  
-  <filter id="posterize">
-    <feComponentTransfer>
+
+>posterize
+<feComponentTransfer>
     <feFuncR type="discrete" 
         tableValues="0 0.25 0.5 0.75 1"/>
     <feFuncG type="discrete" 
@@ -42,27 +161,17 @@
     <feFuncB type="discrete" 
         tableValues="0 0.25 0.5 0.75 1"/>
   </feComponentTransfer>
-  </filter>
-    
-  <filter id="grayscale">
-   <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0" />
-  </filter>
-  
-  <filter id="xray">
-   <feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0" />
+
+>grayscale
+<feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0" />
+
+>xray
+<feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0" />
    <feComponentTransfer >
       <feFuncR type="table" tableValues="1 0"/>
       <feFuncG type="table" tableValues="1 0"/>
       <feFuncB type="table" tableValues="1 0"/>
    </feComponentTransfer>  
-  </filter>
-    
-    <filter id="washout" filterUnits="objectBoundingBox" 
-              x="0%" y="0%" width="100%" height="100%">
-      <feFlood flood-color="#ffffff" flood-opacity="0.5" result="flood"/>
-      <feBlend mode="screen" in2="flood" in="SourceGraphic"/>   
-    </filter>   
-@
 
 >conv
 <feConvolveMatrix order="3" kernelMatrix="1 -1  1 -1 -0.01 -1 1 -1 1" edgeMode="duplicate" result="convo"/>
@@ -78,16 +187,131 @@
 <feConvolveMatrix order="3 3" preserveAlpha="true" kernelMatrix="0 -1 0 -1 5 -1 0 -1 0"/>
 
 
->bluefill
-<feFlood  flood-color="blue" result="A"/>
-                  <feColorMatrix type="matrix" in="SourceGraphic" result="B"
-                  values=
-                          "1   0  0  0 0  
-                           0   1  0  0 0   
-                           0   0  1  0 0   
-                           1   1  1  0 0
-                  "/>
-                  <feMerge>
-                         <feMergeNode in="A"/>
-                         <feMergeNode in="B"/>
-                  </feMerge>
+
+
+>convolve2
+ <feConvolveMatrix filterRes="100 100" style="color-interpolation-filters:sRGB"
+          order="3" kernelMatrix="0 -1 0   -1 4 -1   0 -1 0" preserveAlpha="true"/>
+
+
+>unsharp
+<feGaussianBlur result="blurOut" in="SourceGraphic" stdDeviation=10 />
+<feComposite operator="arithmetic" k1=0 k2=2 k3=-1 k4=0
+            in="SourceGraphic" in2="blurOut" />
+
+
+
+>oldfy
+    <feFlood flood-color="#FEDF91" result="color-fill-one"/>
+    <feBlend mode="multiply" in="SourceGraphic" in2="color-fill-one" result="blend-one"/>
+    <feComponentTransfer>
+      <feFuncB in="blend-one" type="table" tableValues=".08 1"/>
+    </feComponentTransfer>
+    
+    
+>whitefy
+    <feComponentTransfer in="SourceGraphic" result="green-black">
+      <feFuncG in="SourceGraphic" type="table" tableValues=".04 1"/>
+    </feComponentTransfer>
+      <feColorMatrix in="green-black" type="matrix" result="bright-contrast" values="0.92 0 0 0 0.1
+                                0 0.92 0 0 0.1 
+                                0 0 0.92 0 0.1 
+                                0 0 0 1 0  "/>
+      <feFlood flood-color="black" flood-opacity="0.8" result="black-flood" x="-10%" y="-10%" width="120%" height="120%"/>
+      <feFlood x="4%" y="6%" width="92%" height="88%" flood-color="white" result="white-fill"/>
+      <feComposite operator="xor" in2="black-flood" in="white-fill" result="outermargin"/>
+      <feGaussianBlur in="outermargin" stdDeviation="40" result="black-blur"/>
+      <feComposite operator="in" in2="SourceGraphic" in="black-blur" result="inset-shadow"/>
+      <feBlend mode="multiply" in="bright-contrast" in2="inset-shadow"/>
+
+    
+    
+>redfy
+      <feComponentTransfer in="SourceGraphic" result="green-black">
+          <feFuncR in="SourceGraphic" type="table" tableValues=".1 1"/>
+    </feComponentTransfer>
+    
+    
+>pane5 
+<!-- x="0%" y="0%" width="100%" height="100%" -->
+       <feComponentTransfer result="contrast-five">
+          <feFuncR type="linear" slope="2" intercept="-0.5"/>
+          <feFuncG type="linear" slope="2" intercept="-0.5"/>
+          <feFuncB type="linear" slope="2" intercept="-0.5"/>
+       </feComponentTransfer>
+      <feFlood flood-color="#FFE567" flood-opacity=".7" result="yellow-fill-five"/>
+      <feBlend mode="multiply" in="contrast-five" in2="yellow-fill-five"/>
+      <feColorMatrix type="saturate" values="0.75" result="desaturate-five"/>
+      <feGaussianBlur in="desaturate-five" result="desat-blur" stdDeviation="1"/>
+
+    
+    
+>deepsau
+        <feComponentTransfer result="contrast-five">
+          <feFuncR type="table" tableValues=".08 1"/>
+          <feFuncG type="table" tableValues="0 0 0.143 0.286 0.429 0.571 0.714 0.857 1"/>
+       </feComponentTransfer>
+      <feColorMatrix in="contrast-five" type="matrix" result="bright-contrast" values="1.4 0 0 0 -0.3
+                                0 1.4 0 0 -0.3 
+                                0 0 1.4 0 -0.3 
+                                0 0 0 1 0  "/>
+
+    
+    
+>grayny
+    <feColorMatrix type="matrix" values=".2 .35 .45 0 0 
+                                         .2 .35 .45 0 0 
+                                         .2 .35 .45 0 0 
+                                          0  0  0 1 0"
+                   result="weighted-grey-scale"/>
+     <feComponentTransfer in="weighted-grey-scale" result="adj-grey">
+      <feFuncR type="table" tableValues=".1 .33 .66  0.9"/>
+      <feFuncG type="table" tableValues=".1 .33 .66  0.9"/>
+      <feFuncB type="table" tableValues=".1 .33 .66  0.9"/>
+    </feComponentTransfer>
+     <feComponentTransfer in="adj-grey" result="blown-highs">
+      <feFuncR type="table" tableValues="0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 1 1 1"/>
+      <feFuncG type="table" tableValues="0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 1 1 1"/>
+      <feFuncB type="table" tableValues="0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.65 0.7 0.75 0.8 0.85 1 1 1"/>
+    </feComponentTransfer>
+      
+
+    
+    
+>oldfy2
+<feColorMatrix result="contrast-eight" type="matrix" values="1.75 0 0 0 -0.19
+                       0 1.75 0 0 -0.19 
+                       0 0 1.75 0 -0.19 
+                       0 0 0 1 0  "/>
+      <feComponentTransfer in="contrast-eight" result="curves-eight">
+          <feFuncR type="table" tableValues="0 0.07 0.15 0.22 0.3 0.4 0.48 0.6 0.67 0.72 0.77 0.82 0.85 0.88 0.91 0.93 0.95 0.96 0.97 0.99 1"/>
+          <feFuncG type="table" tableValues="0 0.07 0.15 0.22 0.3 0.4 0.48 0.6 0.67 0.72 0.77 0.82 0.85 0.88 0.91 0.93 0.95 0.96 0.97 0.99 1"/>
+          <feFuncB type="table" tableValues="0 0.07 0.15 0.22 0.3 0.4 0.48 0.6 0.67 0.72 0.77 0.82 0.85 0.88 0.91 0.93 0.95 0.96 0.97 0.99 1"/>
+       </feComponentTransfer>
+      <feTurbulence id="b1" type="fractalNoise" baseFrequency="0.075" numOctaves="3"/>
+               <feColorMatrix type="matrix" values=".33 .33 .33 0 0 
+                                                 .33 .33 .33 0 0 
+                                                 .33 .33 .33 0 0 
+                                                 0 0 0 1 0"/>
+             <feComponentTransfer result="texture">
+                <feFuncA type="table" tableValues="0 0.0 0.0 0.0 0.0 0.03 .08 .2 .7 .8 .95 1"/>
+            </feComponentTransfer>
+          <feComponentTransfer result="colored-texture">
+            <feFuncR type="discrete" tableValues="0 .93 .93 .93 .93"/>
+            <feFuncG type="discrete" tableValues="0 .84 .84 .84 .84"/>
+            <feFuncB type="discrete" tableValues="0 .63 .63 .63 .63"/>
+            </feComponentTransfer>
+          <feFlood flood-color="#F7ECCA" result="yellow-field"/>
+              <feBlend mode="multiply" in="yellow-field" in2="colored-texture" result="old-map-texture"/>
+    <feBlend mode="multiply" in="old-map-texture" in2="contrast-eight" result="inter-plus-map"/>
+    <feFlood result="sepia-fill" flood-color="#FDC589"/>
+    <feBlend mode="multiply" in="sepia-fill" in2="inter-plus-map" result="pre-final"/>
+   <feFlood flood-color="#27412B" result="black-flood"/>
+      <feFlood x="4%" y="6%" width="92%" height="88%" flood-color="white" result="white-fill"/>
+      <feComposite operator="xor" in2="black-flood" in="white-fill" result="outermargin"/>
+      <feGaussianBlur in="outermargin" stdDeviation="40" result="black-blur"/>
+      <feBlend mode="multiply" in="pre-final" in2="black-blur"/>
+      <feComposite operator="in" in="pre-final" in2="SourceGraphic"/>
+
+
+
