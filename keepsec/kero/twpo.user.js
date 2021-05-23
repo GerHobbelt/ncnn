@@ -4,6 +4,7 @@
 // ==/UserScript==
 
 var noturl=false;
+var notclick=true;
 
 document.onkeydown=function(e) {
 
@@ -12,6 +13,16 @@ switch (e.keyCode) {
 case 27:
 case 106:
 case 112:
+
+	if(notclick)
+	{
+		var btn=document.getElementsByClassName('css-1dbjc4n r-1kihuf0 r-1ndi9ce')[0];
+		if(btn=== undefined){close(); return;}
+		btn.firstChild.click();
+		document.scrollingElement.scrollTop+=150;
+		notclick=false;
+		return;
+	}
 	close();
 	return;
 
