@@ -1,4 +1,4 @@
->>>
+>>@
   <filter id="emboss" >
     <feConvolveMatrix order="5 5"
       preserveAlpha="true" 
@@ -62,3 +62,32 @@
       <feFlood flood-color="#ffffff" flood-opacity="0.5" result="flood"/>
       <feBlend mode="screen" in2="flood" in="SourceGraphic"/>   
     </filter>   
+@
+
+>conv
+<feConvolveMatrix order="3" kernelMatrix="1 -1  1 -1 -0.01 -1 1 -1 1" edgeMode="duplicate" result="convo"/>
+
+
+>emboss
+<feConvolveMatrix order="5 5"
+      preserveAlpha="true" 
+      kernelMatrix="-1 0 0 0 0 0 -2 0 0 0 0 0 3 0 0 0 0 0 0 0 0 0 0 0 0"/>
+
+
+>sharpen
+<feConvolveMatrix order="3 3" preserveAlpha="true" kernelMatrix="0 -1 0 -1 5 -1 0 -1 0"/>
+
+
+>bluefill
+<feFlood  flood-color="blue" result="A"/>
+                  <feColorMatrix type="matrix" in="SourceGraphic" result="B"
+                  values=
+                          "1   0  0  0 0  
+                           0   1  0  0 0   
+                           0   0  1  0 0   
+                           1   1  1  0 0
+                  "/>
+                  <feMerge>
+                         <feMergeNode in="A"/>
+                         <feMergeNode in="B"/>
+                  </feMerge>
