@@ -44,13 +44,20 @@ const SVGheader='http://www.w3.org/2000/svg';
 
 function ParseSVGf(sst)
 {
-	var ftr_elem=document.createElementNS(SVGheader, 'filter');
+	
 	var syp= sst.indexOf('\n');
 	var ftr_id=sst.substring(1,syp);
-	ftr_elem.id=ftr_id;
-	ftr_elem.innerHTML=sst.substring(syp);
-	SVGf.appendChild(ftr_elem);
-	yput.value='>>'+ftr_id;
+
+	var prev=document.getElementById(ftr_id);
+	if(prev){prev.innerHTML=sst.substring(syp);}
+	else{
+		var ftr_elem=document.createElementNS(SVGheader, 'filter');
+		ftr_elem.id=ftr_id;
+		ftr_elem.innerHTML=sst.substring(syp);
+		SVGf.appendChild(ftr_elem);
+		yput.value='>>'+ftr_id;
+	}
+	
 	vio.style.webkitFilter='url(#'+ftr_id+')';
 
 }
@@ -116,7 +123,7 @@ switch(c0) {
 			}
 			else {
 			var syp=sst.indexOf('\n');
-			if(syp==2){vio.style.webkitFilter='';break;}
+			if(syp==2){vio.style.webkitFilter=null;break;}
 			else if(syp>2){sst=sst.substring(2,syp);}
 			else{sst=sst.substring(2);}
 			vio.style.webkitFilter='url(#'+sst+')';
@@ -150,7 +157,7 @@ switch(c0) {
 
 	
 }
-else {vio.style.webkitFilter = '';}
+else {vio.style.webkitFilter = null;}
 
 if(shrinkbefore) {
 vio.height=dfheight;
@@ -237,7 +244,7 @@ function rotvi(krot)
 vio.style.margin='auto';
 
 if(isrot) {
-	vio.style.webkitTransform='';
+	vio.style.webkitTransform=null;
 	vio.height=dfheight;
 
 	isrot=false;
