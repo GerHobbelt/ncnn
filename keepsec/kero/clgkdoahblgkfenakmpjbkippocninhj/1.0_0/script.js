@@ -109,8 +109,8 @@ switch(c0) {
 	case 62:	//==<
 		if(sst.charCodeAt(1)==62){
 
-			if(sst.charCodeAt(2)==62){
-				ParseSVGblock(sst.substring(3));
+			if(sst.charCodeAt(2)==64){
+				ParseSVGblock(sst.split('@')[1]);
 				vio.play();
 				return;
 			}
