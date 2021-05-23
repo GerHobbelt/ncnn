@@ -10,14 +10,20 @@ var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
 var pozcur=new Array(2);
 var pozcurpic=timgarea.nextSibling;
+var SVGf=timgarea.previousSibling.firstChild;
+
+var selefocus=null;
+
 var erocount=0;
 var keyerocount=0;
 var hardlim=0;
 var klyi=0x0;
 var fpgMode=1;
 
+
 var RDMarr=null;
 var iRDMarr=0xF00000;
+
 
 
 
@@ -153,6 +159,59 @@ function findimgerr()
 	return zsrcrec;
 
 }
+
+const SVGheader='http://www.w3.org/2000/svg';
+
+
+
+function pPick(coord)
+{
+	var x;
+	var y;
+	if(coord)
+	{
+		x=coord[0];
+		y=coord[1];
+	}
+	else
+	{
+		x=window.outerWidth>>1;
+		y=window.outerHeight>>1;
+	}
+	selefocus=document.elementFromPoint(x,y);
+	selefocus.style.border = '5px solid yellow';
+	setTimeout(function(){selefocus.style.border=null;recarea.scrollIntoView();}, 10000);
+	
+}
+
+function pSVG()
+{
+	if(!selefocus){return;}
+
+	var sst=recarea.value;
+	if(sst.charCodeAt(1)==62){
+			var syp=sst.indexOf('\n');
+			if(syp==2){selefocus.style.webkitFilter='';return;}
+			else if(syp>2){sst=sst.substring(2,syp);}
+			else{sst=sst.substring(2);}
+			selefocus.style.webkitFilter='url(#'+sst+')';
+			return;
+		}
+	
+	
+	var ftr_elem=document.createElementNS(SVGheader, 'filter');
+	var syp= sst.indexOf('\n');
+	var ftr_id=sst.substring(1,syp);
+	ftr_elem.id=ftr_id;
+	ftr_elem.innerHTML=sst.substring(syp);
+	SVGf.appendChild(ftr_elem);
+	recarea.value='>>'+ftr_id;
+	selefocus.style.webkitFilter='url(#'+ftr_id+')';
+	selefocus.scrollIntoView();
+	
+
+}
+
 function prtcsvll(i)
 {
 	return thumb[i]+'\t'+vids[i]+'\t'+msgs[i]+'\n';
@@ -1183,6 +1242,14 @@ switch (ekeyCode) {
 		PozMode++;
 		SetPozMode();
 	return;
+	case 70:
+		if(PozMode==1)
+		{
+			selefocus=document.elementFromPoint(pozcur[0],pozcur[1]);
+			if(selefocus){recarea.value='>(name)\n(prog)\n<!--'+selefocus.outerHTML+'-->'}
+			return;
+		}
+	break;
 	case 87:
 		chgfpgMode();
 	case 90:
