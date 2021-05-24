@@ -181,7 +181,7 @@ function pPick(coord)
 	selefocus=document.elementFromPoint(x,y);
 	selefocus.style.border = '5px solid yellow';
 	recarea.value='>(name)\n(prog)\n<!--'+selefocus.outerHTML+'-->';
-	setTimeout(function(){selefocus.style.border=null;recarea.scrollIntoView();}, 10000);
+	setTimeout(function(){selefocus.style.border=null;}, 10000);
 	return selefocus;
 	
 }
@@ -218,7 +218,7 @@ function pSVG()
 			}
 			
 			var syp=sst.indexOf('\n');
-			if(syp==2){selefocus.style.webkitFilter='';return;}
+			if(syp==2){selefocus.style.webkitFilter=null;return;}
 			else if(syp>2){sst=sst.substring(2,syp);}
 			else{sst=sst.substring(2);}
 			setNscroll(sst);
@@ -301,7 +301,7 @@ var canfire=true;
 function repg(ele)
 {
 	
-	timgarea.src='';
+	timgarea.src=null;
 	timgarea.style.maxHeight = '1%';
 
 	if(keyerocount<0)
@@ -314,7 +314,7 @@ function repg(ele)
 	}
 
 
-	recarea.value+='\n\n'+erocount.toString(10);
+	
 	evv=curEro+((parseInt(ele.value,10)*5)>>2);
 	if(evv<0){evv=0;}
 	else if(evv>erocount){evv=erocount-8;}
@@ -323,7 +323,7 @@ function repg(ele)
 		curEro=evv;
 		
 		chaglims();
-		tblarea.innerHTML="";
+		tblarea.innerHTML=bz1+curEro+bz2;
 		
 		
 		menuFunction();
@@ -350,6 +350,8 @@ function thumbstr(src)
 	return vtwimg[0]+src;
 }
 
+const bz1='<h1><a href="0bak/bkero.html">#.';
+const bz2='</a></h1>';
 
 
 const kx1='<br><a href="https://twitter.com/';
@@ -395,7 +397,7 @@ function SetPozMode()
 		pozcurpic.style.bottom=null;
 		return;
 		case 0x2:
-		pozcurpic.innerHTML='';
+		pozcurpic.innerHTML=null;
 		pozcurpic.className='nv';
 		pozcurpic.style.bottom=null;
 		return;
@@ -438,7 +440,7 @@ var ovrcount=0;
 function skrback()
 {
 nymu=-1;
-document.body.background='';
+document.body.background=null;
 document.body.scrollTop+=20;
 document.body.scrollLeft=0;
 }
@@ -524,7 +526,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 				}
 				else
 				{
-					ymgg.alt='';
+					ymgg.alt=null;
 					ele.innerText='g'+iszrda;
 					timgarea.src=ymgg.src;
 				}
@@ -1186,25 +1188,42 @@ function chgfpgMode()
 	document.title='GachaMode '+fpgMode;
 }
 
-function installclo(){
 
 
-erocount=thumb.length>>3;
+function dotxcmd()
+{
+	recarea.rows=5;
+	recarea.cols=26;
+	recarea.className='';
+	recarea.ondblclick=null;
+	document.onkeydown=kycmd;
 
-if(curEro>erocount){curEro=erocount-8;}
+	var sst=recarea.value;
+	if(sst.charCodeAt(0)==62){
+		return pSVG();
+	}
+	sst=sst.split(',');
+	kall(sst[0]);
+}
 
-chaglims();
+function entertxcmd()
+{
+	recarea.rows=30;
+	recarea.cols=60;
+	recarea.className='cmdbox';
+	recarea.ondblclick=dotxcmd;
+	document.onkeydown=null;
+	recarea.focus();
+}
 
-
-
-document.onkeydown=function(e) {
+var kycmd=function(e) {
 
 var ekeyCode=e.keyCode;
 
 
 
-if(keyerocount==0){return;}
-else if(keyerocount==-100){
+
+if(keyerocount==-100){
 klyi++;
 
 switch (ekeyCode) {
@@ -1242,7 +1261,7 @@ switch (ekeyCode) {
 		
 		
 		if(iRDMarr!=0xF00000){iRDMarr=0;}
-		tblarea.innerHTML='';
+		tblarea.innerHTML=bz1+curEro+bz2;
 		chaglims();
 		menuFunction();
 		//window.onmousewheel = document.onmousewheel =null;
@@ -1295,8 +1314,8 @@ switch (ekeyCode) {
 		document.onmousemove=null;
 		document.oncontextmenu=dsmall;
 		keyerocount=-100;
-		document.body.background='';
-		timgarea.src='';
+		document.body.background=null;
+		timgarea.src=null;
 		timgarea.style.maxHeight = '1%';
 		
 		klyi=0x400;
@@ -1315,8 +1334,8 @@ switch (ekeyCode) {
 		document.oncontextmenu=fullpgmenu;
 		//window.onmousewheel = document.onmousewheel =fastrscroll;
 		
-		document.body.background='';
-		timgarea.src='';
+		document.body.background=null;
+		timgarea.src=null;
 		timgarea.style.maxHeight = '1%';
 
 		var uv=tblarea.id.split('.');
@@ -1341,7 +1360,7 @@ switch (ekeyCode) {
 			mouseRDM=false;
 			break;
 		}
-		tblarea.innerHTML='';
+		tblarea.innerHTML=bz1+curEro+bz2;
 		mouseRDM=true;
 		RDMcurEro();
 		mydavRDM();
@@ -1354,9 +1373,8 @@ switch (ekeyCode) {
 	break;
 }
 
-	if(canfire){canfire=false;
-	symfireCon(500);}
-}
+	if(canfire){canfire=false; symfireCon(500);}
+} else {return;}
 
 switch (ekeyCode) {
 	
@@ -1367,30 +1385,32 @@ switch (ekeyCode) {
 
 	case 100:
 		document.body.scrollLeft-=500;
-		if(document.body.scrollLeft<600){document.body.background='';}
+		if(document.body.scrollLeft<600){document.body.background=null;}
 		document.body.scrollTop+=10;
-	break;
+	return;
 
 	case 102:
 		document.body.scrollLeft+=500;
 		document.body.scrollTop+=10;
-	break;
+	return;
+
+	case 75:
+		setTimeout(entertxcmd, 100);
+	return;
 	
 
 	case 37:
 		document.body.scrollLeft-=100;
-	break;
+	return;
 
 	case 39:
 		document.body.scrollLeft+=100;
-	break;
+	return;
 
 	case 27:
 	case 101:
-		if((PozMode&0xff)==1){
-		PozCurKlicK();
-		return;}
-		break;
+		if((PozMode&0xff)==1){PozCurKlicK();}
+		return;
 
 	case 107:
 		partpg();
@@ -1399,10 +1419,23 @@ switch (ekeyCode) {
 
 	case 104:
 		document.body.scrollTop-=600;
-	break;
+	return;
 }
 
 }
+
+function installclo(){
+
+
+erocount=thumb.length>>3;
+
+if(curEro>erocount){curEro=erocount-8;}
+
+chaglims();
+
+
+
+document.onkeydown=kycmd;
 
 PozMode=0x0;
 SetPozMode00();
