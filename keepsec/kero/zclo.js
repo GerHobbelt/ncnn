@@ -25,7 +25,8 @@ var RDMarr=null;
 var iRDMarr=0xF00000;
 
 
-
+const area8=[2,0,-2,-2,-2, 0, 2,2,	//x
+	1,1, 1, 0,-1,-1,-1,0];	//y
 
 function flazt20(arr,num)
 {
@@ -162,7 +163,73 @@ function findimgerr()
 
 const SVGheader='http://www.w3.org/2000/svg';
 
+function goodxyele(x,y)
+{
+	//recarea.value+='\nAT '+x+', '+y;
+	var tele=document.elementFromPoint(x,y);
+	if(tele)
+	{
+		var c0=tele.tagName.charCodeAt(0)
+		switch(c0)
+		{
+			case 73:	//I
+			case 65:	//A
+			return tele;
 
+		}
+	}
+	return null;
+}
+
+function searchxy(x,y)
+{
+	var tele=goodxyele(x,y);
+	if(tele){return tele;}
+
+
+	var hlim=window.innerHeight;
+	var wlim=window.innerWidth;
+	for(var m=32;m<512;m+=32)
+	{
+		for(var d=0;d<8;d++)
+		{
+			var xplu=area8[d];
+			var nx=x+xplu*m;
+			var ny=y+area8[d+8]*m;
+
+			if(nx<0||nx>wlim||ny<0||ny>hlim){continue;}
+			tele=goodxyele(nx,ny);
+			if(tele){return tele;}
+
+			if(xplu)
+			{
+				nx-=(xplu)*16;
+				
+				tele=goodxyele(nx,ny);
+				if(tele){return tele;}
+			}
+		}
+	}
+
+
+
+	return null;
+	
+
+}
+const focusborder='5px solid #ff0';
+
+function simpfocus()
+{
+	if(selefocus)
+	{
+		selefocus.style.border = focusborder;
+		selefocus.scrollIntoView();
+		setTimeout(function(){selefocus.style.border=null;}, 10000);
+		return selefocus;
+	}
+	return null;
+}
 
 function pPick(coord)
 {
@@ -178,11 +245,8 @@ function pPick(coord)
 		x=window.outerWidth>>1;
 		y=window.outerHeight>>1;
 	}
-	selefocus=document.elementFromPoint(x,y);
-	selefocus.style.border = '5px solid yellow';
-	recarea.value='>(name)\n(prog)\n<!--'+selefocus.outerHTML+'-->';
-	setTimeout(function(){selefocus.style.border=null;}, 10000);
-	return selefocus;
+	selefocus=searchxy(x,y);
+	return simpfocus();
 	
 }
 
@@ -200,17 +264,19 @@ recarea.value=fltr_names;
 }
 function setNscroll(sst)
 {
+	selefocus.style.border = '10px dotted #fff';
 	selefocus.style.webkitFilter='url(#'+sst+')';
 	selefocus.scrollIntoView();
+	setTimeout(function(){selefocus.style.border=null;}, 5000);
 }
 
 function pSVG()
 {
+	
 	if(!selefocus){return;}
-
 	var sst=recarea.value;
 	if(sst.charCodeAt(1)==62){
-
+			
 			if(sst.charCodeAt(2)==64){
 				ParseSVGblock(sst.split('@')[1]);
 				
@@ -271,7 +337,7 @@ function printsele()
 
 }
 
-var FuncList = {'svg':pSVG,'pick':pPick};
+var FuncList = {'svg':pSVG,'p':pPick};
 function kall(funcname,param)
 {
 	return FuncList[funcname](param);
@@ -298,16 +364,18 @@ function nwdvid(vidurl)
 
 var canfire=true;
 
-function repg(ele)
+function repg(ele){repgv(ele.value);}
+
+function repgv(elevalue)
 {
 	
-	timgarea.src=null;
+	timgarea.src='';
 	timgarea.style.maxHeight = '1%';
 
 	if(keyerocount<0)
 	{
 		keyerocount=-100;
-		curEro=parseInt(ele.value,10);
+		curEro=parseInt(elevalue,10);
 		klyi=0x400;
 		setTimeout(fullpgALL[fpgMode], 0);
 		return;
@@ -440,7 +508,7 @@ var ovrcount=0;
 function skrback()
 {
 nymu=-1;
-document.body.background=null;
+document.body.background='';
 document.body.scrollTop+=20;
 document.body.scrollLeft=0;
 }
@@ -678,14 +746,14 @@ var kuriakeysimp=function(ev){
 	
 }
 
+function fpt(ele){fptv(ele.value);}
 
-
-function fpt(ele)
+function fptv(elevalue)
 {
 
 
 keyerocount=-100;
-var evv=((parseInt(ele.value,10)*5)>>2);
+var evv=((parseInt(elevalue,10)*5)>>2);
 	if(evv<0){
 		iRDMarr+=evv;
 		if(iRDMarr<=0)
@@ -1195,15 +1263,43 @@ function dotxcmd()
 	recarea.rows=5;
 	recarea.cols=26;
 	recarea.className='';
-	recarea.ondblclick=null;
+	recarea.onblur=null;
 	document.onkeydown=kycmd;
 
 	var sst=recarea.value;
-	if(sst.charCodeAt(0)==62){
+	var c0=sst.charCodeAt(0);
+	switch(c0)
+	{
+		case 33:
+		return simpfocus();
+		case 62:
 		return pSVG();
 	}
-	sst=sst.split(',');
-	kall(sst[0]);
+
+
+
+	sst=sst.replaceAll('\n','').split(',');
+	var sstl=sst.length;
+	if(sstl==1)
+	{
+		
+		
+		if(keyerocount==-100&&klyi<0x100){fptv(sst[0]);}
+		else {repgv(sst[0]);}
+		
+	}
+	else if(sstl==2&&sst[1]==''){kall(sst[0],null);}
+	else {
+		sstl-=1;
+		var param=new Array(sstl);
+		for(var k=0;k<sstl;k++)
+		{
+			param[k]=parseInt(sst[k+1],10);
+		}
+		kall(sst[0],param);
+	}
+	
+	
 }
 
 function entertxcmd()
@@ -1211,7 +1307,7 @@ function entertxcmd()
 	recarea.rows=30;
 	recarea.cols=60;
 	recarea.className='cmdbox';
-	recarea.ondblclick=dotxcmd;
+	recarea.onblur=dotxcmd;
 	document.onkeydown=null;
 	recarea.focus();
 }
@@ -1301,9 +1397,8 @@ switch (ekeyCode) {
 	case 70:
 		if(PozMode==1)
 		{
-			selefocus=document.elementFromPoint(pozcur[0],pozcur[1]);
-			if(selefocus){recarea.value='>(name)\n(prog)\n<!--'+selefocus.outerHTML+'-->'}
-			return;
+			selefocus=searchxy(pozcur[0],pozcur[1]);
+			return simpfocus();
 		}
 	break;
 	case 87:
@@ -1314,8 +1409,8 @@ switch (ekeyCode) {
 		document.onmousemove=null;
 		document.oncontextmenu=dsmall;
 		keyerocount=-100;
-		document.body.background=null;
-		timgarea.src=null;
+		document.body.background='';
+		timgarea.src='';
 		timgarea.style.maxHeight = '1%';
 		
 		klyi=0x400;
@@ -1334,8 +1429,8 @@ switch (ekeyCode) {
 		document.oncontextmenu=fullpgmenu;
 		//window.onmousewheel = document.onmousewheel =fastrscroll;
 		
-		document.body.background=null;
-		timgarea.src=null;
+		document.body.background='';
+		timgarea.src='';
 		timgarea.style.maxHeight = '1%';
 
 		var uv=tblarea.id.split('.');
@@ -1385,7 +1480,7 @@ switch (ekeyCode) {
 
 	case 100:
 		document.body.scrollLeft-=500;
-		if(document.body.scrollLeft<600){document.body.background=null;}
+		if(document.body.scrollLeft<600){document.body.background='';}
 		document.body.scrollTop+=10;
 	return;
 
