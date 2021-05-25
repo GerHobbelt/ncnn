@@ -248,7 +248,7 @@ function ParseSVGblock(sst)
 SVGf.insertAdjacentHTML('beforeend',sst);
 var fltr_cot=SVGf.children.length;
 var fltr_names="";
-for(var i=2;i<fltr_cot;i++)
+for(var i=4;i<fltr_cot;i++)
 {
 	fltr_names+='\n>>'+SVGf.children[i].id;
 }
