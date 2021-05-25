@@ -25,8 +25,7 @@ var RDMarr=null;
 var iRDMarr=0xF00000;
 
 
-const area8=[2,0,-2,-2,-2, 0, 2,2,	//x
-	1,1, 1, 0,-1,-1,-1,0];	//y
+
 
 function flazt20(arr,num)
 {
@@ -181,6 +180,9 @@ function goodxyele(x,y)
 	return null;
 }
 
+const area8=[2,0,-2,-2,-2, 0, 2,2,	//x
+	1,1, 1, 0,-1,-1,-1,0];	//y
+
 function searchxy(x,y)
 {
 	var tele=goodxyele(x,y);
@@ -189,25 +191,16 @@ function searchxy(x,y)
 
 	var hlim=window.innerHeight;
 	var wlim=window.innerWidth;
-	for(var m=32;m<512;m+=32)
+	for(var m=128;m<1024;m+=128)
 	{
 		for(var d=0;d<8;d++)
 		{
-			var xplu=area8[d];
-			var nx=x+xplu*m;
+			var nx=x+area8[d]*m;
 			var ny=y+area8[d+8]*m;
 
 			if(nx<0||nx>wlim||ny<0||ny>hlim){continue;}
 			tele=goodxyele(nx,ny);
 			if(tele){return tele;}
-
-			if(xplu)
-			{
-				nx-=(xplu)*16;
-				
-				tele=goodxyele(nx,ny);
-				if(tele){return tele;}
-			}
 		}
 	}
 
@@ -383,7 +376,7 @@ function repgv(elevalue)
 
 
 	
-	evv=curEro+((parseInt(ele.value,10)*5)>>2);
+	evv=curEro+((parseInt(elevalue,10)*5)>>2);
 	if(evv<0){evv=0;}
 	else if(evv>erocount){evv=erocount-8;}
 
@@ -483,8 +476,8 @@ function SetPozMode()
 
 function mydav()
 {
-	var yina = document.createElement('div');
-	yina.className = 'fl';
+	var yina = document.createElement('FL');
+	//yina.className = 'FL';
 
 	var kole7='=';
 	var zko=(curEro<<3);
@@ -1267,6 +1260,7 @@ function dotxcmd()
 	document.onkeydown=kycmd;
 
 	var sst=recarea.value;
+	if(sst.length==0){return;}
 	var c0=sst.charCodeAt(0);
 	switch(c0)
 	{
@@ -1548,7 +1542,7 @@ function mkscript(sksrc)
 {
 	var sk = document.createElement('script');
 	sk.src=sksrc;
-	document.body.append(sk);
+	document.body.appendChild(sk);
 	return sk;
 }
 
