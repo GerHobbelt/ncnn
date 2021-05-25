@@ -147,10 +147,15 @@ switch(c0) {
 
 		if(sst.length<3){rotvi([ks+1,sst[0]]);}
 		else {
+			
 			var ssta2=sst[2];
 			if(ssta2.length==0){ssta2='auto';}
 			else{ssta2+='px';}
-			rotvi([ks,sst[0],sst[1]+'px',ssta2]);
+
+			if(sst[0].length==0){rotvi([0x11,sst[0],sst[1]+'px',ssta2]);}
+			else{rotvi([ks,sst[0],sst[1]+'px',ssta2]);}
+				
+			
 		}
 		
 		vio.play();
@@ -312,6 +317,10 @@ if(typ)
 		case 0x4:
 			vio.style.webkitTransform = 'matrix('+krot[1]+')';
 		break;
+		case 0x11:
+			vio.style.marginTop=krot[2];
+			vio.style.marginLeft=krot[3];
+		return;
 	}
 }
 else
