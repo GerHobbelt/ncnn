@@ -82,8 +82,33 @@
 </feTurbulence>
 <feDisplacementMap xChannelSelector="R" yChannelSelector="G" in="SourceGraphic" scale="10" />
 
+>puru2
+<feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.1 0.1" numOctaves="1" >
+            <animate
+                    attributeName="baseFrequency"
+                    from="0.1 0.1"
+                    to="0.08 0.01"
+                    dur="3.5s"
+                    repeatCount="indefinite"/>
+        </feTurbulence>
+<feDisplacementMap in="SourceGraphic" scale="15" />
+
+>fractal
+<feTurbulence type="fractalNoise" baseFrequency="0.995" numOctaves="10" seed="1" result="img" />
+        <feDisplacementMap in="SourceGraphic" in2="img" xChannelSelector="R" yChannelSelector="G" scale="600">
+            <animate attributeName="scale" values="600;0;0" keyTimes="0;0.75;1" begin="0s" dur="2s" repeatCount="indefinite" />
+</feDisplacementMap>
 
 
+>wave2
+<feTurbulence id="feturbulence" type="fractalNoise" numOctaves="3" seed="2" />
+<feDisplacementMap xChannelSelector="G" yChannelSelector="B" scale="20" in="SourceGraphic" />
+
+>wave3
+<feTurbulence type="turbulence" baseFrequency="0.0547184" id="turbulence" numOctaves="1" result="turbulence" seed="5">
+<animate id="noiseAnimate" attributeName="baseFrequency" values="0;.1;0,0" from="0" to="100" dur="10s" repeatCount="indefinite" />
+</feTurbulence>
+<feDisplacementMap in="SourceGraphic" in2="turbulence" scale="30" xChannelSelector="R" yChannelSelector="R" />
 
 >midsepia
       <!-- generate mid-tone mask -->
@@ -200,6 +225,13 @@
             in="SourceGraphic" in2="blurOut" />
 
 
+>fractal
+<feTurbulence type="fractalNoise" baseFrequency="0.995" numOctaves="1" seed="1" stitchTiles="noStitch" result="img"/>
+<feDisplacementMap in="SourceGraphic" in2="img" xChannelSelector="R" yChannelSelector="G" scale="500">
+<animate attributeName="scale" values="600;0;0" keyTimes="0;0.9;1" begin="0s" dur="12s" repeatCount="indefinite"/>
+</feDisplacementMap>
+
+
 
 >oldfy
     <feFlood flood-color="#FEDF91" result="color-fill-one"/>
@@ -207,7 +239,7 @@
     <feComponentTransfer>
       <feFuncB in="blend-one" type="table" tableValues=".08 1"/>
     </feComponentTransfer>
-    
+
     
 >whitefy
     <feComponentTransfer in="SourceGraphic" result="green-black">
