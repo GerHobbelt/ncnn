@@ -138,15 +138,18 @@ switch(c0) {
 		sst=sst.split('\n')[0];	//==m
 		var ks=0x1;
 		if(sst.charCodeAt(1)==109){
-			sst=sst.substring(2).split(',');
+			sst=sst.substring(2).split(';');
 			ks=0x3;
 		}
 		else {
-			sst=sst.substring(1).split(',');
+			sst=sst.substring(1).split(';');
 		}
 
 		if(sst.length<3){rotvi([ks+1,sst[0]]);}
-		else {rotvi([ks,sst[0],sst[1],sst[2]]);}
+		else {
+			if(sst[2].length==0){sst[2]='auto';}
+			rotvi([ks,sst[0],sst[1],sst[2]]);
+		}
 		
 		vio.play();
 	return;
