@@ -147,8 +147,10 @@ switch(c0) {
 
 		if(sst.length<3){rotvi([ks+1,sst[0]]);}
 		else {
-			if(sst[2].length==0){sst[2]='auto';}
-			rotvi([ks,sst[0],sst[1],sst[2]]);
+			var ssta2=sst[2];
+			if(ssta2.length==0){ssta2='auto';}
+			else{ssta2+='px';}
+			rotvi([ks,sst[0],sst[1]+'px',ssta2]);
 		}
 		
 		vio.play();
@@ -298,15 +300,15 @@ if(typ)
 	switch(typ)
 	{
 		case 0x1:
-			vio.style.marginTop=krot[2]+'px';
-			vio.style.marginLeft=krot[3]+'px';
+			vio.style.marginTop=krot[2];
+			vio.style.marginLeft=krot[3];
 		case 0x2:
 			vio.style.webkitTransform = 'rotate('+krot[1]+'deg)'; 
 		break;
 		
 		case 0x3:
-			vio.style.marginTop=krot[2]+'px';
-			vio.style.marginLeft=krot[3]+'px';
+			vio.style.marginTop=krot[2];
+			vio.style.marginLeft=krot[3];
 		case 0x4:
 			vio.style.webkitTransform = 'matrix('+krot[1]+')';
 		break;
