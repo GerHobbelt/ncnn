@@ -136,8 +136,17 @@ switch(c0) {
 		if(isrot){rotvi(null);}
 
 		sst=sst.split('\n')[0];	//==m
-		if(sst.charCodeAt(1)==109){rotvi([0x2,sst.substring(2)]);}
-		else {rotvi([0x1,sst.substring(1)]);}
+		var ks=0x1;
+		if(sst.charCodeAt(1)==109){
+			sst=sst.substring(2).split(',');
+			ks=0x3;
+		}
+		else {
+			sst=sst.substring(1).split(',');
+		}
+
+		if(sst.length<3){rotvi([ks+1,sst[0]]);}
+		else {rotvi([ks,sst[0],sst[1],sst[2]]);}
 		
 		vio.play();
 	return;
@@ -281,13 +290,21 @@ if(isrot) {
 	var typ=krot[0];
 if(typ)
 {
-	vio.style.margin='auto';
+	if(typ&1){vio.style.margin='0px';}
+	else {vio.style.margin='auto';}
 	switch(typ)
 	{
 		case 0x1:
+			vio.style.marginTop=krot[2]+'px';
+			vio.style.marginLeft=krot[3]+'px';
+		case 0x2:
 			vio.style.webkitTransform = 'rotate('+krot[1]+'deg)'; 
 		break;
-		case 0x2:
+		
+		case 0x3:
+			vio.style.marginTop=krot[2]+'px';
+			vio.style.marginLeft=krot[3]+'px';
+		case 0x4:
 			vio.style.webkitTransform = 'matrix('+krot[1]+')';
 		break;
 	}
