@@ -136,6 +136,32 @@ function RDMcurEro()
 	iRDMarr++;
 }
 
+function shuflocfi()
+{
+	var zsta=klyi2>>1;
+	for(var i=0;i<zsta;i++)
+	{
+		var y=i<<1;
+		var nx=1+((Math.random() *zsta)<<1);
+		var tmp=locfi[y];
+		locfi[y]=locfi[nx];
+		locfi[nx]=locfi[y+1];
+		locfi[y+1]=tmp;
+	}
+	var ibz=2;
+	if(klyi2&1){ibz=3;}
+
+	for(var i=1;i<ibz;i++)
+	{
+		var zsta=klyi2-i;
+		var nx=(Math.random() *klyi2)>>1;
+		var tmp=locfi[nx];
+		locfi[nx]=locfi[zsta];
+		locfi[zsta]=tmp;
+	}
+
+}
+
 function findimgerr()
 {
 	var imgsetz=document.getElementsByTagName("img");
@@ -180,8 +206,6 @@ function goodxyele(x,y)
 	return null;
 }
 
-const area8=[2,0,-2,-2,-2, 0, 2,2,	//x
-	1,1, 1, 0,-1,-1,-1,0];	//y
 
 function searchxy(x,y)
 {
@@ -896,12 +920,25 @@ else{ele.outerHTML=kx3t+vidurl+kx5t2+msgs[sig]+'" >'+sig+aTAGend;}
 
 const llgif='0bak/longbar.png';
 
+function insertRDMloc(elep,numu)
+{
+	var yina = document.createElement('a');
+	var locfisyg=locfi[(numu%klyi2)];
+	yina.href='0bak/tu/lu/'+locfisyg+'.mp4';
+	yina.innerHTML='~~~~~~~~~~ <img style="width:300px; -webkit-filter: url(#longbar)" src="poz.png"> '+locfisyg;
+	tblarea.insertBefore(yina,elep);
+}
+
 function hv2(ele)
 {
+var vnba=parseInt(ele.alt,10);
+
 ele.style.webkitFilter='';
-ele.src=thumbstr(thumb[parseInt(ele.alt,10)]);
+ele.src=thumbstr(thumb[vnba]);
 ele.onmouseover=null;
 ele.onclick=kv;
+
+insertRDMloc(ele.parentNode,vnba);
 }
 
 function llimgThis(ele,nx,depth)
@@ -1265,47 +1302,6 @@ fullpg();
 return false;
 }
 
-const chika=[-48,-70,400,540,'witch',
-98,-50,400,350,'tinka',
--14,-50,400,450,'tanta',
-3,-100,400,350,'nk2',
-
--16,0,600,380,'mai3',
--147,0,400,720,'ate1',
--138,-100,400,720,'mai1',
-77,-100,300,480,'mai4',
-
-118,-50,300,310,'lo1',
--119,-50,250,400,'lo2',
-109,-50,300,370,'airi03_1',
--308,-120,400,320,'tif',
-
-1,-50,400,450,'mai2',
--167,-50,300,330,'mai5',
-150,-50,250,350,'blu1',
-129,0,250,680,'nja',
-//========
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2',
-
-100,-50,350,350,'ate2',
-100,-50,350,350,'mai10',
-100,-50,350,350,'blu2',
-100,-50,350,350,'blu2'
-
-];	
 
 
 
@@ -1347,6 +1343,8 @@ function chgfpgMode()
 			pvklyi=-10;
 		break;
 		default:
+			klyi2=locfi.length;
+			shuflocfi();
 			fpgMode=0;
 			pvklyi=klyi&0xf;
 		break;
@@ -1640,7 +1638,10 @@ document.oncontextmenu=dsmall;
 keyerocount=-100;
 timgarea.style.maxHeight = '1%';
 
-klyi=0x400+((64*Math.random())>>1);
+var srdm=(1024*Math.random())>>2;
+locfi[0]=locfi[srdm];
+
+klyi=0x400+(srdm>>3);
 setTimeout(changechika, 0x4000);
 setTimeout(fullpgALL[fpgMode], 0);
 
