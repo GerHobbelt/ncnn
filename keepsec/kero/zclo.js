@@ -923,10 +923,13 @@ const llgif='0bak/longbar.png';
 function insertRDMloc(elep,numu)
 {
 	var yina = document.createElement('a');
-	var locfisyg=locfi[(numu%klyi2)];
+	numu=(numu%klyi2);
+	var locfisyg=locfi[numu];
+	numu=numu&0xF;
+	var emparr=new Array(2+numu);
 	yina.href='0bak/tu/lu/'+locfisyg+'.mp4';
-	yina.innerHTML='~~~~~~~~~~ <img style="width:300px; -webkit-filter: url(#longbar)" src="poz.png"> '+locfisyg;
-	tblarea.insertBefore(yina,elep);
+	yina.innerHTML=locfisyg+emparr.join('=~')+'<img style="width:300px; -webkit-filter: url(#longbar)" src="poz.png"><br><br>';
+	elep.appendChild(yina);
 }
 
 function hv2(ele)
@@ -938,7 +941,7 @@ ele.src=thumbstr(thumb[vnba]);
 ele.onmouseover=null;
 ele.onclick=kv;
 
-insertRDMloc(ele.parentNode,vnba);
+insertRDMloc(ele.parentNode.previousSibling,vnba);
 }
 
 function llimgThis(ele,nx,depth)
