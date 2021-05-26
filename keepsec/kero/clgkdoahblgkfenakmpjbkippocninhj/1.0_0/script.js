@@ -135,27 +135,24 @@ switch(c0) {
 	case 111:	//==o
 		if(isrot){rotvi(null);}
 
-		sst=sst.split('\n')[0];	//==m
-		var ks=0x1;
-		if(sst.charCodeAt(1)==109){
-			sst=sst.substring(2).split(';');
-			ks=0x3;
+		sst=sst.substring(1).split('\n');
+		var ks=0x2;
+		if(sst[0].length){
+			if(sst[0].length>10){ks=0x4;}
 		}
 		else {
-			sst=sst.substring(1).split(';');
+			ks=0;
 		}
 
-		if(sst.length<3){rotvi([ks+1,sst[0]]);}
+		if(sst.length<3){rotvi([ks,sst[0]]);}
 		else {
 			
 			var ssta2=sst[2];
 			if(ssta2.length==0){ssta2='auto';}
 			else{ssta2+='px';}
 
-			if(sst[0].length==0){rotvi([0x11,sst[0],sst[1]+'px',ssta2]);}
-			else{rotvi([ks,sst[0],sst[1]+'px',ssta2]);}
-				
-			
+			rotvi([ks+1,sst[0],sst[1]+'px',ssta2]);
+
 		}
 		
 		vio.play();
@@ -281,7 +278,9 @@ function rotvi_margin()
 		var sya=(vio.scrollWidth-cur_h)>>1;
 		vio.style.marginLeft='-'+sya+'px';
 		vio.style.marginTop=sya+'px';
+		
 	}
+	return sya;
 
 }
 
@@ -298,32 +297,34 @@ if(isrot) {
 } else if(krot) {
 	
 	var typ=krot[0];
-if(typ)
+if(typ>0)
 {
 	if(typ&1){vio.style.margin='0px';}
 	else {vio.style.margin='auto';}
 	switch(typ)
 	{
+
 		case 0x1:
+			vio.style.marginTop=krot[2];
+			vio.style.marginLeft=krot[3];
+		return;
+		case 0x3:
 			vio.style.marginTop=krot[2];
 			vio.style.marginLeft=krot[3];
 		case 0x2:
 			vio.style.webkitTransform = 'rotate('+krot[1]+'deg)'; 
 		break;
 		
-		case 0x3:
+		case 0x5:
 			vio.style.marginTop=krot[2];
 			vio.style.marginLeft=krot[3];
 		case 0x4:
 			vio.style.webkitTransform = 'matrix('+krot[1]+')';
 		break;
-		case 0x11:
-			vio.style.marginTop=krot[2];
-			vio.style.marginLeft=krot[3];
-		return;
+		
 	}
 }
-else
+else if(typ==0)
 {
 	vio.style.margin='0px';
 
@@ -333,7 +334,7 @@ else
 
 		var lvioasp=(vio.videoHeight/vio.videoWidth);
 
-		if(lvioasp<1.0){vio90h=4-window.innerWidth;}
+		if(lvioasp<1.0){vio90h=20-window.innerWidth;}
 		else {vio90h=(dfheight*lvioasp)<<0;}
 
 	}
@@ -342,12 +343,18 @@ else
 
 	vio.style.webkitTransform = 'matrix(0,'+t1+','+(-t1)+',0,0,0)';
 
-	if(vio90h<0){var lvio90h=-vio90h;}
-	else {var lvio90h=vio90h;}
+	if(vio90h<0){
+		vio.height=-vio90h;
+		document.scrollingElement.scrollTop=rotvi_margin();
+		}
+	else {
+		vio.height=vio90h;
+		rotvi_margin();
+		}
 
-	vio.height=lvio90h;
-	rotvi_margin();
-}
+	
+}else{return;}
+	
 
 
 isrot=true;
@@ -624,14 +631,14 @@ return;
 		
 		return;
 	case 103:
-		rotvi([null,true]);	//270,-1,1
+		rotvi([0,true]);	//270,-1,1
 		break;
 	case 104:
 		plbrate+=0.1;
 		ratechange();
 		return;
 	case 105:
-		rotvi([null,false]);	//90
+		rotvi([0,false]);	//90
 		return;
 
 
