@@ -29,6 +29,16 @@ center {
 }
 FL { float:right;}
 
+.yka {
+	vertical-align: text-top;
+	border:10px #0C0 dotted;
+}
+
+.yki {
+	width:300px;
+	-webkit-filter: url(#longbar)
+}
+
 .cmdbox {
 	position:fixed;
 	top:20%;
