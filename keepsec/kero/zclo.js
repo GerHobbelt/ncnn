@@ -136,8 +136,28 @@ function RDMcurEro()
 	iRDMarr++;
 }
 
+function xchg6(y,nx)
+{
+	y*=6;
+	nx*=6;
+
+	for(var m=0;m<6;m++)
+	{
+		
+		var tmp=chika[y];
+		chika[y]=chika[nx];
+		chika[nx]=chika[y+6];
+		chika[y+6]=tmp;
+		y++;
+		nx++;
+	}
+
+}
+
 function shuflocfi()
 {
+	var chikal=(chika.length/6)<<0;
+	var ibz=0;
 	var zsta=klyi2>>1;
 	for(var i=0;i<zsta;i++)
 	{
@@ -147,8 +167,12 @@ function shuflocfi()
 		locfi[y]=locfi[nx];
 		locfi[nx]=locfi[y+1];
 		locfi[y+1]=tmp;
+
+		xchg6(ibz,nx%chikal);
+		ibz+=2;
+		if(ibz>=chikal){ibz=0;}
 	}
-	var ibz=2;
+	ibz=2;
 	if(klyi2&1){ibz=3;}
 
 	for(var i=1;i<ibz;i++)
@@ -599,10 +623,13 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 				{
 					var niki=msgs[iszrda].split('/')[0];
 					
+					var mgknak=((iszrda>>3)^(iszrda&7))&0x1F;
+
+					ymgg.src=chikagifpa+chika[6*mgknak+5]+'.gif';
 					
 					if(niki=='i'){niki=' ';}
 					else{ymgg.alt='\n:'+niki+'\n';
-					niki=' href="https://nitter.kavin.rocks/'+niki+'/media" '; //' href="https://twitter.com/'+niki+'/with_replies"';
+					niki=' href="https://nitter.kavin.rocks/'+niki+'/media" ';
 					}
 					ele.onmouseover=null;
 					ele.onclick=null;
@@ -1144,7 +1171,7 @@ function fullpgALLcur0()
 
 var dvvsta=(curEro>>3);
 var dvvendo=dvvsta+8;
-var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>512+64*'+dvvendo+sixbkmark(dvvsta);
+var kole7='<center><h1>Serial<br>*<br>*<br>*<br>*<br>512+64*'+dvvsta+sixbkmark(dvvsta);
 
 for(var jj=dvvsta;jj<dvvendo;jj++)
 {
@@ -1217,7 +1244,7 @@ function fullpgALLrdm0()
 
 var dvvsta=(iRDMarr>>3);
 var dvvendo=dvvsta+8;
-var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>128*'+dvvendo+sixbkmark(dvvsta);//'<br>*<br>*<br>*<br>*<br>*</h1>';
+var kole7='<center><h1>Random<br>*<br>*<br>*<br>*<br>128*'+dvvsta+sixbkmark(dvvsta);//'<br>*<br>*<br>*<br>*<br>*</h1>';
 
 for(var jj=dvvsta;jj<dvvendo;jj++)
 {
@@ -1325,15 +1352,15 @@ return false;
 }
 
 
-
+const chikagifpa='0bak/tu/';
 
 function changechika()
 {
 	
 	if(pvklyi&0xffffffE0){setTimeout(changechika, 0x10000); return;}
-	else{setTimeout(changechika, 0x2000+(pvklyi<<9));}
+	else{setTimeout(changechika, 0x2000+((pvklyi&0xF)<<10));}
 
-	var rnum=(klyi&0x1f);
+	var rnum=(klyi&0x1F);
 	pvklyi=rnum;
 	
 	rnum*=6;
@@ -1345,7 +1372,7 @@ function changechika()
 		lbar.setAttribute('y',chika[rnum+1]);
 		lbar.setAttribute('width',chika[rnum+2]);
 		lbar.setAttribute('height',chika[rnum+3]);
-		lbar.firstChild.setAttribute('href','0bak/tu/'+chika[rnum+5]+'.gif');
+		lbar.firstChild.setAttribute('href',chikagifpa+chika[rnum+5]+'.gif');
 		
 	}
 	
@@ -1701,6 +1728,7 @@ locfi[0]=locfi[srdm];
 setklyi2();
 
 klyi=0x400+(srdm>>3);
+changechika();
 setTimeout(changechika, 0x4000);
 setTimeout(fullpgALL[fpgMode], 0);
 

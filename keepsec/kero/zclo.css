@@ -22,6 +22,11 @@ center {
 	box-shadow: inset 0 0 400px 100px #000;
 	
 }
+
+img {
+	object-fit: contain;
+}
+
 .tFlo {
 	width: 224;
 	border:1px #fff solid;
@@ -30,8 +35,9 @@ center {
 FL { float:right;}
 
 .yka {
+	display: inline-block;
 	vertical-align: text-top;
-	border:10px #0C0 dotted;
+	border:10px #f0f dotted;
 }
 
 .yki {
