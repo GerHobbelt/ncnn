@@ -1726,10 +1726,10 @@ chgfpgMode();
 var srdm=(1024*Math.random())>>2;
 locfi[0]=locfi[srdm];
 setklyi2();
-
 klyi=0x400+(srdm>>3);
+
+
 changechika();
-setTimeout(changechika, 0x4000);
 setTimeout(fullpgALL[fpgMode], 0);
 
 }
