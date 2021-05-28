@@ -1099,11 +1099,11 @@ return;
 
 function hv0func(ele,suub)
 {
-	if(klyi<0x200){klyi=0x400+(klyi&0xFF);}
+	//if(klyi<0x200){klyi=0x400+(klyi&0xFF);}
 
 	klyi+=suub;
 	setTimeout(function(){llimgThis(ele.nextSibling,true,0);}, klyi);
-	klyi+=0x100;
+	klyi+=suub;
 	setTimeout(function(){llimgThis(ele.previousSibling,false,0);}, klyi);
 
 	ele.style.webkitFilter='';
@@ -1116,14 +1116,14 @@ function hv0func(ele,suub)
 var hv =function(e) {
 
 klyi++;
-if(klyi&1){return;}
+if(klyi&3){return;}
 
 hv0func(e.currentTarget,0xFE);
 
 }
 
 
-var hv0fast =function(e) {hv0func(e.currentTarget,0xFF);}
+var hv0fast =function(e) {hv0func(e.currentTarget,0x100);}
 
 const mgx1sma='</a><img class=tFlo alt=x';
 const mgx1='<img style="-webkit-filter: url(#cur)" src="poz.png" alt=';
