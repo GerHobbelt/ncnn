@@ -2,9 +2,17 @@
 
 var ochinka=SVGf.children[3];
 
+var laztpic='';
+
 function sg(vx,vy,vw,vh,garba,pic)
 {
-    if(pic){ochinka.firstChild.setAttribute('href',chikagifpa+pic+'.gif');}
+    if(pic){
+        if(pic!=laztpic)
+        {
+        ochinka.firstChild.setAttribute('href',chikagifpa+pic+'.gif');
+        laztpic=pic;
+        }
+        }
     else {pic=ochinka.firstChild.href.baseVal.replace(chikagifpa,'').replace('.gif','');}
 
 ochinka.setAttribute('x',vx);
@@ -17,6 +25,37 @@ vx+','+vy+','+vw+','+vh+',0.5,"'+pic+'",\n';
 
 recarea.value+=zstr;
 return zstr;
+
+}
+
+function printchika(chkdup)
+{
+    var chkl=(chika.length/6)<<0;
+
+    for(var i=0;i<chkl;i++)
+    {
+        var bs=i*6;
+        var bssig=chika[bs];
+        var bsfna=chika[bs+5];
+
+        console.log(bssig+','+chika[bs+1]+','+chika[bs+2]+','+chika[bs+3]+','+chika[bs+4]+',"'+bsfna+'",');
+        if(chkdup)
+        {
+            
+            for(var dd=i+1;dd<chkl;dd++)
+            {
+                var ddbs=dd*6;
+                if(bssig==chika[ddbs]){return 'badsig='+chika[ddbs+5];}
+                else if(bsfna==chika[ddbs+5]){return 'badfna='+chika[ddbs+5];}
+
+            }
+
+        }
+
+    }
+
+    return 'good';
+
 
 }
 
