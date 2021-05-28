@@ -623,7 +623,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 				{
 					var niki=msgs[iszrda].split('/')[0];
 					
-					var mgknak=((iszrda>>3)^(iszrda&7))&0x1F;
+					var mgknak=((iszrda>>3)^(iszrda&7))&0x3F;
 
 					ymgg.src=chikagifpa+chika[6*mgknak+5]+'.gif';
 					
@@ -1357,10 +1357,10 @@ const chikagifpa='0bak/tu/';
 function changechika()
 {
 	
-	if(pvklyi&0xffffffE0){setTimeout(changechika, 0x10000); return;}
+	if(pvklyi&0xffffffC0){setTimeout(changechika, 0x10000); return;}
 	else{setTimeout(changechika, 0x2000+((pvklyi&0xF)<<10));}
 
-	var rnum=(klyi&0x1F);
+	var rnum=(klyi&0x3F);
 	pvklyi=rnum;
 	
 	rnum*=6;
@@ -1414,7 +1414,7 @@ function chgfpgMode()
 	if(fullpgALL===fullpgALLcur&&curEro>0x7F){curEro-=0x80;}
 	
 	fpgMode++;
-	pvklyi=klyi&0x1f;
+	pvklyi=klyi&0x3f;
 	
 	switch(fpgMode)
 	{
@@ -1520,7 +1520,7 @@ switch (ekeyCode) {
 			SetPozMode();
 			document.onmousemove=null;
 			document.oncontextmenu=dsmall;
-			pvklyi=klyi&0x1F;
+			pvklyi=klyi&0x3F;
 		}
 		
 		
@@ -1534,7 +1534,7 @@ switch (ekeyCode) {
 		PozMode=0x0;
 		SetPozMode00();
 		
-		pvklyi=(-10)|(klyi&0x1F);
+		pvklyi=(-10)|(klyi&0x3F);
 		
 		if(iRDMarr!=0xF00000){iRDMarr=0;}
 		tblarea.innerHTML=bz1+curEro+bz2;
@@ -1586,7 +1586,7 @@ switch (ekeyCode) {
 	case 90:
 		setklyi2();
 		klyi=0x400+(klyi&0xFF);
-		pvklyi=klyi&0x1F;
+		pvklyi=klyi&0x3F;
 		if(PozMode!=0){PozMode=0x0; SetPozMode00();}
 		document.onmousemove=null;
 		document.oncontextmenu=dsmall;
