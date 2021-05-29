@@ -10,7 +10,9 @@ var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
 var pozcur=new Array(2);
 var pozcurpic=timgarea.nextSibling;
-var SVGf=timgarea.previousSibling.firstChild;
+var SVGf=new Array(2);
+SVGf[0]=timgarea.previousSibling.firstChild;
+SVGf[1]=SVGf[0].children[3];
 
 var selefocus=null;
 
@@ -293,12 +295,12 @@ function pPick(coord)
 
 function ParseSVGblock(sst)
 {
-SVGf.insertAdjacentHTML('beforeend',sst);
-var fltr_cot=SVGf.children.length;
+SVGf[0].insertAdjacentHTML('beforeend',sst);
+var fltr_cot=SVGf[0].children.length;
 var fltr_names="";
 for(var i=4;i<fltr_cot;i++)
 {
-	fltr_names+='\n>>'+SVGf.children[i].id;
+	fltr_names+='\n>>'+SVGf[0].children[i].id;
 }
 
 recarea.value=fltr_names;
@@ -343,7 +345,7 @@ function pSVG()
 		var ftr_elem=document.createElementNS(SVGheader, 'filter');
 		ftr_elem.id=ftr_id;
 		ftr_elem.innerHTML=sst.substring(syp);
-		SVGf.appendChild(ftr_elem);
+		SVGf[0].appendChild(ftr_elem);
 		recarea.value='>>'+ftr_id;
 	}
 	setNscroll(ftr_id);
@@ -382,7 +384,7 @@ function pChika()
 {
 	recarea.value='';
 	delete FuncList['chick'];
-	changechika();
+	changechikaChain();
 }
 
 var FuncList = {'svg':pSVG,'p':pPick,'chick':pChika};
@@ -630,7 +632,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 				{
 					var niki=msgs[iszrda].split('/')[0];
 					
-					var mgknak=((iszrda>>3)^(iszrda&7))&0x3F;
+					var mgknak=iszrda&0x3F;	//((iszrda>>3)^(iszrda&7))
 
 					ymgg.src=chikagifpa+chika[6*mgknak+5]+'.gif';
 					
@@ -1111,7 +1113,7 @@ function hv0func(ele,suub)
 
 	klyi+=suub;
 	setTimeout(function(){llimgThis(ele.nextSibling,true,0);}, klyi);
-	klyi+=suub;
+	klyi+=(suub+1);
 	setTimeout(function(){llimgThis(ele.previousSibling,false,0);}, klyi);
 
 	ele.style.webkitFilter='';
@@ -1124,14 +1126,14 @@ function hv0func(ele,suub)
 var hv =function(e) {
 
 klyi++;
-if(klyi&3){return;}
+if(klyi&7){return;}
 
-hv0func(e.currentTarget,0xFE);
+hv0func(e.currentTarget,0xFC);
 
 }
 
 
-var hv0fast =function(e) {hv0func(e.currentTarget,0x100);}
+var hv0fast =function(e) {hv0func(e.currentTarget,0xFF);}
 
 const mgx1sma='</a><img class=tFlo alt=x';
 const mgx1='<img style="-webkit-filter: url(#cur)" src="poz.png" alt=';
@@ -1362,27 +1364,32 @@ return false;
 
 const chikagifpa='0bak/tu/';
 
-function changechika()
+function changechika(n6)
+{
+	var lbar=SVGf[1];
+	
+	if(lbar.fna===n6){return;}
+	lbar.fna=n6;
+	
+	n6*=6;
+	
+	lbar.setAttribute('x',chika[n6]);
+	lbar.setAttribute('y',chika[n6+1]);
+	lbar.setAttribute('width',chika[n6+2]);
+	lbar.setAttribute('height',chika[n6+3]);
+	lbar.firstChild.setAttribute('href',chikagifpa+chika[n6+5]+'.gif');
+}
+
+function changechikaChain()
 {
 	
-	if(pvklyi&0xffffffC0){setTimeout(changechika, 0x10000); return;}
-	else{setTimeout(changechika, 0x2000+((pvklyi&0xF)<<10));}
+	if(pvklyi&0xffffffC0){setTimeout(changechikaChain, 0x10000); return;}
+	else{setTimeout(changechikaChain, 0x2000+((pvklyi&0xF)<<10));}
 
 	var rnum=(klyi&0x3F);
 	pvklyi=rnum;
-	
-	rnum*=6;
-	var lbar=SVGf.children[3];
-	
-	if(lbar.x.baseVal.value!=chika[rnum])
-	{
-		lbar.setAttribute('x',chika[rnum]);
-		lbar.setAttribute('y',chika[rnum+1]);
-		lbar.setAttribute('width',chika[rnum+2]);
-		lbar.setAttribute('height',chika[rnum+3]);
-		lbar.firstChild.setAttribute('href',chikagifpa+chika[rnum+5]+'.gif');
-		
-	}
+
+	changechika(rnum);
 	
 	
 
@@ -1432,7 +1439,7 @@ function chgfpgMode()
 		default:
 			
 			fpgMode=0;
-			//if(chika[4]>1.0){chikasz();}
+			changechika(1);
 		break;
 		
 	}
