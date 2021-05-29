@@ -1,17 +1,34 @@
 //dbgsvgf
-
-var ochinka=SVGf.children[3];
+var ochinka=SVGf[1];
 
 var laztpic='';
+
+var WtoH=0;
+
+
+function showWHcalc(inW,inH)
+{
+    console.log('R='+WtoH.toFixed(3));
+    console.log('W= '+inW+',  (H= '+(inW*WtoH).toFixed(0)+')');
+    console.log('(W= '+(inH/WtoH).toFixed(0)+'),  H= '+inH);
+
+
+}
 
 function sg(vx,vy,vw,vh,garba,pic)
 {
     if(pic){
         if(pic!=laztpic)
         {
-        ochinka.firstChild.setAttribute('href',chikagifpa+pic+'.gif');
-        laztpic=pic;
+            WtoH=0;
+            var gifpasa=chikagifpa+pic+'.gif';
+            ochinka.firstChild.setAttribute('href',gifpasa);
+            timgarea.src=gifpasa;
+            laztpic=pic;
+            setTimeout(function(){WtoH=(timgarea.naturalHeight/timgarea.naturalWidth);showWHcalc(vw,vh);}, 100);
+
         }
+        else{showWHcalc(vw,vh);}
         }
     else {pic=ochinka.firstChild.href.baseVal.replace(chikagifpa,'').replace('.gif','');}
 
@@ -28,9 +45,30 @@ return zstr;
 
 }
 
+function printchkarr(arr)
+{
+    var stret='';
+    for(var i=0;i<256;i++)
+    {
+        var tst=256+i;
+        if(!arr[tst]){stret+=i+',';}
+        tst=255-i;
+        if(!arr[tst]){stret+=(-1-i)+',';}
+
+    }
+    return stret;
+
+}
+
 function printchika(chkdup)
 {
     var chkl=(chika.length/6)<<0;
+
+    if(chkdup)
+    {
+        var sigchk=new Array(512);
+
+    }
 
     for(var i=0;i<chkl;i++)
     {
@@ -41,12 +79,14 @@ function printchika(chkdup)
         console.log(bssig+','+chika[bs+1]+','+chika[bs+2]+','+chika[bs+3]+','+chika[bs+4]+',"'+bsfna+'",');
         if(chkdup)
         {
+
+            if(bssig>-256&&bssig<256){sigchk[bssig+256]=1;}
             
             for(var dd=i+1;dd<chkl;dd++)
             {
                 var ddbs=dd*6;
-                if(bssig==chika[ddbs]){return 'badsig='+chika[ddbs+5];}
-                else if(bsfna==chika[ddbs+5]){return 'badfna='+chika[ddbs+5];}
+                if(bssig==chika[ddbs]){console.log('badsig='+chika[ddbs+5]);}
+                else if(bsfna==chika[ddbs+5]){console.log('badfna='+chika[ddbs+5])}
 
             }
 
@@ -54,11 +94,14 @@ function printchika(chkdup)
 
     }
 
-    return 'good';
+     if(chkdup)
+     { return printchkarr(sigchk);
+         
+     }else{ return 'good';}
+   
 
 
 }
-
 //looppic
 document.body.innerText='';
 
@@ -106,4 +149,15 @@ function mkimg_d(bs,sta,nimg)
 //mkimg('https://static6.hentai-img.com/upload/20180531/455/465571/',0,50)
 //mkimg('https://static6.hentai-img.com/upload/20180601/457/467875/',0,50)
 //mkimg_d('https://static.hentai-gif-anime.com/upload/20180726/48/',97400,200)
+
+//njagif
+var kole=document.getElementsByTagName("img");
+var kolel=kole.length;
+
+for(var i=0;i<kolel;i++)
+{
+var uv=kole[i].src;
+kole[i].src=uv.replace('/__rs_l30x30','');
+
+}
 
