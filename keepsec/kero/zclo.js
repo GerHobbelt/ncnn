@@ -632,7 +632,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 				{
 					var niki=msgs[iszrda].split('/')[0];
 					
-					var mgknak=iszrda&0x3F;	//((iszrda>>3)^(iszrda&7))
+					var mgknak=iszrda&0xFF;	//((iszrda>>3)^(iszrda&7))
 
 					ymgg.src=chikagifpa+chika[6*mgknak+5]+'.gif';
 					
@@ -990,7 +990,7 @@ ele.style.webkitFilter='';
 ele.src=thumbstr(thumb[vnba]);
 ele.onmouseover=null;
 ele.onclick=kv;
-klyi--;
+//klyi--;
 //insertRDMloc(ele.parentNode.previousSibling,vnba);
 }
 
@@ -1133,7 +1133,7 @@ hv0func(e.currentTarget,0xFC);
 }
 
 
-var hv0fast =function(e) {hv0func(e.currentTarget,0xFF);}
+var hv0fast =function(e) {hv0func(e.currentTarget,0x100);}
 
 const mgx1sma='</a><img class=tFlo alt=x';
 const mgx1='<img style="-webkit-filter: url(#cur)" src="poz.png" alt=';
@@ -1378,15 +1378,16 @@ function changechika(n6)
 	lbar.setAttribute('width',chika[n6+2]);
 	lbar.setAttribute('height',chika[n6+3]);
 	lbar.firstChild.setAttribute('href',chikagifpa+chika[n6+5]+'.gif');
+	
 }
 
 function changechikaChain()
 {
 	
-	if(pvklyi&0xffffffC0){setTimeout(changechikaChain, 0x10000); return;}
+	if(pvklyi&0xffffff00){setTimeout(changechikaChain, 0x10000); return;}
 	else{setTimeout(changechikaChain, 0x2000+((pvklyi&0xF)<<10));}
 
-	var rnum=(klyi&0x3F);
+	var rnum=(klyi&0xFF);
 	pvklyi=rnum;
 
 	changechika(rnum);
@@ -1429,7 +1430,7 @@ function chgfpgMode()
 	if(fullpgALL===fullpgALLcur&&curEro>0x7F){curEro-=0x80;}
 	
 	fpgMode++;
-	pvklyi=klyi&0x3f;
+	pvklyi=klyi&0xFF;
 	
 	switch(fpgMode)
 	{
@@ -1535,7 +1536,7 @@ switch (ekeyCode) {
 			SetPozMode();
 			document.onmousemove=null;
 			document.oncontextmenu=dsmall;
-			pvklyi=klyi&0x3F;
+			pvklyi=klyi&0xFF;
 		}
 		
 		
@@ -1549,7 +1550,7 @@ switch (ekeyCode) {
 		PozMode=0x0;
 		SetPozMode00();
 		
-		pvklyi=(-10)|(klyi&0x3F);
+		pvklyi=(-10)|(klyi&0xFF);
 		
 		if(iRDMarr!=0xF00000){iRDMarr=0;}
 		tblarea.innerHTML=bz1+curEro+bz2;
@@ -1601,7 +1602,7 @@ switch (ekeyCode) {
 	case 90:
 		setklyi2();
 		klyi=0x400|(klyi&0xFF);
-		pvklyi=klyi&0x3F;
+		pvklyi=klyi&0xFF;
 		if(PozMode!=0){PozMode=0x0; SetPozMode00();}
 		document.onmousemove=null;
 		document.oncontextmenu=dsmall;
