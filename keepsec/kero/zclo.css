@@ -45,6 +45,11 @@ FL { float:right;}
 	-webkit-filter: url(#longbar)
 }
 
+.ykix {
+	width:400px;
+	image-rendering: pixelated;
+}
+
 .cmdbox {
 	position:fixed;
 	top:20%;

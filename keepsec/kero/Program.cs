@@ -21,6 +21,15 @@ namespace eroneto
 		public static char[] sepQuo = { '\"' };
 		public static char[] sep0x9 = { '\t' };
 		
+		public static string[] vtwimg={
+			"https://pbs.twimg.com/ext_tw_video_thumb/",	"https://pbs.twimg.com/amplify_video_thumb/",	"https://pbs.twimg.com/tweet_video_thumb/","https://pbs.twimg.com/media/"};
+		public static string[] vtwvid={
+			"https://video.twimg.com/ext_tw_video/",		"https://video.twimg.com/amplify_video/",		"https://video.twimg.com/tweet_video/"};
+		public static string[] vtwsig=	{
+			string.Empty,									"@",											"!",										"+"};
+		
+		
+		
 		static void klening()
 		{
 			string[] data = File.ReadAllLines("rlines.csv");
@@ -48,31 +57,21 @@ namespace eroneto
 		
 		static string trimthumb(string thupic)
 		{
-			thupic = thupic.Replace("https://pbs.twimg.com/ext_tw_video_thumb/", string.Empty);
-						
-			if (thupic[0] == 'h') {
-				thupic = thupic.Replace("https://pbs.twimg.com/amplify_video_thumb/", "@");
+			for(int i=0;i<4;i++)
+			{
+				thupic = thupic.Replace(vtwimg[i], vtwsig[i]);
+				if (thupic[0] != 'h') {return thupic;}
 			}
-						
-			if (thupic[0] == 'h') {
-				thupic = thupic.Replace("https://pbs.twimg.com/tweet_video_thumb/", "!");
-			}
-			
 			return thupic;
 		}
 		
 		static string trimvid(string vid)
 		{
-			vid = vid.Replace("https://video.twimg.com/ext_tw_video/", string.Empty);
-							
-			if (vid[0] == 'h') {
-				vid = vid.Replace("https://video.twimg.com/amplify_video/", "@");
+			for(int i=0;i<3;i++)
+			{
+				vid = vid.Replace(vtwvid[i], vtwsig[i]);
+				if (vid[0] != 'h') {return vid;}
 			}
-							
-			if (vid[0] == 'h') {
-				vid = vid.Replace("https://video.twimg.com/tweet_video/", "!");
-			}
-			
 			return vid;
 		}
 		
@@ -97,11 +96,13 @@ namespace eroneto
 				
 				
 				try {
-					string[] html = dndr.DownloadString("https://www.nurumayu.net/ko/twidouga/realtime_tzucks.php").Split(sep0xA);
+					string[] html = dndr.DownloadString("https://www.twidouga.net/realtime_t.php").Split(sep0xA);
 															//https://www.twidouga.net/realtime_t.php
+															//https://www.nurumayu.net/ko/twidouga/realtime_tzucks.php
 					
-					string[] html2 = dndr.DownloadString("https://www.nurumayu.net/ko/twidouga/realtime_t.php").Split(sep0xA);
+					string[] html2 = dndr.DownloadString("https://www.twidouga.net/ko/realtime_t.php").Split(sep0xA);
 															//https://www.twidouga.net/ko/realtime_t.php
+															//https://www.nurumayu.net/ko/twidouga/realtime_t.php
 				
 					int htmllen = html.Length;
 				
@@ -109,29 +110,14 @@ namespace eroneto
 						if (html[i].Length > 200 && html[i].Contains("video.twimg.com")) {
 							string[] siu = html[i].Split(sepQuo);
 						
-							string thupic = siu[7].Replace("https://pbs.twimg.com/ext_tw_video_thumb/", string.Empty);
+							string thupic = trimthumb(siu[7]);
 						
-							if (thupic[0] == 'h') {
-								thupic = thupic.Replace("https://pbs.twimg.com/amplify_video_thumb/", "@");
-							}
-						
-							if (thupic[0] == 'h') {
-								thupic = thupic.Replace("https://pbs.twimg.com/tweet_video_thumb/", "!");
-							}
+							
 						
 							if (!deuu.Contains(thupic)) {
 								deuu.Add(thupic);
-								string vid = siu[3].Replace("https://video.twimg.com/ext_tw_video/", string.Empty);
-							
-								if (vid[0] == 'h') {
-									vid = vid.Replace("https://video.twimg.com/amplify_video/", "@");
-								}
-							
-								if (vid[0] == 'h') {
-									vid = vid.Replace("https://video.twimg.com/tweet_video/", "!");
-								}
-							
-							
+								string vid = trimvid(siu[3]);
+
 								string msg = html[i + 2].Split(sepQuo)[1].Replace("https://twitter.com/", string.Empty).Replace("https://mobile.twitter.com/", string.Empty);
 								sw.WriteLine(thupic + "\t" + vid + "\t" + msg);
 							
@@ -148,29 +134,13 @@ namespace eroneto
 						if (html[i].Length > 200 && html[i].Contains("video.twimg.com")) {
 							string[] siu = html[i].Split(sepQuo);
 						
-							string thupic = siu[7].Replace("https://pbs.twimg.com/ext_tw_video_thumb/", string.Empty);
+							string thupic = trimthumb(siu[7]);
 						
-							if (thupic[0] == 'h') {
-								thupic = thupic.Replace("https://pbs.twimg.com/amplify_video_thumb/", "@");
-							}
-						
-							if (thupic[0] == 'h') {
-								thupic = thupic.Replace("https://pbs.twimg.com/tweet_video_thumb/", "!");
-							}
 						
 							if (!deuu.Contains(thupic)) {
 								deuu.Add(thupic);
-								string vid = siu[3].Replace("https://video.twimg.com/ext_tw_video/", string.Empty);
-							
-								if (vid[0] == 'h') {
-									vid = vid.Replace("https://video.twimg.com/amplify_video/", "@");
-								}
-							
-								if (vid[0] == 'h') {
-									vid = vid.Replace("https://video.twimg.com/tweet_video/", "!");
-								}
-							
-							
+								string vid = trimvid(siu[3]);
+
 								string msg = html[i + 2].Split(sepQuo)[1].Replace("https://twitter.com/", string.Empty).Replace("https://mobile.twitter.com/", string.Empty);
 								sw.WriteLine(thupic + "\t" + vid + "\t" + msg);
 							

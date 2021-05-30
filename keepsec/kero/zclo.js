@@ -622,7 +622,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 					ele.innerText='g'+iszrda;
 					
 				}
-				pvklyi=-10;
+				pvklyi+=0x10;
 			}
 			return;
 			case 114:	//r
@@ -643,7 +643,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 					ele.onmouseover=null;
 					ele.onclick=null;
 					ele.outerHTML='<a'+niki+'>...X'+iszrda+aTAGend;
-					pvklyi=-10;
+					pvklyi+=0x10;
 				}
 				else
 				{
@@ -872,7 +872,13 @@ kx5a;
 	canfire=true;
 }
 
+function lynklocfi(sig)
+{
+	if(klyi&3){return '<img class="yki" src="poz.png" />';}
 
+	return '<img class="ykix" src="0bak/tu/xx/_'+chika[5+((sig>>1)&0xFF)*6]+'.gif" />'
+
+}
 
 var dsmall=function(e){
 var ele=e.target;
@@ -919,7 +925,7 @@ if(ele.src.endsWith('.jpg'))
 	var locfisyg=locfi[numu];
 
 	ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5t+msgs[sig]+'" >@'+sig+'</a> <a class="yka" href="0bak/tu/lu/'+locfisyg+
-		'.mp4"><img class="yki" src="poz.png" />'+locfisyg+'</a>';
+		'.mp4">'+lynklocfi(numu)+locfisyg+'</a>';
 	
 	}
 	else if(ele.width==200)
@@ -959,7 +965,7 @@ var numu=(sig%klyi2);
 var locfisyg=locfi[numu];
 
 ele.outerHTML=kx3t+vidurl+kx5t2+msgs[sig]+'" >'+sig+'</a> <a class="yka" href="0bak/tu/lu/'+locfisyg+
-		'.mp4"><img class="yki" src="poz.png" />'+locfisyg+'</a>';
+		'.mp4">'+lynklocfi(numu)+locfisyg+'</a>';
 
 }
 
@@ -1095,7 +1101,7 @@ var numu=(sigN%klyi2);
 var locfisyg=locfi[numu];
 
 ele.outerHTML=kx3t+vidstr(vids[sigN])+kx4+thumburl+'" width=200 /></a> <a class="yka" href="0bak/tu/lu/'+locfisyg+
-		'.mp4"><img class="yki" src="poz.png" />'+locfisyg+'</a>';
+		'.mp4">'+lynklocfi(numu)+locfisyg+'</a>';
 
 }
 

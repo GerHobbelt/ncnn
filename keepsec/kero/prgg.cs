@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Net;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Runtime.InteropServices;
 
 namespace eroneto
@@ -21,6 +22,7 @@ namespace eroneto
 		public static char[] sepMao = { ':' };
 		public static char[] sepXie = { '/' };
 		public static char[] sepTab = { '\t' };
+		public static char[] sepQuo = { '\"' };
 		const int sepjslen=50000;
 		
 		static string[] js50src;
@@ -106,7 +108,20 @@ namespace eroneto
 			
 			
 		}
-		/*
+		
+		static void gzcomp(string fna)
+		{
+			byte[] data=File.ReadAllBytes(fna);
+			MemoryStream output = new MemoryStream();
+		    using (GZipStream dstream = new GZipStream(output,CompressionMode.Compress))
+		    {
+		        dstream.Write(data, 0, data.Length);
+		    }
+		    File.WriteAllBytes(fna+".gz",output.ToArray());
+		    
+		}
+		
+		
 		static void findmymiss()
 		{
 			js50src=File.ReadAllLines("aadata.3.js");
@@ -208,8 +223,9 @@ namespace eroneto
 				Thread.Sleep(90000);
 			}
 			
-			system("pause");
+			
 		}
+		
 		
 		static void aco2(WebClient dndr)
 		{
@@ -223,6 +239,7 @@ namespace eroneto
 			for(int i=0;i<acolen;i++)
 			{
 				try{
+					//
 				string html = dndr.DownloadString("https://lab.syncer.jp/api/100/"+acotz[i]);
 				if(html.StartsWith("[200"))
 				{
@@ -255,7 +272,7 @@ namespace eroneto
 			sw.Close();
 			origjson.Close();
 			
-			system("pause");
+			
 		}
 		
 		static void chkmiss()
@@ -272,6 +289,92 @@ namespace eroneto
 			}
 			system("pause");
 		}
+		static HashSet<string> deuu = new HashSet<string>();
+		static StreamWriter swtwtk;
+		
+		static bool chknwrt(string src)
+		{
+			if (!deuu.Contains(src)) {
+					deuu.Add(src);
+					swtwtk.WriteLine(src);
+					return true;}
+			return false;
+		}
+		
+		static void twtk(WebClient dndr)
+		{
+			
+			string[] html=File.ReadAllLines("twtkold.csv");
+			int nl=html.Length;
+			
+			for(int i=0;i<nl;i++)
+			{
+				deuu.Add(html[i]);
+			}
+			
+			html=File.ReadAllLines("twtknu.csv");
+			nl=html.Length;
+			
+			for(int i=0;i<nl;i++)
+			{
+				deuu.Add(html[i]);
+			}
+			
+			
+			swtwtk = File.AppendText("twtknu.csv");
+			for(int pg=0;pg<315;pg++)
+			{
+				int gsome=0;
+				
+					
+					try{
+						html = dndr.DownloadString("https://tk2dl.com/t/recent.html?start="+((pg%12)*40)).Split(sepQuo);
+					}catch{}
+					
+					nl=html.Length;
+					
+					for(int i=0;i<nl;i++)
+					{
+						if(html[i]==" value="&&html[i-1]=="x")
+						{
+							if(chknwrt(html[i+1]))
+							{gsome++;}
+							
+							
+							
+						}
+					}
+					if(gsome!=0)
+					{Console.WriteLine("tk2d"+pg+", "+gsome);}
+					
+				
+				
+				gsome=0;
+				try{
+						html = dndr.DownloadString("https://tw-dl.net/hozon.php?p="+pg).Split(sepQuo);
+					}catch{}
+				nl=html.Length;
+				for(int i=0;i<nl;i++)
+				{
+					int hlll=html[i].Length;
+					if(hlll>0x10&&hlll<0x24)
+					{
+						if(html[i].StartsWith("./v.php?video="))
+						{
+							
+							if(chknwrt(html[i].Split('=')[1]))
+							{gsome++;}
+						}
+					
+					}
+				}
+				if(gsome!=0)
+				{Console.WriteLine("hozon"+pg+", "+gsome);}
+				else {Console.WriteLine("---nohozon"+pg);}
+				swtwtk.Flush();
+				Thread.Sleep(30000);
+			}
+		}
 		
 		static void dlbati()
 		{
@@ -284,10 +387,41 @@ namespace eroneto
 			
 
 			//client.Encoding = Encoding.UTF8; 
-			aco2(new WebClient());
+			twtk(new WebClient());
+			system("pause");
 			
 		}
+		static string schpa=@"Q:\z\bookpdf\0bak\tu\ar\";
+		static void mkplaceho()
+		{
+			string[] giflist=Directory.GetFiles(schpa,"*.gif",SearchOption.TopDirectoryOnly);
+			int giflistl=giflist.Length;
+			
+			for(int i=0;i<giflistl;i++)
+			{
+				if((i&3)==0)
+				{
+					Console.WriteLine(" ");
+				
+				}
+				
+				string gsho=giflist[i].Replace(schpa,string.Empty).Replace(".gif",string.Empty);
+				Console.WriteLine("100,-50,350,350,0.5,'"+gsho+"',");
+				File.Copy("da/xx_placeho.gif","sele/_"+gsho+".gif");
+				
+				
+				
+			}
+			
+			Console.ReadKey();
+			Console.ReadKey();
+			Console.ReadKey();
+			Console.ReadKey();
+			Console.ReadKey();
 		
+		}
+		
+		/*
 		static WebClient glbdl;
 		const string jprog="../bk40792.html";
 		static void buukdl()
@@ -362,10 +496,13 @@ namespace eroneto
 			File.WriteAllLines("rlines++.csv",data);
 		}
 		*/
+		
+		
+		
 		static void Main(string[] args)
 		{
-			
-			findmymiss();
+			mkplaceho();
+			//dlbati();
 		}
 		
 	}
