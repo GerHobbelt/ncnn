@@ -874,7 +874,7 @@ kx5a;
 
 function lynklocfi(sig)
 {
-	if(klyi&3){return '<img class="yki" src="poz.png" />';}
+	if(klyi&4){return '<img class="yki" src="poz.png" />';}
 
 	return '<img class="ykix" src="0bak/tu/xx/_'+chika[5+((sig>>1)&0xFF)*6]+'.gif" />'
 
@@ -1391,7 +1391,7 @@ function changechikaChain()
 {
 	
 	if(pvklyi&0xffffff00){setTimeout(changechikaChain, 0x10000); return;}
-	else{setTimeout(changechikaChain, 0x2000+((pvklyi&0xF)<<10));}
+	else{setTimeout(changechikaChain, 0x2000+((pvklyi&0x1F)<<10));}
 
 	var rnum=(klyi&0xFF);
 	pvklyi=rnum;
