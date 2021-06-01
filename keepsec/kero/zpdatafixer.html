@@ -1,0 +1,116 @@
+<html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><img src="" width=141% height=1 /><div id="team">
+</div><textarea id="urlrec" rows="5" cols="26">chick,
+</textarea><svg class="animated" width=0 height=0 ><defs>
+<g id="pozgif">
+<circle cx="32" cy="32" r="26" stroke="#0ff" stroke-width="8" fill="none" >
+<animate attributeName="opacity" values="0.3;0.8;1;0.6;0.3" keyTimes="0;0.25;0.5;0.75;1" begin="0s" dur="5s" repeatCount="indefinite" />
+</circle></g>
+<g id="longbargif">
+<ellipse cx="128" cy="400" rx="100" ry="400" fill="#fff">
+<animate attributeName="ry" values="32;400;32" keyTimes="0;0.5;1" begin="0s" dur="5s" repeatCount="indefinite" />
+</ellipse></g>
+<filter id="cur" filterUnits="userSpaceOnUse"  width="64" height="64"><feImage href="poz.gif" /></filter>
+<filter id="longbar" filterUnits="userSpaceOnUse" x="25" y="-70" width="400" height="400" ><feImage href="tu/lo4.gif" /></filter></defs></svg>
+<br>
+<img style="filter: url(#longbar);" src="longbar.png">
+<img id="timg" src="https://pbs.twimg.com/ext_tw_video_thumb/1303877190367326217/pu/img/VobI7hp8l76Tzjsv.jpg" /><br>
+<img src="https://pbs.twimg.com/ext_tw_video_thumb/1303877190367326217/pu/img/VobI7hp8l76Tzjsv.jpg" /><img style="filter: url(#longbar);" src="longbar.png"><div class="nv"></div>
+</body><script src="zpdata.js"></script>
+<script>
+var tblarea = document.getElementById('team');
+var recarea = document.getElementById('urlrec');
+var timgarea = document.getElementById('timg');
+
+var SVGf=new Array(2);
+SVGf[0]=recarea.nextSibling.firstChild;
+SVGf[1]=SVGf[0].children[3];
+
+var byfna= {};
+var chkl=(chika.length/6)<<0;
+
+function fillbyfna()
+{
+	for(var i=0;i<chkl;i++)
+	{
+		byfna[chika[i*6+5]]=i;
+	}
+
+}
+fillbyfna();
+
+function fixxx()
+{
+tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';
+
+for(var i=0;i<chkl;i++)
+{
+	var yina = document.createElement('div');
+	if(chika[i*6+1]&1){yina.className='yka';}
+	
+	var fna=chika[i*6+5];
+	yina.innerHTML='<h3>'+fna+'</h3><img class="yk400" src="tu/'+fna+'.gif" /><img class="yk400" src="tu/xx/_'+fna+'.gif" />'
+	
+
+	tblarea.appendChild(yina);
+
+}
+
+
+}
+
+
+
+/*
+var gidx=1;
+function prtwh()
+{
+    var lwh=(timgarea.naturalHeight/timgarea.naturalWidth).toFixed(3);
+    console.log(lwh+'\t'+chika[(gidx-1)*6+5]);
+    timgarea.src='tu/'+chika[gidx*6+5]+'.gif';
+    gidx++;
+
+}
+
+function whlist()
+{
+    timgarea = document.getElementById('timg');
+    gidx=1;
+    timgarea.src='tu/'+chika[5]+'.gif';
+    setInterval(prtwh, 500);
+
+
+}
+
+
+function rmvdu()
+{
+    
+    var retstr='\n\n\n';
+    var cidx=0;
+    for(var i=0;i<chkl;i++)
+    {
+        var bs=i*6;
+        var bsfna=chika[bs+5];
+        if(remv.includes(bsfna))
+        {
+            if(!(cidx&3))
+            {
+                if(!(cidx&0xF)){retstr+='//========\n';}
+                else {retstr+='\n';}
+                
+
+            }
+
+            retstr+=chika[bs]+','+chika[bs+1]+','+chika[bs+2]+','+chika[bs+3]+','+chika[bs+4]+',"'+bsfna+'",\n';
+            cidx++;;
+
+        }
+
+    }
+
+    return retstr+'\n\n\n';
+
+}
+*/
+
+</script></html>

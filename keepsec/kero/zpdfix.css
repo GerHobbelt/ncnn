@@ -1,0 +1,21 @@
+body {
+	color: #fff;
+	background-color: #401;
+	image-rendering: pixelated;
+}
+
+.yk400 {
+	height:400px;
+	max-height: 800px;
+}
+
+.yki {
+	width:300px;
+	-webkit-filter: url(#longbar)
+}
+
+.yka {
+	display: inline-block;
+	vertical-align: text-top;
+	border:30px #ff0 dotted;
+}
