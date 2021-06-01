@@ -1,6 +1,8 @@
-<html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><img src="" width=141% height=1 /><div id="team">
-</div><textarea id="urlrec" rows="5" cols="26">chick,
-</textarea><svg class="animated" width=0 height=0 ><defs>
+<html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><img src="" width=141% height=1 /><div><div id="team">
+</div><br><br><textarea id="urlrec" rows="10" cols="50">
+</textarea>
+<img id="timg" />
+</div><svg class="animated" width=0 height=0 ><defs>
 <g id="pozgif">
 <circle cx="32" cy="32" r="26" stroke="#0ff" stroke-width="8" fill="none" >
 <animate attributeName="opacity" values="0.3;0.8;1;0.6;0.3" keyTimes="0;0.25;0.5;0.75;1" begin="0s" dur="5s" repeatCount="indefinite" />
@@ -12,18 +14,117 @@
 <filter id="cur" filterUnits="userSpaceOnUse"  width="64" height="64"><feImage href="poz.gif" /></filter>
 <filter id="longbar" filterUnits="userSpaceOnUse" x="25" y="-70" width="400" height="400" ><feImage href="tu/lo4.gif" /></filter></defs></svg>
 <br>
-<img style="filter: url(#longbar);" src="longbar.png">
-<img id="timg" src="https://pbs.twimg.com/ext_tw_video_thumb/1303877190367326217/pu/img/VobI7hp8l76Tzjsv.jpg" /><br>
-<img src="https://pbs.twimg.com/ext_tw_video_thumb/1303877190367326217/pu/img/VobI7hp8l76Tzjsv.jpg" /><img style="filter: url(#longbar);" src="longbar.png"><div class="nv"></div>
+
+<img src="https://pbs.twimg.com/ext_tw_video_thumb/1303877190367326217/pu/img/VobI7hp8l76Tzjsv.jpg" /><img style="filter: url(#longbar);" src="longbar.png" />
+<br>
+<img style="filter: url(#longbar);" src="longbar.png" /><img src="https://pbs.twimg.com/ext_tw_video_thumb/1303877190367326217/pu/img/VobI7hp8l76Tzjsv.jpg" />
+<div class="nv"></div>
 </body><script src="zpdata.js"></script>
 <script>
+const chikagifpa='tu/';
+const chikagifpaXX='tu/xx/_';
+
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
 
 var SVGf=new Array(2);
-SVGf[0]=recarea.nextSibling.firstChild;
+SVGf[0]=recarea.parentNode.nextSibling.firstChild;
 SVGf[1]=SVGf[0].children[3];
+
+var WtoH=0;
+var laztpic='';
+
+function dofit(ymg)
+{
+  SVGf[1].firstChild.setAttribute('href',ymg+'.gif');
+	tblarea.innerText='\n\n'+ymg+'  =   _'+laztpic+'\n\n';
+}
+
+
+
+var nrpka=rpka.length;
+function changerpka()
+{
+	nrpka--;
+	if(nrpka<0){nrpka=rpka.length-1;}
+
+          dofit(chikagifpa+rpka[nrpka]);
+
+
+}
+
+timgarea.onclick=changerpka;
+
+function showWHcalc(inW,inH)
+{
+    var zstr='R='+WtoH.toFixed(3)+
+    '\n\nW= '+inW+',  (H= '+(inW*WtoH).toFixed(0)+')'+
+    '\n\n(W= '+(inH/WtoH).toFixed(0)+'),  H= '+inH;
+
+	tblarea.innerText=zstr;
+
+
+}
+
+function rCMD()
+{
+	var cmdz=recarea.value.split('\n');
+	switch(cmdz[0])
+	{
+		case 'fix':
+			fixxx();
+		break;
+
+		case 'sg':
+			var cdym=cmdz[1].replace(/[ \t"']/g,'').split(',');
+			
+			//recarea.value='sg\n'+
+			sg(parseInt(cdym[0],10),parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),cdym[5]);
+
+		break;
+	
+	}
+
+}
+
+
+function sg(vx,vy,vw,vh,gb,pic)
+{
+    if(pic){
+
+        
+        if(pic!=laztpic)
+        {
+            WtoH=0;
+            var gifpasa=chikagifpa+pic+'.gif';
+            SVGf[1].firstChild.setAttribute('href',gifpasa);
+            timgarea.src=gifpasa;
+            laztpic=pic;
+            setTimeout(function(){WtoH=(timgarea.naturalHeight/timgarea.naturalWidth);showWHcalc(vw,vh);}, 100);
+
+        } else{showWHcalc(vw,vh);}
+        }
+    
+
+SVGf[1].setAttribute('x',vx);
+SVGf[1].setAttribute('y',vy);
+SVGf[1].setAttribute('width',vw);
+SVGf[1].setAttribute('height',vh);
+
+
+//return vx+','+vy+','+vw+','+vh+',0.5,"'+pic+'",';
+
+}
+
+function midy()
+{
+	if(recarea.parentNode.className===''){recarea.parentNode.className='cmdbox';}
+	else{recarea.parentNode.className='';}
+}
+
+recarea.onblur=rCMD;
+recarea.ondblclick=midy;
 
 var byfna= {};
 var chkl=(chika.length/6)<<0;
