@@ -640,7 +640,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 					var mgknak=iszrda&0xFF;	//((iszrda>>3)^(iszrda&7))
 
 					//ymgg.className='ykiQ';
-					ymgg.src='0bak/tu/xx/_'+chika[6*mgknak+5]+'.gif';
+					ymgg.src=chikagifpaXX+chika[6*mgknak+5]+'.gif';
 					
 					
 					if(niki=='i'){niki=' ';}
@@ -1376,6 +1376,7 @@ return false;
 
 
 const chikagifpa='0bak/tu/';
+const chikagifpaXX='0bak/tu/xx/_';
 
 function changechika(n6)
 {
@@ -1384,13 +1385,19 @@ function changechika(n6)
 	if(lbar.fna===n6){return;}
 	lbar.fna=n6;
 	
+	var chkpai=chikagifpa;
+	var yv=chika[n6*6+1];
+
+	if((yv*n6)&1){chkpai=chikagifpaXX;}
+	yv=yv&(-2);
+
 	n6*=6;
 	
 	lbar.setAttribute('x',chika[n6]);
-	lbar.setAttribute('y',chika[n6+1]);
+	lbar.setAttribute('y',yv);
 	lbar.setAttribute('width',chika[n6+2]);
 	lbar.setAttribute('height',chika[n6+3]);
-	lbar.firstChild.setAttribute('href',chikagifpa+chika[n6+5]+'.gif');
+	lbar.firstChild.setAttribute('href',chkpai+chika[n6+5]+'.gif');
 	
 }
 
