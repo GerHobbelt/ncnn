@@ -46,8 +46,7 @@ FL { float:right;}
 }
 
 .ykix {
-	width:400px;
-	max-height: 800px;
+	height:400px;
 	image-rendering: pixelated;
 }
 

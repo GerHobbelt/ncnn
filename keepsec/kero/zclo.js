@@ -1384,14 +1384,19 @@ function changechika(n6)
 	
 	if(lbar.fna===n6){return;}
 	lbar.fna=n6;
-	
-	var chkpai=chikagifpa;
-	var yv=chika[n6*6+1];
-
-	if((yv*n6)&1){chkpai=chikagifpaXX;}
-	yv=yv&(-2);
-
 	n6*=6;
+
+
+	var chkpai=chikagifpa;
+	var yv=chika[n6+1];
+
+	if((yv&1)&&(n6&3)){
+		yv=yv&(-2);
+		chkpai=chikagifpaXX;
+	}
+	
+
+	
 	
 	lbar.setAttribute('x',chika[n6]);
 	lbar.setAttribute('y',yv);

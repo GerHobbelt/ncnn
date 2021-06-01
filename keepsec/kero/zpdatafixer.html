@@ -46,6 +46,8 @@ function dofit(ymg)
 var nrpka=rpka.length;
 function changerpka()
 {
+	
+	
 	nrpka--;
 	if(nrpka<0){nrpka=rpka.length-1;}
 
@@ -79,9 +81,10 @@ function rCMD()
 		case 'sg':
 			var cdym=cmdz[1].replace(/[ \t"']/g,'').split(',');
 			
-			//recarea.value='sg\n'+
-			sg(parseInt(cdym[0],10),parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),cdym[5]);
-
+			var zuoyo=parseInt(cdym[0],10);
+			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),cdym[5]);
+			if(zuoyo>0){recarea.parentNode.className='cmdbox';}
+			else{recarea.parentNode.className='';}
 		break;
 	
 	}
