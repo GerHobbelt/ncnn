@@ -158,21 +158,26 @@ function xchg6(y,nx)
 
 function shuflocfi()
 {
-	var chikal=(chika.length/6)<<0;
-	var ibz=0;
+	
+	var ibz=((chika.length/6)&(-2))-2;
 	var zsta=klyi2>>1;
 	for(var i=0;i<zsta;i++)
 	{
 		var y=i<<1;
-		var nx=1+((Math.random() *zsta)<<1);
+		var nx=(Math.random() *klyi2)<<0;
+
+		xchg6(ibz,nx%ibz);
+		ibz-=2;
+		if(ibz<=0){ibz=((chika.length/6)&(-2))-2;}
+
+		nx=(nx|1);
+
 		var tmp=locfi[y];
 		locfi[y]=locfi[nx];
 		locfi[nx]=locfi[y+1];
 		locfi[y+1]=tmp;
 
-		xchg6(ibz,nx%chikal);
-		ibz+=2;
-		if(ibz>=chikal){ibz=0;}
+		
 	}
 	ibz=2;
 	if(klyi2&1){ibz=3;}
@@ -634,7 +639,9 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 					
 					var mgknak=iszrda&0xFF;	//((iszrda>>3)^(iszrda&7))
 
-					ymgg.src=chikagifpa+chika[6*mgknak+5]+'.gif';
+					//ymgg.className='ykiQ';
+					ymgg.src='0bak/tu/xx/_'+chika[6*mgknak+5]+'.gif';
+					
 					
 					if(niki=='i'){niki=' ';}
 					else{ymgg.alt='\n:'+niki+'\n';
@@ -1390,13 +1397,23 @@ function changechika(n6)
 function changechikaChain()
 {
 	
-	if(pvklyi&0xffffff00){setTimeout(changechikaChain, 0x10000); return;}
+	if(pvklyi&0xffffff00){setTimeout(changechikaChain, 0x20000); return;}
 	else{setTimeout(changechikaChain, 0x2000+((pvklyi&0x1F)<<10));}
 
-	var rnum=(klyi&0xFF);
-	pvklyi=rnum;
+	var rnum=((pvklyi*klyi)&0xFF);
 
 	changechika(rnum);
+
+	if(rnum<4){pvklyi=3;}
+	else if(rnum&1){
+		if(pvklyi==rnum){klyi-=2;}
+		pvklyi=rnum;}
+	else {pvklyi=rnum-1;}
+
+	
+	
+
+	
 	
 	
 

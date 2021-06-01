@@ -51,6 +51,14 @@ FL { float:right;}
 	image-rendering: pixelated;
 }
 
+.ykiQ {
+	z-index: -1000;
+	width: auto;
+	height:251px;
+	margin: -20px 0px;
+	image-rendering: pixelated;
+}
+
 .cmdbox {
 	position:fixed;
 	top:20%;
