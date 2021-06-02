@@ -1,0 +1,14 @@
+img {
+	object-fit: contain;
+	image-rendering: pixelated;
+}
+
+.grps {
+	display: inline-block;
+	border:30px #ff0 dotted;
+}
+
+.grpbox{
+	border:10px #00f solid;
+
+}
