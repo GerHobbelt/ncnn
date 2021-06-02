@@ -1,8 +1,7 @@
 <html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><img src="" width=141% height=1 /><div><div id="team">
 </div><br><br><textarea id="urlrec" rows="10" cols="50">
 </textarea>
-<img id="timg" />
-<img id="timg2" />
+<img id="timg" /><img />
 </div><svg class="animated" width=0 height=0 ><defs>
 <g id="pozgif">
 <circle cx="32" cy="32" r="26" stroke="#0ff" stroke-width="8" fill="none" >
@@ -22,13 +21,18 @@
 <div class="nv"></div>
 </body><script src="zpdata.js"></script>
 <script>
-const chikagifpa='tu/';
-const chikagifpaXX='tu/xx/_';
+
+var rpka=[
+'gr1',
+'gr2',
+'zc68',
+];
+
+var chikagifpa_fix=['tu/','tu/xx/_','tu/xx/b_','tu/xx/c_'];
 
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
-var timg2 = document.getElementById('timg2');
 var paya=recarea.parentNode;
 
 var SVGf=new Array(2);
@@ -40,7 +44,7 @@ var laztpic='';
 
 function dofit(ymg)
 {
-  SVGf[1].firstChild.setAttribute('href',ymg+'.gif');
+  SVGf[1].firstChild.setAttribute('href','tu/xx/rp/'+ymg+'.gif');
 	tblarea.innerText='\n\n'+ymg+'  =   _'+laztpic+'\n\n';
 }
 
@@ -63,7 +67,7 @@ function changerpka()
 	nrpka--;
 	if(nrpka<0){nrpka=rpka.length-1;}
 
-          dofit('tu/xx/rp/'+rpka[nrpka]);
+          dofit(rpka[nrpka]);
 
 
 }
@@ -81,6 +85,15 @@ function showWHcalc(inW,inH)
 
 }
 
+var xgcur=0;
+
+function stbox(zuoyo)
+{
+	if(zuoyo>0){paya.className='cmdbox';}
+	else{paya.className='';}
+
+}
+
 function rCMD()
 {
 	var cmdz=recarea.value.split('\n');
@@ -90,13 +103,44 @@ function rCMD()
 			fixxx();
 		break;
 
+		case 'xgo':
+			xgcur=byfna[cmdz[1]];
+			recarea.value='xgo\n'+cmdz[1]+'\n'+xgcur;
+		break;
+
+		case 'xg':
+			var n6=xgcur*6;
+			var vy=0;
+			for(var fg=xgcur;fg<chkl;fg++)
+			{	
+				vy=chika[n6+1];
+				if(vy%10!=1){break;}
+				xgcur++;
+				n6=xgcur*6;
+			}
+			
+
+			xgcur++;
+			if(xgcur>=chkl){xgcur=0;}
+
+
+			var zuoyo=chika[n6];
+			var fnaaj=chika[n6+5];
+			recarea.value='xg\n'+fnaaj;
+			timgarea.nextSibling.src=chikagifpa_fix[1]+fnaaj+'.gif';
+			sg(zuoyo,vy,chika[n6+2],chika[n6+3],chika[n6+4],fnaaj);
+			stbox(zuoyo);
+			
+
+			
+		break;
+
 		case 'sg':
 			var cdym=cmdz[1].replace(/[ \t"']/g,'').split(',');
 			
 			var zuoyo=parseInt(cdym[0],10);
 			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),cdym[5]);
-			if(zuoyo>0){paya.className='cmdbox';}
-			else{paya.className='';}
+			stbox(zuoyo);
 		break;
 	
 	}
@@ -112,7 +156,7 @@ function sg(vx,vy,vw,vh,gb,pic)
         if(pic!=laztpic)
         {
             WtoH=0;
-            var gifpasa=chikagifpa+pic+'.gif';
+            var gifpasa=chikagifpa_fix[0]+pic+'.gif';
             SVGf[1].firstChild.setAttribute('href',gifpasa);
             timgarea.src=gifpasa;
             laztpic=pic;
@@ -123,7 +167,7 @@ function sg(vx,vy,vw,vh,gb,pic)
     
 
 SVGf[1].setAttribute('x',vx);
-SVGf[1].setAttribute('y',vy);
+SVGf[1].setAttribute('y',-vy);
 SVGf[1].setAttribute('width',vw);
 SVGf[1].setAttribute('height',vh);
 
@@ -161,10 +205,29 @@ tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';
 for(var i=0;i<chkl;i++)
 {
 	var yina = document.createElement('div');
-	if(chika[i*6+1]&1){yina.className='yka';}
+
+	var dov=chika[i*6+1]%10;
+	if(dov>0){yina.className='yka';}
 	
 	var fna=chika[i*6+5];
-	yina.innerHTML='<h3>'+i+'= '+fna+'</h3><img class="yk400" src="tu/'+fna+'.gif" /><img class="yk400" src="tu/xx/_'+fna+'.gif" />'
+
+	if(dov>1)
+	{
+		dov++;
+		var stiv='<h3>'+dov+'x '+i+'= '+fna+'</h3>';
+		for(var vv=0;vv<dov;vv++)
+		{
+			stiv+='<img class="yk400" src="'+chikagifpa_fix[vv]+fna+'.gif" />'
+		}
+
+
+		yina.innerHTML=stiv;
+	}
+	else
+	{
+
+		yina.innerHTML='<h3>'+i+'= '+fna+'</h3><img class="yk400" src="tu/'+fna+'.gif" /><img class="yk400" src="tu/xx/_'+fna+'.gif" />';
+	}
 	
 
 	tblarea.appendChild(yina);
