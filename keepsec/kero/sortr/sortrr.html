@@ -1,0 +1,149 @@
+<html><head><link href="sortr.css" rel="stylesheet"/></head><body></body>
+
+
+<script src="gfdta.js"></script><script>
+
+var sortgrptxt=[];
+
+var sortgrp={};
+
+
+
+function printmv()
+{
+	var stivv='\n\n';
+	var grpl=sortgrptxt.length;
+
+	var thagp=sortgrp['del'];
+	var chll=thagp.children.length;
+	for(var v1=2;v1<chll;v1++)
+	{
+		stivv+='\ndel '+thagp.children[v1].id.replace('^','\\')+'.gif ';
+	}
+
+	for(var v0=1;v0<grpl;v0++)
+	{
+		var grpna=sortgrptxt[v0];
+		stivv+='\nmd '+grpna;
+		thagp=sortgrp[grpna];
+		chll=thagp.children.length;
+		for(var v1=2;v1<chll;v1++)
+		{
+			stivv+='\nmove '+thagp.children[v1].id.replace('^','\\')+'.gif '+grpna+'\\';
+		}
+	}
+
+	return stivv+'\n\n\n\n';
+
+}
+
+function putprintmv()
+{
+	resultbox.value=printmv();
+}
+
+var imkv=function(e){
+	var ele=e.target;
+
+	if(ele.naturalWidth==0){ele.parentElement.remove();}
+	else{ele.parentElement.appendChild(kbboxgrp);}
+	
+
+}
+
+
+
+function addnewgrp()
+{
+	addnewgrp_r(newgrpinput.value);
+	newgrpinput.value='';
+	
+}
+
+function addnewgrp_r(newgrpname)
+{
+	if(newgrpname!=''&&!sortgrptxt.includes(newgrpname))
+	{
+		sortgrptxt.push(newgrpname);
+		var nyuopt=document.createElement('option');
+		nyuopt.value = newgrpname;
+		nyuopt.text = newgrpname;
+		kbbox.appendChild(nyuopt);
+
+		var grpdiv=document.createElement('div');
+		grpdiv.className='grps';
+		grpdiv.innerHTML='<h1>'+newgrpname+'</h1><br>'
+		sorted.appendChild(grpdiv);
+
+		sortgrp[newgrpname]=grpdiv;
+	}
+}
+
+function PutintoSort()
+{
+	sortgrp[kbbox.value].appendChild(kbbox.parentElement.parentElement);
+}
+
+function mkbs1()
+{
+	sorted=document.createElement('div');
+	document.body.appendChild(sorted);
+	
+
+	unsorted=document.createElement('div');
+	document.body.appendChild(unsorted);
+	
+
+	kbboxgrp=document.createElement('div');
+	kbboxgrp.className='grpbox';
+	
+	
+	newgrpinput=document.createElement('input');
+	newgrpinput.onblur=addnewgrp;
+	kbboxgrp.appendChild(newgrpinput);
+
+	
+
+	
+
+	kbbox=document.createElement('select');
+	kbbox.onchange=PutintoSort;
+	kbboxgrp.appendChild(kbbox);
+
+	kbboxgrp.appendChild(document.createElement('br'));
+	var btnadd=document.createElement('a');
+	btnadd.innerText='+++++add+++++';
+	btnadd.onmouseover=PutintoSort;
+	kbboxgrp.appendChild(btnadd);
+
+	resultbox=document.createElement('textarea');
+	resultbox.cols=70;
+	resultbox.rows=20;
+	resultbox.onfocus=putprintmv;
+	unsorted.appendChild(resultbox);
+
+	var gfl=gfdta.length;
+
+	for(var i=0;i<gfl;i++)
+	{
+		var kten=document.createElement('div');
+		kten.id=gfdta[i].replace('/','^');
+		kten.innerText=gfdta[i]+'\n';
+		var ymg=document.createElement('img');
+		ymg.src=gfdta[i]+'.gif';
+		ymg.onclick=imkv;
+		kten.appendChild(ymg);
+		unsorted.appendChild(kten);
+	}
+	
+	
+	
+	
+	addnewgrp_r('del');
+
+}
+
+mkbs1();
+
+</script>
+</html>
