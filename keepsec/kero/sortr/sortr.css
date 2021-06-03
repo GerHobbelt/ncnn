@@ -3,8 +3,8 @@ img {
 	image-rendering: pixelated;
 }
 
-.grps {
-	display: inline-block;
+grp {
+	float: right;
 	border:30px #ff0 dotted;
 }
 
