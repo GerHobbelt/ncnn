@@ -23,40 +23,8 @@
 <script>
 
 var rpka=[
-'gr1',
-'gr2',
-'z21',
-'z22',
-'z23',
-'z25',
-'zffk11',
-'zk10',
-'zk11',
-'zk12',
-'zk13',
-'zk14',
-'zk15',
-'zk16',
-'zk17',
-'zk18',
-'zk19',
-'zk2',
-'zk20',
-'zk21',
-'zk24',
-'zk24r',
-'zk25',
-'zk26',
-'zk27',
-'zk3',
-'zk4',
-'zk5',
-'zk6',
-'zk7',
-'zk8',
-'zk9',
-'zkmy',
-'zmai1',
+
+
 
 ];
 
@@ -248,7 +216,11 @@ function sg(vx,vy,vw,vh,gb,pic)
         if(pic!=laztpic)
         {
             WtoH=0;
-            var gifpasa=chikagifpa_fix[0]+pic+'.gif';
+	var sipa=chikagifpa_fix[0];
+
+	if(gb>=1.0){sipa=chikagifpa_fix[gb];}
+	
+            var gifpasa=sipa+pic+'.gif';
             SVGf[1].firstChild.setAttribute('href',gifpasa);
             timgarea.src=gifpasa;
             laztpic=pic;
