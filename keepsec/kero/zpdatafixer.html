@@ -60,13 +60,13 @@ var rpka=[
 
 ];
 
-var chikagifpa_fix=['tu/','tu/xx/_','tu/xx/b_','tu/xx/c_'];
+var chikagifpa_fix=['tu/','tu/xx/_','tu/xx/b_','tu/xx/c_','tu/xx/d_','tu/xx/e_','tu/xx/f_','tu/xx/g_'];
 
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
 var timgXX=timgarea.nextSibling
-timgXX.onclick=doxg;
+timgXX.onclick=mousexg;
 timgXX=timgXX.firstChild;
 var timg_abc=timgXX.nextSibling;
 var paya=recarea.parentNode;
@@ -110,6 +110,7 @@ function changerpka()
 
 }
 
+
 timgarea.onclick=changerpka;
 
 function showWHcalc(inW,inH)
@@ -145,6 +146,19 @@ function mkextraimg(fnaaj)
 		ymg.src='tu/xx/'+extraimghd[i]+fnaaj+'.gif';
 		timg_abc.appendChild(ymg);
 	}
+
+}
+
+function enabletimgovr()
+{
+	timgarea.onmouseover=changerpka;
+}
+
+function mousexg()
+{
+	timgarea.onmouseover=null;
+	doxg();
+	setTimeout(enabletimgovr, 2000);
 
 }
 
@@ -201,7 +215,7 @@ function rCMD()
 			fixxx();
 		break;
 
-		case 'xgo':
+		case 'xgp':
 			xgcur=byfna[cmdz[1]];
 			recarea.value='xg\n\n'+cmdz[1]+'\n'+xgcur;
 		break;
