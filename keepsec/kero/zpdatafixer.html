@@ -1,7 +1,7 @@
 <html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><img src="" width=141% height=1 /><div><div id="team">
 </div><br><br><textarea id="urlrec" rows="10" cols="50">
 </textarea>
-<img id="timg" /><img /><b></b>
+<img id="timg" /><b><img /><b></b></b>
 </div><svg class="animated" width=0 height=0 ><defs>
 <g id="pozgif">
 <circle cx="32" cy="32" r="26" stroke="#0ff" stroke-width="8" fill="none" >
@@ -25,7 +25,39 @@
 var rpka=[
 'gr1',
 'gr2',
-'zc68',
+'z21',
+'z22',
+'z23',
+'z25',
+'zffk11',
+'zk10',
+'zk11',
+'zk12',
+'zk13',
+'zk14',
+'zk15',
+'zk16',
+'zk17',
+'zk18',
+'zk19',
+'zk2',
+'zk20',
+'zk21',
+'zk24',
+'zk24r',
+'zk25',
+'zk26',
+'zk27',
+'zk3',
+'zk4',
+'zk5',
+'zk6',
+'zk7',
+'zk8',
+'zk9',
+'zkmy',
+'zmai1',
+
 ];
 
 var chikagifpa_fix=['tu/','tu/xx/_','tu/xx/b_','tu/xx/c_'];
@@ -33,7 +65,9 @@ var chikagifpa_fix=['tu/','tu/xx/_','tu/xx/b_','tu/xx/c_'];
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
-var timgXX=timgarea.nextSibling;
+var timgXX=timgarea.nextSibling
+timgXX.onclick=doxg;
+timgXX=timgXX.firstChild;
 var timg_abc=timgXX.nextSibling;
 var paya=recarea.parentNode;
 
@@ -108,7 +142,7 @@ function mkextraimg(fnaaj)
 	for(var i=1;i<glodov;i++)
 	{
 		var ymg=document.createElement('img');
-		ymg.src='xx/'+extraimghd[i]+fnaaj+'.gif';
+		ymg.src='tu/xx/'+extraimghd[i]+fnaaj+'.gif';
 		timg_abc.appendChild(ymg);
 	}
 
@@ -130,9 +164,9 @@ function doxg()
 	glodov=vy%10;
 	var fnaaj=chika[n6+5];
 
+	timg_abc.innerHTML='';
 	if(glodov==0){
 		timg_abc.className='';
-		timg_abc.innerHTML='';
 	}
 	else
 	{
@@ -156,7 +190,7 @@ function doxg()
 
 }
 
-timgXX.onclick=doxg;
+
 
 function rCMD()
 {
