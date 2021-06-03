@@ -1,7 +1,7 @@
 <html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><img src="" width=141% height=1 /><div><div id="team">
 </div><br><br><textarea id="urlrec" rows="10" cols="50">
 </textarea>
-<img id="timg" /><img />
+<img id="timg" /><img /><b></b>
 </div><svg class="animated" width=0 height=0 ><defs>
 <g id="pozgif">
 <circle cx="32" cy="32" r="26" stroke="#0ff" stroke-width="8" fill="none" >
@@ -33,6 +33,8 @@ var chikagifpa_fix=['tu/','tu/xx/_','tu/xx/b_','tu/xx/c_'];
 var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
+var timgXX=timgarea.nextSibling;
+var timg_abc=timgXX.nextSibling;
 var paya=recarea.parentNode;
 
 var SVGf=new Array(2);
@@ -42,10 +44,12 @@ SVGf[1]=SVGf[0].children[3];
 var WtoH=0;
 var laztpic='';
 
+var glodov=0;
+const extraimghd=['_','b_','c_','d_','e_','f_','g_'];
 function dofit(ymg)
 {
-  SVGf[1].firstChild.setAttribute('href','tu/xx/rp/'+ymg+'.gif');
-	tblarea.innerText='\n\n'+ymg+'  =   _'+laztpic+'\n\n';
+SVGf[1].firstChild.setAttribute('href','tu/xx/rp/'+ymg+'.gif');
+tblarea.innerText='\n\n'+ymg+'  =   '+extraimghd[glodov]+laztpic+'\n\n';
 }
 
 function fna()
@@ -94,6 +98,66 @@ function stbox(zuoyo)
 
 }
 
+
+
+
+
+function mkextraimg(fnaaj)
+{
+	
+	for(var i=1;i<glodov;i++)
+	{
+		var ymg=document.createElement('img');
+		ymg.src='xx/'+extraimghd[i]+fnaaj+'.gif';
+		timg_abc.appendChild(ymg);
+	}
+
+}
+
+function doxg()
+{
+	var n6=xgcur*6;
+	var vy=chika[n6+1];
+	/*
+	for(var fg=xgcur;fg<chkl;fg++)
+	{	
+		vy=chika[n6+1];
+		if(vy%10!=1){break;}
+		xgcur++;
+		n6=xgcur*6;
+	}
+	*/
+	glodov=vy%10;
+	var fnaaj=chika[n6+5];
+
+	if(glodov==0){
+		timg_abc.className='';
+		timg_abc.innerHTML='';
+	}
+	else
+	{
+		timg_abc.className='extrabox';
+		if(glodov==1){timg_abc.innerText='+++EXTRA';}
+		else{
+			mkextraimg(fnaaj);
+		}
+	}
+
+	xgcur++;
+	if(xgcur>=chkl){xgcur=0;}
+
+
+	var zuoyo=chika[n6];
+	
+	recarea.value='xg\n'+fnaaj;
+	timgXX.src=chikagifpa_fix[1]+fnaaj+'.gif';
+	sg(zuoyo,vy,chika[n6+2],chika[n6+3],chika[n6+4],fnaaj);
+	stbox(zuoyo);
+
+}
+
+timgXX.onclick=doxg;
+
 function rCMD()
 {
 	var cmdz=recarea.value.split('\n');
@@ -105,31 +169,11 @@ function rCMD()
 
 		case 'xgo':
 			xgcur=byfna[cmdz[1]];
-			recarea.value='xgo\n'+cmdz[1]+'\n'+xgcur;
+			recarea.value='xg\n\n'+cmdz[1]+'\n'+xgcur;
 		break;
 
 		case 'xg':
-			var n6=xgcur*6;
-			var vy=0;
-			for(var fg=xgcur;fg<chkl;fg++)
-			{	
-				vy=chika[n6+1];
-				if(vy%10!=1){break;}
-				xgcur++;
-				n6=xgcur*6;
-			}
-			
-
-			xgcur++;
-			if(xgcur>=chkl){xgcur=0;}
-
-
-			var zuoyo=chika[n6];
-			var fnaaj=chika[n6+5];
-			recarea.value='xg\n'+fnaaj;
-			timgarea.nextSibling.src=chikagifpa_fix[1]+fnaaj+'.gif';
-			sg(zuoyo,vy,chika[n6+2],chika[n6+3],chika[n6+4],fnaaj);
-			stbox(zuoyo);
+			doxg();
 			
 
 			

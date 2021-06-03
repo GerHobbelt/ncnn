@@ -20,6 +20,12 @@ body {
 	border:30px #ff0 dotted;
 }
 
+.extrabox{
+	font-size: 300%;
+	border:10px #f0f solid;
+
+}
+
 .cmdbox {
 	position:fixed;
 	top:20%;
