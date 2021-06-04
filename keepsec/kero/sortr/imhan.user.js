@@ -18,7 +18,7 @@ function klear()
 
 }
 
-function goon()
+function k3()
 {
     loadcot=0;
     notload=false;
@@ -51,6 +51,30 @@ function findsome()
 
 }
 
+function k2(typ)
+{
+    switch(typ)
+    {
+        case 1:
+            asma.innerHTML='';
+            return;
+            
+        case 2:
+           averysma.innerHTML='';
+           return;
+
+        case 3:
+            asma.innerHTML='';
+            averysma.innerHTML='';
+            break;
+
+
+
+    }
+    abig.innerHTML='';
+
+
+}
 
 function findsome2()
 {
@@ -61,7 +85,11 @@ function findsome2()
         return;
     }
     loadcot++;
-    if(loadcot>=1000){notload=true;}
+    if(loadcot>=300){
+        notload=true;
+        console.log('!!waiting!!');
+        console.log(document.title);
+        }
 
     //var ozk=performance.getEntriesByName(this.src);
     //var szz=ozk.encodedBodySize;
@@ -83,6 +111,9 @@ function findsome2()
         asma.appendChild(this);
 
     }
+
+    this.onload=null;
+    this.onerror=null;
 
     
 
@@ -119,6 +150,9 @@ function pgshow10()
     if(notload){return;}
 
     var endo=pgnn2+10;
+
+    document.title=(pglim-1)+','+pgnn+','+endo+') //'+bsurl;
+
     for(pgnn2=pgnn2;pgnn2<endo;pgnn2++)
     {
         var ymg=document.createElement('img');
@@ -130,11 +164,11 @@ function pgshow10()
 
     }
 
-    document.title=pglim+','+pgnn+','+pgnn2+') //'+bsurl;
+    
 
     if(pgnn2>=pglim)
     {
-        pgnn2=0;
+        pgnn2=1;
         pgnn++;
         bsurl=mkurl(gal[pgnn]);
 
@@ -145,7 +179,7 @@ function pgshow10()
 
 function f_show(lim,galsta,pgsta)
 {
-    pglim=lim;
+    pglim=lim+1;
     pgnn=galsta;
     pgnn2=pgsta;
 
@@ -166,5 +200,4 @@ function f_cot(lim)
 
 klear();
 
-//var gal=[
-//];
+//var gal=[];
