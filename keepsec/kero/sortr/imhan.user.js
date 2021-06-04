@@ -2,13 +2,12 @@
 
 function klear()
 {
-    bsurl='';
     pglim=0;
     pgnn=0;
     pgnn2=0;
     notload=false;
     loadcot=0;
-    document.body.innerHTML='<div>loading</div><div>big</div><div>small</div><div>verysmall</div><pre>info1</pre><pre>info2</pre>';
+    document.body.innerHTML='<div>loading</div>big<div>big</div>small<div>small</div>verysmall<div>verysmall</div><pre>info1</pre><pre>info2</pre>';
     aload=document.body.children[0];
     abig=document.body.children[1];
     asma=document.body.children[2];
@@ -18,8 +17,10 @@ function klear()
 
 }
 
-function k3()
+function k3(clea)
 {
+    if(clea){k2(3);}
+    
     loadcot=0;
     notload=false;
 }
@@ -88,7 +89,7 @@ function findsome2()
     if(loadcot>=300){
         notload=true;
         console.log('!!waiting!!');
-        console.log(document.title);
+        console.log('('+document.title+')');
         }
 
     //var ozk=performance.getEntriesByName(this.src);
@@ -151,13 +152,15 @@ function pgshow10()
 
     var endo=pgnn2+10;
 
-    document.title=(pglim-1)+','+pgnn+','+endo+') //'+bsurl;
+    document.title=pgnn+','+(pgnn2-1);
 
-    for(pgnn2=pgnn2;pgnn2<endo;pgnn2++)
+    for(var i=pgnn2;i<endo;i++)
     {
         var ymg=document.createElement('img');
-        ymg.src=bsurl+pgnn2+'.gif';
-        ymg.alt=gal[pgnn];
+        var syg=gal[pgnn];
+        ymg.alt=syg;
+        ymg.src=mkurl(syg)+i+'.gif';
+        
         ymg.onload=findsome2;
         ymg.onerror=findnone2;
         aload.appendChild(ymg);
@@ -165,25 +168,24 @@ function pgshow10()
     }
 
     
-
-    if(pgnn2>=pglim)
+    pgnn++;
+    if(pgnn>=pgE)
     {
-        pgnn2=1;
-        pgnn++;
-        bsurl=mkurl(gal[pgnn]);
-
+        pgnn=0;
+        pgnn2+=10;
+       
     }
     
 
 }
 
-function f_show(lim,galsta,pgsta)
+function f_show(galsta,pgsta)
 {
-    pglim=lim+1;
+    pgE=gal.length;
     pgnn=galsta;
-    pgnn2=pgsta;
 
-    bsurl=mkurl(gal[pgnn]);
+    pgnn2=pgsta+1;
+
     pgshow10();
     setInterval(pgshow10, 5000);
 
