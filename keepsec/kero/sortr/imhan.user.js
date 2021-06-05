@@ -179,15 +179,28 @@ function pgshow10()
 
 }
 
-function f_show(galsta,pgsta)
+function  dofshow()
 {
     pgE=gal.length;
-    pgnn=galsta;
-
-    pgnn2=pgsta+1;
-
     pgshow10();
     setInterval(pgshow10, 5000);
+
+}
+
+function f_show(galsta,pgsta,lymz)
+{
+    
+    pgnn=galsta;
+    pgnn2=pgsta+1;
+
+    if((typeof gal === 'undefined')&&lymz){
+        var sk = document.createElement('script');
+	   sk.src='https://klanly.github.io/imh/az'+lymz+'.js';
+	   sk.onload=dofshow;
+	   document.body.appendChild(sk);
+    }
+    else{dofshow();}
+
 
 }
 
