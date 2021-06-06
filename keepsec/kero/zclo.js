@@ -642,7 +642,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 					//ymgg.className='ykiQ';
 					//ymgg.src=chikagifpa[1]+chika[6*mgknak+5]+'.gif';
 
-			if(iszrda&1){ymgg.parentElement.nextElementSibling.outerHTML=lynklocfi_small(iszrda);}
+			if(!(iszrda&1)){ymgg.parentElement.nextElementSibling.outerHTML=lynklocfi_small(iszrda);}
 					
 					if(niki=='i'){niki=' ';}
 					else{ymgg.alt='\n:'+niki+'\n';
@@ -902,7 +902,7 @@ function lynklocfi_small(sig)
 {
 	
 	var numu=((sig>>1)%locfi.length);
-	if(numu&1)
+	if(numu&2)
 	{
 		var n6=(numu&0xFF)*6;
 		var chkkpai=chikagifpa[1];
@@ -1448,8 +1448,9 @@ function changechika(n6)
 function changechikaChain()
 {
 	
-	if(pvklyi&0xffffff00){setTimeout(changechikaChain, 0x20000); return;}
-	else{setTimeout(changechikaChain, 0x2000+((pvklyi&0x1F)<<10));}
+	//if(pvklyi&0xffffff00){setTimeout(changechikaChain, 0x20000); return;}
+	//else{}
+	setTimeout(changechikaChain, 0x4000+((pvklyi&0x1F)<<10));
 
 	var rnum=((pvklyi*klyi)&0xFF);
 

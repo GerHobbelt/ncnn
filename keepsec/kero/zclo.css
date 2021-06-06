@@ -47,18 +47,18 @@ FL { float:right;}
 
 .ykis1 {
 	width:211px;
-	margin: 0px -50px;
 	-webkit-filter: url(#longbar)
 }
 
 .ykis2 {
 	height: 411px;
-	margin: -100px 0px;
+	margin: -100px -20px;
 	image-rendering: pixelated;
 }
 
 .ykix {
 	height:400px;
+	margin: -50px;
 	image-rendering: pixelated;
 }
 
