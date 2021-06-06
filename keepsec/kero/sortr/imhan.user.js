@@ -7,11 +7,14 @@ function klear()
     pgnn2=0;
     notload=false;
     loadcot=0;
-    document.body.innerHTML='<div>loading</div>big<div>big</div>small<div>small</div>verysmall<div>verysmall</div><pre>info1</pre><pre>info2</pre>';
-    aload=document.body.children[0];
-    abig=document.body.children[1];
-    asma=document.body.children[2];
-    averysma=document.body.children[3];
+    document.body.innerHTML='verysma<div>verysma</div>sma<div>sma</div>big<div>big</div><div>loading</div><pre>info1</pre><pre>info2</pre>';
+    
+    
+    
+    averysma=document.body.children[0];
+    asma=document.body.children[1];
+    abig=document.body.children[2];
+    aload=document.body.children[3];
     ainfo1=document.body.children[4];
 
 
@@ -89,7 +92,7 @@ function findsome2()
     if(loadcot>=300){
         notload=true;
         console.log('!!waiting!!');
-        console.log('('+document.title+')');
+        document.title='('+document.title+')';
         }
 
     //var ozk=performance.getEntriesByName(this.src);
@@ -215,4 +218,4 @@ function f_cot(lim)
 
 klear();
 
-//var gal=[];
+//var gal=[ ];
