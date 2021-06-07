@@ -17,12 +17,39 @@ function klear()
     aload=document.body.children[3];
     ainfo1=document.body.children[4];
 
+    nwd=window.open('https://ezgif.com/optimize', null, null);
+
+
+}
+var block5s=false;
+
+function rst5s()
+{
+    block5s=false;
+
+}
+
+
+document.ondblclick=function(ev)
+{
+
+    if(block5s){return;}
+
+    var ele=ev.target.src;
+    if(ele)
+    {
+        nwd.location.href ='https://ezgif.com/optimize?url='+ele;
+        block5s=true;
+        setTimeout(rst5s, 5000);
+        nwd.focus();
+
+    }
 
 }
 
 function k3(clea)
 {
-    if(clea){k2(3);}
+    if(clea){k2(clea);}
     
     loadcot=0;
     notload=false;
@@ -91,7 +118,6 @@ function findsome2()
     loadcot++;
     if(loadcot>=300){
         notload=true;
-        console.log('!!waiting!!');
         document.title='('+document.title+')';
         }
 
