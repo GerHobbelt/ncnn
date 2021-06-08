@@ -51,13 +51,13 @@ FL { float:right;}
 }
 
 .ykis2 {
-	height: 411px;
+	min-height: 411px;
 	margin: -100px -20px;
 	image-rendering: pixelated;
 }
 
 .ykix {
-	height:400px;
+	min-height:400px;
 	margin: -50px;
 	image-rendering: pixelated;
 }
@@ -65,7 +65,7 @@ FL { float:right;}
 .ykiQ {
 	z-index: -1000;
 	width: auto;
-	height:251px;
+	min-height:251px;
 	margin: -20px 0px;
 	image-rendering: pixelated;
 }

@@ -11,7 +11,7 @@ var timgarea = document.getElementById('timg');
 var pozcur=new Array(2);
 var pozcurpic=timgarea.nextSibling;
 var SVGf=new Array(2);
-SVGf[0]=timgarea.previousSibling.firstChild;
+SVGf[0]=tblarea.previousSibling.firstChild;
 SVGf[1]=SVGf[0].children[3];
 
 var selefocus=null;
@@ -1210,7 +1210,7 @@ function asgn()
 	klyi=0x400|(klyi&0xFF);
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
-	for(var i=1;i<1025;i++){ymgs[i].onmouseover=hv;}
+	for(var i=0;i<1024;i++){ymgs[i].onmouseover=hv;}
 	
 }
 
@@ -1222,7 +1222,7 @@ function asgn_s(ym)
 	tblarea.innerHTML=ym.join(' /></b><b> =<a href="https://twitter.com/');
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
-	for(var i=2;i<1026;i++){ymgs[i].onmouseover=hv_s;}
+	for(var i=1;i<1025;i++){ymgs[i].onmouseover=hv_s;}
 }
 
 function fullpgALLcur0()
