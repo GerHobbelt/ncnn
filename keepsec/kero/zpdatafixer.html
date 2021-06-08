@@ -46,7 +46,9 @@ var glodov=0;
 const extraimghd=['_','b_','c_','d_','e_','f_','g_'];
 function dofit(ymg)
 {
-SVGf[1].firstChild.setAttribute('href','tu/xx/rp/'+ymg+'.gif');
+var uymg='tu/xx/rp/'+ymg+'.gif';
+document.body.background=uymg;
+SVGf[1].firstChild.setAttribute('href',uymg);
 tblarea.innerText='\n\n'+ymg+'  =   '+extraimghd[glodov]+laztpic+'\n\n';
 }
 
@@ -233,6 +235,7 @@ SVGf[1].setAttribute('x',vx);
 SVGf[1].setAttribute('y',-vy);
 SVGf[1].setAttribute('width',vw);
 SVGf[1].setAttribute('height',vh);
+document.body.background='';
 
 
 //return vx+','+vy+','+vw+','+vh+',0.5,"'+pic+'",';
