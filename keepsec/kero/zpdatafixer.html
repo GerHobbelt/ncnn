@@ -1,4 +1,4 @@
-<html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><svg class="animated" ><defs>
+<html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><img class="tygimg" id="timg" /><svg class="animated" ><defs>
 <g id="pozgif">
 <circle cx="32" cy="32" r="26" stroke="#0ff" stroke-width="8" fill="none" >
 <animate attributeName="opacity" values="0.3;0.8;1;0.6;0.3" keyTimes="0;0.25;0.5;0.75;1" begin="0s" dur="5s" repeatCount="indefinite" />
@@ -17,7 +17,7 @@
 <img src="https://pbs.twimg.com/ext_tw_video_thumb/1303877190367326217/pu/img/VobI7hp8l76Tzjsv.jpg" /><img style="filter: url(#longbar);" src="longbar.png" />
 <br><br><br><br><br><br><br><br><br><br><br><br>
 <img style="filter: url(#longbar);" src="longbar.png" /><img src="https://pbs.twimg.com/ext_tw_video_thumb/1303877190367326217/pu/img/VobI7hp8l76Tzjsv.jpg" />
-<br><br><br><br><img id="timg" /></center>
+<br><br><br><br></center>
 <div class="nv"></div>
 </body><script src="zpdata.js"></script><script src="tu/xx/rp/zzz_rpka.js"></script>
 <script>
@@ -36,7 +36,7 @@ var timg_abc=timgXX.nextSibling;
 var paya=recarea.parentNode;
 
 var SVGf=new Array(2);
-SVGf[0]=document.body.firstChild.firstChild;
+SVGf[0]=document.body.children[1].firstChild;
 SVGf[1]=SVGf[0].children[3];
 
 var WtoH=0;
@@ -49,7 +49,8 @@ function dofit(ymg)
 var uymg='tu/xx/rp/'+ymg+'.gif';
 document.body.background=uymg;
 SVGf[1].firstChild.setAttribute('href',uymg);
-tblarea.innerText='\n\n'+ymg+'  =   '+extraimghd[glodov]+laztpic+'\n\n';
+//tblarea.innerText='\n\n'+ymg+'  =   '+extraimghd[glodov]+laztpic+'\n\n';
+tblarea.innerText='\n\nren '+ymg+'.gif '+extraimghd[glodov]+laztpic+'.gif\n\n';
 }
 
 function fna()
@@ -60,6 +61,34 @@ function fna()
 		rti+=chika[i*6+5]+'\n';
 	}
 	recarea.value=rti;
+}
+
+const pagifo='.gif o\\\n';
+function crpka()
+{
+	var rti='cd ..\\\nmd o\n';
+	for(var i=0;i<chkl;i++)
+	{
+		var n6=i*6;
+		var yv=chika[n6+1]%10;
+		if(yv==0)
+		{
+			rti+='move _'+chika[i*6+5]+pagifo;
+		}
+		else if(yv > 1)
+		{
+			
+			for(var kk=1;kk<yv;kk++)
+			{
+				rti+='move '+extraimghd[kk]+chika[i*6+5]+pagifo;
+			}
+			
+		}
+
+		
+	}
+	recarea.value=rti;
+
 }
 
 
@@ -197,7 +226,7 @@ function rCMD()
 			var cdym=cmdz[1].replace(/[ \t"']/g,'').split(',');
 			
 			var zuoyo=parseInt(cdym[0],10);
-			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),'ar/1/'+cdym[5]);	//'ar/1/'+cdym[5]
+			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),'xx/rp/'+cdym[5]);	//'ar/1/'+cdym[5]
 			
 		break;
 	

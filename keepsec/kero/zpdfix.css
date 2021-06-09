@@ -5,14 +5,23 @@ body {
 	color: #fff;
 	background-color: #401;
 	image-rendering: pixelated;
+	
 
 }
 
 center {
 	width: 110%;
+	z-index: 10;
+	position: relative;  
 	
 }
 
+.tygimg {
+	position:fixed;
+	top:10%;
+	right:20%;
+	z-index: 1;
+}
 
 .tygbox {
 	display: inline-block;
