@@ -29,6 +29,7 @@ var tblarea = document.getElementById('team');
 var recarea = document.getElementById('urlrec');
 var timgarea = document.getElementById('timg');
 var p_timgXX=recarea.nextSibling;
+p_timgXX.onclick=changerpka;
 var timgXX=p_timgXX.nextSibling;
 timgXX.onclick=mousexg;
 timgXX=timgXX.firstChild;
@@ -202,17 +203,32 @@ function doxg()
 function rCMD()
 {
 	var cmdz=recarea.value.split('\n');
-	switch(cmdz[0])
+	switch(cmdz[0].slice(-2))
 	{
-		case 'fix':
-			fixxx();
+		case 'ix':
+		var ftl=cmdz.length;
+		var kl=false;
+		if(ftl>1)
+		{
+			var tstt=byfna[cmdz[1]];
+			if(tstt!==undefined){xgcur=tstt;}
+			kl=true;
+		}
+
+		if(xgcur==0)
+		{
+			kl=true;
+		}
+		ftl=cmdz[0].length;
+		if(ftl==4){ fix2(kl); }
+		else {fixxx(kl);}
+		
+			
 		break;
 
-		case '2fix':
-			fix2();
-		break;
 
-		case 'xgp':
+
+		case 'gp':
 			xgcur=byfna[cmdz[1]];
 
 		case 'xg':
@@ -226,7 +242,14 @@ function rCMD()
 			var cdym=cmdz[1].replace(/[ \t"']/g,'').split(',');
 			
 			var zuoyo=parseInt(cdym[0],10);
-			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),'xx/rp/'+cdym[5]);	//'ar/1/'+cdym[5]
+
+			if(cmdz[0].length==3){
+			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),
+		cdym[5]);
+			} else {
+			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),
+		'xx/rp/a/'+cdym[5]);
+			}
 			
 		break;
 	
@@ -294,11 +317,16 @@ function fillbyfna()
 fillbyfna();
 
 
-function fix2()
+function fix2(kl)
 {
-tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';
+document.body.background='';
+timgXX.src='';
+timgarea.src='';
 
-for(var i=0;i<chkl;i++)
+if(kl){tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';}
+var endo=xgcur+16;
+
+for(var i=xgcur;i<endo;i++)
 {
 	var yina = document.createElement('div');
 	var n6=i*6;
@@ -348,15 +376,19 @@ for(var i=0;i<chkl;i++)
 	tblarea.appendChild(yina);
 
 }
-
+xgcur=endo;
 
 }
 
-function fixxx()
+function fixxx(kl)
 {
-tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';
+document.body.background='';
+timgXX.src='';
+timgarea.src='';
+if(kl){tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';}
 
-for(var i=0;i<chkl;i++)
+var endo=xgcur+16;
+for(var i=xgcur;i<endo;i++)
 {
 	var yina = document.createElement('div');
 
@@ -387,7 +419,7 @@ for(var i=0;i<chkl;i++)
 	tblarea.appendChild(yina);
 
 }
-
+xgcur=endo;
 
 }
 
