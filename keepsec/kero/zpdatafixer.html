@@ -210,8 +210,14 @@ function rCMD()
 		var kl=false;
 		if(ftl>1)
 		{
+			if(cmdz[1].length>1){
 			var tstt=byfna[cmdz[1]];
-			if(tstt!==undefined){xgcur=tstt;}
+			if(tstt===undefined){
+				tstt=parseInt(cmdz[1],10);
+				if(tstt){xgcur=tstt;}
+			}
+			} else {xgcur=tstt;}
+			
 			kl=true;
 		}
 
@@ -220,8 +226,8 @@ function rCMD()
 			kl=true;
 		}
 		ftl=cmdz[0].length;
-		if(ftl==4){ fix2(kl); }
-		else {fixxx(kl);}
+		if(ftl==4){ fixxx(kl,1); }
+		else {fixxx(kl,0);}
 		
 			
 		break;
@@ -241,15 +247,10 @@ function rCMD()
 		case 'sg':
 			var cdym=cmdz[1].replace(/[ \t"']/g,'').split(',');
 			
-			var zuoyo=parseInt(cdym[0],10);
+			var fpaa=cdym[5];
 
-			if(cmdz[0].length==3){
-			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),
-		cdym[5]);
-			} else {
-			sg(zuoyo,parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),
-		'xx/rp/a/'+cdym[5]);
-			}
+			if(cmdz[0].length==2){fpaa='xx/rp/a/'+fpaa;} 
+			sg(parseInt(cdym[0],10),parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),fpaa);
 			
 		break;
 	
@@ -317,14 +318,39 @@ function fillbyfna()
 fillbyfna();
 
 
-function fix2(kl)
+function fixxx(kl,typ)
 {
 document.body.background='';
 timgXX.src='';
 timgarea.src='';
-
 if(kl){tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';}
-var endo=xgcur+16;
+
+var endo=xgcur+32;
+if(endo>chkl)
+{
+endo=chkl;
+xgcur=endo-32;
+}
+
+
+switch(typ)
+{
+case 1:
+fix1(endo)
+break;
+default:
+fix0(endo)
+break;
+}
+
+xgcur=endo;
+
+}
+
+
+function fix1(endo)
+{
+
 
 for(var i=xgcur;i<endo;i++)
 {
@@ -376,18 +402,14 @@ for(var i=xgcur;i<endo;i++)
 	tblarea.appendChild(yina);
 
 }
-xgcur=endo;
+
 
 }
 
-function fixxx(kl)
-{
-document.body.background='';
-timgXX.src='';
-timgarea.src='';
-if(kl){tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';}
 
-var endo=xgcur+16;
+
+function fix0(endo)
+{
 for(var i=xgcur;i<endo;i++)
 {
 	var yina = document.createElement('div');
@@ -419,8 +441,6 @@ for(var i=xgcur;i<endo;i++)
 	tblarea.appendChild(yina);
 
 }
-xgcur=endo;
-
 }
 
 

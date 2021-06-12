@@ -168,7 +168,7 @@ function shuflocfi()
 
 		xchg6(ibz,nx%ibz);
 		ibz-=2;
-		if(ibz<=0){ibz=((chika.length/6)&(-2))-2;}
+		//if(ibz<=0){ibz=((chika.length/6)&(-2))-2;}
 
 		nx=(nx|1);
 
@@ -892,13 +892,13 @@ function lynklocfi(sig)
 	
 	
 	var zipi='<img class="yki" src="poz.png" />';
-	var dov=chika[7+n6]%10;
+	var dov=chika[61+n6]%10;
 	if(dov>0){
-		zipi='<img class="ykixm5" src="'+chikagifpa[dov-((n6%11)%(dov+1))]+chika[11+n6]+'.gif" />';
+		zipi='<img class="ykixm5" src="'+chikagifpa[dov-((n6%11)%(dov+1))]+chika[65+n6]+'.gif" />';
 	}
 	var locfisyg=locfi[sig];
 
-	return '<img class="ykix" src="0bak/tu/xx/_'+chika[5+n6]+'.gif" /></a>==<a class="yka" href="0bak/tu/lu/'+locfisyg+'.mp4">'+zipi+locfisyg;
+	return '==<img class="ykix" src="0bak/tu/xx/_'+chika[5+n6]+'.gif" /></a>==<a class="yka" href="0bak/tu/lu/'+locfisyg+'.mp4">'+zipi+locfisyg;
 	
 	
 	
