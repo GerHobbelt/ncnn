@@ -51,7 +51,7 @@ var uymg='tu/xx/rp/'+ymg+'.gif';
 document.body.background=uymg;
 SVGf[1].firstChild.setAttribute('href',uymg);
 //tblarea.innerText='\n\n'+ymg+'  =   '+extraimghd[glodov]+laztpic+'\n\n';
-tblarea.innerText='\n\nren '+ymg+'.gif '+extraimghd[glodov]+laztpic+'.gif\n\n';
+tblarea.innerText=laztpic+'\n\nren '+ymg+'.gif '+extraimghd[glodov]+laztpic+'.gif\n\n';
 }
 
 function fna()
@@ -215,8 +215,9 @@ function rCMD()
 			if(tstt===undefined){
 				tstt=parseInt(cmdz[1],10);
 				if(tstt){xgcur=tstt;}
-			}
+	
 			} else {xgcur=tstt;}
+			}
 			
 			kl=true;
 		}
