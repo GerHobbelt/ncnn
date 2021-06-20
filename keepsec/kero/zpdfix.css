@@ -16,6 +16,10 @@ center {
 	
 }
 
+.smth {
+	image-rendering: auto;
+}
+
 .tygimg {
 	position:fixed;
 	top:10%;

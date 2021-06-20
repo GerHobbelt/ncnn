@@ -14,17 +14,29 @@ function prepg()
 
 prepg();
 
-const tx1='<html><body><pre id="t"></pre></body><scr'+'ipt src="pv/aadata.';
+//const tx1='<html><body><pre id="t"></pre></body><scr'+'ipt src="pv/aadata.';
+const tx1='<html><body></body><scr'+'ipt>var thiid=';
+const tx1b=';</scr'+'ipt><scr'+'ipt src="pv/aadata.';
 const tx2='.js"></scr'+'ipt><scr'+'ipt src="rpre.js"></scr'+'ipt></html>';
 
 var loadcount=0;
-function fyna()
+function fyna_old()
 {
 	loadcount++;
 	if(loadcount==scril) {for(var i=0;i<scril;i++){ifrm[i].outerHTML=ifrm[i].contentDocument.getElementById('t').outerHTML;}}
 }
 
+function fyna()
+{
+	//downloadString(this.contentDocument.getElementById('t').innerText,'text/csv','rlines.'+this.id);
+	this.remove();
+}
+
+
 var donotgall=false;
+
+
+
 
 function gall(ele)
 {
@@ -48,14 +60,17 @@ function gall(ele)
 	for(var i=0;i<scril;i++)
 	{
 		var jls=(scril-1-i);
-		ifrm[i].contentDocument.write(tx1+jls+tx2);
+		ifrm[i].id=jls;
+		ifrm[i].contentDocument.write(tx1+jls+tx1b+jls+tx2);
 		ifrm[i].contentDocument.close();
-		ifrm[i].onload=fyna;
+		//ifrm[i].onload=fyna;
 	}
 	ele.outerHTML ='';
 	return;
 	
 }
+
+
 
 
 

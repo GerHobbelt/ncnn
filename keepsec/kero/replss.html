@@ -1,0 +1,95 @@
+<html><head><base target="_blank"><style>
+img {width: 200px;}
+iframe {border:10px #ff0 solid;}
+</style><script>
+
+
+const vtwsig=	[0,				64/*@*/,				33/*!*/,			43/*+*/];
+const vtwimg=['https://pbs.twimg.com/ext_tw_video_thumb/',	'https://pbs.twimg.com/amplify_video_thumb/',	'https://pbs.twimg.com/tweet_video_thumb/','https://pbs.twimg.com/media/'];
+const vtwvid=['https://video.twimg.com/ext_tw_video/',		'https://video.twimg.com/amplify_video/',		'https://video.twimg.com/tweet_video/'];
+
+
+function vidstr(src)
+{
+	var c0=src.charCodeAt(0);
+	for(var i=1;i<3;i++){if(c0==vtwsig[i]){return vtwvid[i]+src.substring(1);}}
+	return vtwvid[0]+src;
+}
+
+function thumbstr(src)
+{
+	var c0=src.charCodeAt(0);
+	for(var i=1;i<4;i++){if(c0==vtwsig[i]){return vtwimg[i]+src.substring(1);}}
+	return vtwimg[0]+src;
+}
+
+
+const kx1='<a href="https://twitter.com/i/status/';
+const kx2='">====<br></a>';
+
+const mgx3='" />';
+
+
+
+function mkymg(str)
+{
+	var jk=str.split('\t');
+	if(jk.length>2)
+	{
+		return true;
+	}
+	return false;
+
+}
+
+function downloadString(text, fileType, fileName) {
+  var blob = new Blob([text], { type: fileType });
+
+  var a = document.createElement('a');
+  a.download = fileName;
+  a.href = URL.createObjectURL(blob);
+  a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+}
+
+function repurl(yina)
+{
+yina.onblur=null;
+
+var yza=yina.value.split('\n');
+var yzal=yza.length;
+
+
+
+
+	var imgarr=[];
+	var dota=[];
+	for(i=0;i<yzal;i++)
+	{
+		if(yza[i].charCodeAt(0)==59){dota.push(yza[i]);} 
+		else {
+			if(mkymg(yza[i])){imgarr.push(yza[i]);}
+		}
+	}
+
+	yina.value=dota.join('\n');
+	downloadString(imgarr.join('\n'),'text/csv','rlines.+');
+
+
+
+	
+
+	
+
+
+
+
+}
+
+
+</script></head><body><textarea rows=40 cols=300 onblur=repurl(this)></textarea><br>
+<object data="repl.txt"></object></body></html>

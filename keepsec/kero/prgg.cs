@@ -375,6 +375,37 @@ namespace eroneto
 				Thread.Sleep(30000);
 			}
 		}
+		const string tubsig="/thumb.jpg";
+		static void imhan_anima(WebClient dndr)
+		{
+			swtwtk = File.AppendText("imhenta_anim.txt");
+			string[] html=null;
+			for(int pg=1;pg<420;pg++)
+			{
+				try{
+						html = dndr.DownloadString("https://imhentai.xxx/tag/animated/?page="+pg).Split(sepQuo);
+				}catch{}
+				int nl=html.Length;
+					
+					for(int i=0;i<nl;i++)
+					{
+						string gei=html[i];
+						if(gei.Length>40&&gei.EndsWith(tubsig))
+						{
+							
+							swtwtk.WriteLine(gei.Substring(8,gei.Length-18));
+							
+							
+						}
+					}
+				
+					swtwtk.Flush();
+				Thread.Sleep(10000);
+			}
+				
+				//420
+		
+		}
 		
 		static void dlbati()
 		{
@@ -387,30 +418,35 @@ namespace eroneto
 			
 
 			//client.Encoding = Encoding.UTF8; 
-			twtk(new WebClient());
+			imhan_anima(new WebClient());
 			system("pause");
 			
 		}
-		static string schpa=@"Q:\z\bookpdf\0bak\tu\ar\";
-		static void mkplaceho()
+		const string schpa=@"Q:\z\bookpdf\0bak\tu\ar\";
+		const string jsh123="',\n100,50,350,350,0.5,'";
+		const string jsh0="',\n\n100,50,350,350,0.5,'";
+		
+		const string tu1=@"Q:\z\bookpdf\0bak\tu\";
+		
+		static void prtmv()
 		{
-			string[] giflist=Directory.GetFiles(schpa,"*.gif",SearchOption.TopDirectoryOnly);
-			int giflistl=giflist.Length;
+			string[] html=File.ReadAllLines("oz.txt");
+			int nl=html.Length;
 			
-			for(int i=0;i<giflistl;i++)
+			for(int i=0;i<nl;i++)
 			{
-				if((i&3)==0)
+				deuu.Add(html[i]);
+			}
+			html=Directory.GetFiles(tu1,"*.gif",SearchOption.TopDirectoryOnly);
+			nl=html.Length;
+			
+			for(int i=0;i<nl;i++)
+			{
+				string fsig=html[i].Replace(tu1,string.Empty).Replace(".gif",string.Empty);
+				if(!deuu.Contains(fsig))
 				{
-					Console.WriteLine(" ");
-				
+					Console.WriteLine("move "+fsig+".gif ar\\");
 				}
-				
-				string gsho=giflist[i].Replace(schpa,string.Empty).Replace(".gif",string.Empty);
-				Console.WriteLine("100,-50,350,350,0.5,'"+gsho+"',");
-				File.Copy("da/xx_placeho.gif","sele/_"+gsho+".gif");
-				
-				
-				
 			}
 			
 			Console.ReadKey();
@@ -420,6 +456,101 @@ namespace eroneto
 			Console.ReadKey();
 		
 		}
+		
+		static void mkplaceho()
+		{
+			string[] giflist=Directory.GetFiles(schpa,"*.gif",SearchOption.TopDirectoryOnly);
+			int giflistl=giflist.Length;
+			
+			int nonXX=0;
+			
+			for(int i=0;i<giflistl;i++)
+			{
+				
+				string gsho=giflist[i].Replace(schpa,string.Empty).Replace(".gif",string.Empty);
+				
+				if(gsho.StartsWith("xx_"))
+				{
+					giflist[i]=string.Empty;
+					
+					if(!File.Exists(gsho+".gif")){continue;}
+					
+					string dstgsho=gsho.Replace("xx_",string.Empty);
+					
+				lpsa:
+					
+					if(File.Exists("../xx/_"+dstgsho+".gif"))
+					{
+						
+						system("mvx.bat "+dstgsho+".gif "+gsho);
+						/*
+move ../xx/_%1 ../xx/byby/%1
+move %2.gif sele/_%1
+						 */
+					}
+					else if(File.Exists(dstgsho+".gif"))
+					{
+						system("mvx2.bat "+dstgsho+".gif "+gsho);
+												/*
+move sele/_%1 sele/bb/%1
+move %2.gif sele/_%1
+						 */
+					}
+					else
+					{
+						Console.WriteLine("Xno dst: "+dstgsho);
+						dstgsho=Console.ReadLine();
+						goto lpsa;
+					}
+				
+				}
+				else
+				{
+					string jsh=jsh123;
+					if((nonXX&3)==0){jsh=jsh0;}
+					
+					giflist[i]=jsh+gsho;
+					
+					string replsbo="xx_"+gsho+".gif";
+					if(File.Exists(replsbo))
+					{
+						File.Move(replsbo,"sele/_"+gsho+".gif");
+					}
+					else{
+						system(@"mklink /H sele\_"+gsho+".gif "+gsho+".gif");
+					}
+					
+					
+					nonXX++;
+				
+				}
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			}
+			Console.Write("\n\n\n\n\n");
+			for(int i=0;i<giflistl;i++)
+			{
+				Console.Write(giflist[i]);
+			}
+			Console.Write("',");
+			
+			Console.ReadKey();
+			Console.ReadKey();
+			Console.ReadKey();
+			Console.ReadKey();
+			Console.ReadKey();
+		
+		}
+		
+		
 		
 		/*
 		static WebClient glbdl;
@@ -497,12 +628,28 @@ namespace eroneto
 		}
 		*/
 		
+		const string rensrc=@"Q:\z\bookpdf\0bak\tu\xx\rp\";
+		
+		static void konren()
+		{
+			string[] dysr=Directory.GetFiles(rensrc+"a","*.gif",SearchOption.TopDirectoryOnly);
+			string[] resr=Directory.GetFiles(rensrc+"b","*.gif",SearchOption.TopDirectoryOnly);
+			int stl=dysr.Length;
+			for(int i=0;i<stl;i++)
+			{
+				File.Move(resr[i],"_"+dysr[i].Substring(29));
+				
+			}
+				
+			
+		
+		}
 		
 		
 		static void Main(string[] args)
 		{
-			mkplaceho();
-			//dlbati();
+			//mkplaceho();
+			dlbati();
 		}
 		
 	}
