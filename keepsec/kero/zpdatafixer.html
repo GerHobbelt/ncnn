@@ -42,6 +42,7 @@ SVGf[1]=SVGf[0].children[3];
 
 var WtoH=0;
 var laztpic='';
+var didsg=false;
 
 var glodov=0;
 const extraimghd=['_','b_','c_','d_','e_','f_','g_'];
@@ -89,6 +90,49 @@ function crpka()
 		
 	}
 	recarea.value=rti;
+
+}
+
+
+function printchika()
+{
+    
+
+   
+
+    var rrstr='';
+
+    for(var i=0;i<chkl;i++)
+    {
+        var bs=i*6;
+        var bssig=chika[bs];
+        var bsfna=chika[bs+5];
+
+        if(i&3)
+        {
+            rrstr+='\n';
+        }
+        else
+        {
+            if(i&0xF)
+            {
+                   rrstr+='\n\n';
+            }
+            else
+            {
+                rrstr+='\n//========\n';
+            }
+        }
+
+	var pzss=chika[bs+4].toFixed(1);
+
+	if(rpka.includes(bsfna)){pzss='1.4';}
+
+        rrstr+=bssig+','+chika[bs+1]+','+chika[bs+2]+','+chika[bs+3]+','+pzss+",'"+bsfna+"',";
+    }
+recarea.value=rrstr;
+    
+
 
 }
 
@@ -157,6 +201,9 @@ function enabletimgovr()
 
 function mousexg()
 {
+
+	if(didsg){return;}
+
 	p_timgXX.onmouseover=null;
 	doxg();
 	setTimeout(enabletimgovr, 2000);
@@ -184,7 +231,14 @@ function doxg()
 		}
 	}
 
-	recarea.value='xg\n'+fnaaj+'\n\n'+xgcur;
+	var lifo=fnaaj;
+
+	if(chika[n6+4]!=0.5)
+	{
+		lifo+='\n!!!pixa'+chika[n6+4]+'!!!';
+	}
+
+	recarea.value='xg\n'+lifo+'\n\n'+xgcur;
 
 	xgcur++;
 	if(xgcur>=chkl){xgcur=0;}
@@ -207,28 +261,28 @@ function rCMD()
 	{
 		case 'ix':
 		var ftl=cmdz.length;
-		var kl=false;
+		
 		if(ftl>1)
 		{
 			if(cmdz[1].length>1){
 			var tstt=byfna[cmdz[1]];
 			if(tstt===undefined){
 				tstt=parseInt(cmdz[1],10);
-				if(tstt){xgcur=tstt;}
+				if(tstt){
+					if(tstt>0){xgcur=tstt;}
+					else{xgcur+=(tstt-32)}
+					}
 	
 			} else {xgcur=tstt;}
 			}
 			
-			kl=true;
+			recarea.value='2fix';
 		}
 
-		if(xgcur==0)
-		{
-			kl=true;
-		}
+		
 		ftl=cmdz[0].length;
-		if(ftl==4){ fixxx(kl,1); }
-		else {fixxx(kl,0);}
+		if(ftl==4){ fixxx(1);	}
+		else {fixxx(0);	recarea.value='fix';}
 		
 			
 		break;
@@ -252,6 +306,7 @@ function rCMD()
 
 			if(cmdz[0].length==2){fpaa='xx/rp/a/'+fpaa;} 
 			sg(parseInt(cdym[0],10),parseInt(cdym[1],10),parseInt(cdym[2],10),parseInt(cdym[3],10),parseInt(cdym[4],10),fpaa);
+			didsg=true;
 			
 		break;
 	
@@ -319,12 +374,12 @@ function fillbyfna()
 fillbyfna();
 
 
-function fixxx(kl,typ)
+function fixxx(typ)
 {
 document.body.background='';
 timgXX.src='';
 timgarea.src='';
-if(kl){tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';}
+tblarea.innerHTML='<h1>cot= '+chkl+'</h1>';
 
 var endo=xgcur+32;
 if(endo>chkl)
@@ -383,7 +438,7 @@ for(var i=xgcur;i<endo;i++)
 			skei='</h3>[[[===<img class="smth" srcset="tu/xx/_';
 			skeix-=1.0;
 		}
-		yina.innerHTML='<h3>'+i+'= '+fna+skei+fna+'.gif '+skeix+'x" />===]]]<br>';
+		yina.innerHTML='<h3>'+i+'= '+fna+skei+fna+'.gif '+skeix.toFixed(1)+'x" />===]]]<br>';
 		
 	}
 

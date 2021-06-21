@@ -166,7 +166,7 @@ function shuflocfi()
 		
 		var nx=(Math.random() *klyi2)<<0;
 
-		xchg6(ibz,nx%ibz,6+(i>>3)*6);
+		xchg6(ibz,nx%ibz,6+(i&0x3f)*6);
 		ibz--;
 		//if(ibz<=0){ibz=((chika.length/6)&(-2))-2;}
 
@@ -901,7 +901,7 @@ function lynklocfi(sig)
 	var zipi='<img class="yki" src="poz.png" />';
 	var dov=chika[61+n6]%10;
 	if(dov>0){
-		zipi='<img class="ykixm5" srcset="'+chikagifpa[dov-((n6%11)%(dov+1))]+chika[65+n6]+'.gif '+chika[64+n6]+'x" />';
+		zipi='<img class="ykixm5" srcset="'+chikagifpa[dov-((n6%11)%(dov+1))]+chika[65+n6]+'.gif '+chika[64+n6].toFixed(1)+'x" />';
 	}
 	
 	var skei='==<img class="ykix" srcset="0bak/tu/xx/_';
@@ -911,7 +911,7 @@ function lynklocfi(sig)
 		skeix-=1.0;
 	}
 
-	return skei+chika[5+n6]+'.gif '+skeix+'x" /></a>==<a class="yka" href="0bak/tu/lu/'+locfisyg+'.mp4">'+zipi+locfisyg;
+	return skei+chika[5+n6]+'.gif '+skeix.toFixed(1)+'x" /></a>==<a class="yka" href="0bak/tu/lu/'+locfisyg+'.mp4">'+zipi+locfisyg;
 	
 	
 	
