@@ -320,16 +320,20 @@ recarea.value=fltr_names;
 }
 function setNscroll(sst)
 {
+
+if(selefocus){
 	selefocus.style.border = '10px dotted #fff';
 	selefocus.style.webkitFilter='url(#'+sst+')';
 	selefocus.scrollIntoView();
 	setTimeout(function(){selefocus.style.border=null;}, 5000);
+} else{tblarea.style.webkitFilter='url(#'+sst+')';}
+
 }
 
 function pSVG()
 {
+	if(selefocus){tblarea.style.webkitFilter='';}
 	
-	if(!selefocus){return;}
 	var sst=recarea.value;
 	if(sst.charCodeAt(1)==62){
 			
