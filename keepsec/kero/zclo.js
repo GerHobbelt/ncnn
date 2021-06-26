@@ -286,7 +286,7 @@ function simpfocus()
 	}
 	return null;
 }
-
+var effectfilter=[];
 function pPick(coord)
 {
 	var x;
@@ -318,15 +318,42 @@ for(var i=2;i<fltr_cot;i++)
 
 recarea.value=fltr_names;
 }
+
+function ParseSVG_name(dst,sst)
+{
+	var oldsst=sst;
+	sst+='pg';
+	if(!effectfilter.includes(oldsst))
+	{
+		
+		var lvdb=localStorage.getItem(sst);
+		if(lvdb)
+		{
+			effectfilter.push(oldsst);
+			var ftr_elem=document.createElementNS(SVGheader, 'filter');
+			
+			ftr_elem.id=sst;
+			ftr_elem.innerHTML=lvdb;
+			SVGf[0].appendChild(ftr_elem);
+			
+			
+		} else {return;}
+	}
+
+	dst.style.webkitFilter='url(#'+sst+')';
+
+}
+
 function setNscroll(sst)
 {
 
 if(selefocus){
 	selefocus.style.border = '10px dotted #fff';
-	selefocus.style.webkitFilter='url(#'+sst+')';
+	ParseSVG_name(selefocus,sst);
+	
 	selefocus.scrollIntoView();
 	setTimeout(function(){selefocus.style.border=null;}, 5000);
-} else{tblarea.style.webkitFilter='url(#'+sst+')';}
+} else{ParseSVG_name(tblarea,sst);}
 
 }
 
@@ -344,7 +371,10 @@ function pSVG()
 			}
 			
 			var syp=sst.indexOf('\n');
-			if(syp==2){selefocus.style.webkitFilter=null;return;}
+			if(syp==2){
+				if(selefocus){selefocus.style.webkitFilter='';}
+				else{tblarea.style.webkitFilter='';}
+			return;}
 			else if(syp>2){sst=sst.substring(2,syp);}
 			else{sst=sst.substring(2);}
 			setNscroll(sst);
@@ -361,7 +391,11 @@ function pSVG()
 	else{
 		var ftr_elem=document.createElementNS(SVGheader, 'filter');
 		ftr_elem.id=ftr_id;
-		ftr_elem.innerHTML=sst.substring(syp);
+		var ktx=sst.substring(syp);
+		localStorage.setItem(ftr_id, ktx);
+		effectfilter.push(ftr_id);
+
+		ftr_elem.innerHTML=ktx;
 		SVGf[0].appendChild(ftr_elem);
 		recarea.value='>>'+ftr_id;
 	}
@@ -399,7 +433,7 @@ function printsele()
 
 function pChika()
 {
-	recarea.value='';
+	recarea.value=recarea.value.substr(6);
 	delete FuncList['chick'];
 	changechikaChain();
 }
@@ -1559,7 +1593,7 @@ function dotxcmd()
 		else {repgv(sst[0]);}
 		
 	}
-	else if(sstl==2&&sst[1]==''){kall(sst[0],null);}
+	else if(!sst[1]){kall(sst[0],null);}
 	else {
 		sstl-=1;
 		var param=new Array(sstl);
