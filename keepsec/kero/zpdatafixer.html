@@ -1,12 +1,4 @@
 <html><head><base target="_blank"><link href="zpdfix.css" rel="stylesheet"/></head><body><img class="tygimg" id="timg" /><svg class="animated" ><defs>
-<g id="pozgif">
-<circle cx="32" cy="32" r="26" stroke="#0ff" stroke-width="8" fill="none" >
-<animate attributeName="opacity" values="0.3;0.8;1;0.6;0.3" keyTimes="0;0.25;0.5;0.75;1" begin="0s" dur="5s" repeatCount="indefinite" />
-</circle></g>
-<g id="longbargif">
-<ellipse cx="128" cy="400" rx="100" ry="400" fill="#fff">
-<animate attributeName="ry" values="32;400;32" keyTimes="0;0.5;1" begin="0s" dur="5s" repeatCount="indefinite" />
-</ellipse></g>
 <filter id="cur" filterUnits="userSpaceOnUse"  width="64" height="64"><feImage href="../poz.gif" /></filter>
 <filter id="longbar" filterUnits="userSpaceOnUse" x="25" y="-70" width="400" height="400" ><feImage href="tu/lo4.gif" /></filter></defs></svg><center><div><div id="team">
 </div><br><br><textarea id="urlrec" rows="10" cols="50">
@@ -38,7 +30,7 @@ var paya=recarea.parentNode;
 
 var SVGf=new Array(2);
 SVGf[0]=document.body.children[1].firstChild;
-SVGf[1]=SVGf[0].children[3];
+SVGf[1]=SVGf[0].children[1];
 
 var WtoH=0;
 var laztpic='';
@@ -278,7 +270,18 @@ function showWHcalc(inW,inH)
 
 }
 
-var xgcur=0;
+var byfna= {};
+var chkl=(chika.length/6)<<0;
+function fillbyfna()
+{
+	for(var i=0;i<chkl;i++)
+	{
+		byfna[chika[i*6+5]]=i;
+	}
+
+}
+fillbyfna();
+var xgcur=byfna['kat1'];
 
 function stbox(zuoyo)
 {
@@ -479,18 +482,9 @@ function midy()
 recarea.onblur=rCMD;
 recarea.ondblclick=midy;
 
-var byfna= {};
-var chkl=(chika.length/6)<<0;
 
-function fillbyfna()
-{
-	for(var i=0;i<chkl;i++)
-	{
-		byfna[chika[i*6+5]]=i;
-	}
 
-}
-fillbyfna();
+
 
 
 function fixxx(typ)

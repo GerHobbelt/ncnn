@@ -57,12 +57,12 @@ FL { float:right;}
 }
 
 .ykix {
-	min-width:400px;
+	min-height: 400px;
 	image-rendering: pixelated;
 }
 
 .ykixm5 {
-	min-height:400px;
+	min-height: 400px;
 	margin: -50px;
 	image-rendering: pixelated;
 }

@@ -931,7 +931,7 @@ function lynklocfi(sig)
 
 	
 
-	var n6=((sig>>1)&0x1FF);
+	var n6=sig&0x3FF;
 	var locfisyg=locfi[n6];
 	n6*=6;
 	
@@ -959,7 +959,7 @@ function lynklocfi(sig)
 function lynklocfi_small(sig)
 {
 	
-	var n6=((sig>>1)%0x1FF);
+	var n6=((sig>>1)%0x3FF);
 	var locfisyg='<a href="0bak/tu/lu/'+locfi[n6]+'.mp4"><img class="ykis';
 	if(n6&2)
 	{
@@ -1503,7 +1503,7 @@ function changechikaChain()
 	pvklyi=pvklyi^(pvklyi<<5)
 	
 
-	changechika(pvklyi&0x1ff);
+	changechika(pvklyi&0x3ff);
 
 	
 

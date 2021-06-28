@@ -10,6 +10,14 @@ function prepg()
 	ifmarea.innerHTML=dstr+"</h2><br><br><br><h3 onclick=mklokal() >Mp4Disk</h3>";
 
 	document.body.style.backgroundColor='#400010';
+
+	var lvdb=localStorage.getItem('blmpg');
+	if(!lvdb)
+	{
+		localStorage.setItem('blmpg', '<feGaussianBlur stdDeviation="5" result="bml"/><feBlend mode="screen" in="bml" in2="SourceGraphic" />');
+		localStorage.setItem('blm', '<feConvolveMatrix preserveAlpha="true" order="3 3" kernelMatrix="0 -1 0 -1 5 -1 0 -1 0" in="SourceGraphic" result="sha"/><feGaussianBlur stdDeviation="3" result="bml"/><feBlend mode="screen" in="bml" in2="sha" />');
+	}
+
 }
 
 prepg();
