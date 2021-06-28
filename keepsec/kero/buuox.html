@@ -76,14 +76,15 @@ function kocode(typ,ktxt){
 
 function recolor()
 {
-	infobox = document.createElement('h1');
+	infobox = document.createElement('textarea');
+	infobox.rows=50;
 	infobox.className='nv';
 	
 	document.body.appendChild(infobox);
 
 	var biz=document.getElementsByTagName("K");
 	var bizl=biz.length;
-	infobox.innerText='INFO: '+bizl;
+	infobox.value='--------INFO: '+bizl;
 	for(var i=0;i<bizl;i++)
 	{
 		var boz=biz[i];
@@ -167,14 +168,13 @@ function find2(tali)
 		
 	}
 
-	infobox.innerText=vl+' (......'+tali
+	infobox.value=vl+' (......'+tali
 	return retstr;
 }
 
 function getPosition(string, subString, index) {
   return string.split(subString, index).join(subString).length;
 }
-
 function find2a(tcot)
 {
 	if(Notfullprm){
@@ -189,8 +189,6 @@ function find2a(tcot)
 		break;
 	}
 
-	
-	
 	var kole={};
 	for (const [key, value] of Object.entries(PRMinfo)) {
 		var ky2=value[1].substr(getPosition(value[1],',',tcot)+1);
@@ -208,14 +206,16 @@ function find2a(tcot)
 	}
 
 	var retstr='';
+	var ifostr='';
 	for (const [key, value] of Object.entries(kole)) {
 		var vl=value.length;
+		ifostr+=key+' x'+vl+'\n';
 		retstr+='\n\n'+vl+'x\t'+key;
 		
 		for(var i=0;i<vl;i++){retstr+='\n'+value[i];}
 	}
 
-	
+	infobox.value=ifostr;
 	return retstr;
 }
 
@@ -233,7 +233,7 @@ function find(inin)
 	dohighlight(papa[0])
 	lazthighlight.scrollIntoView();
 	return papa[1];
-	//infobox.innerText='( ['+papa[1]+'] )';
+	//infobox.value='( ['+papa[1]+'] )';
 }
 
 function allprm()
@@ -275,7 +275,7 @@ document.onclick=function(e){
 	{
 		case 75:	//K
 			
-			infobox.innerText=calcK(ele);
+			infobox.value=calcK(ele);
 			dohighlight(ele);
 		return;
 		case 86:	//V
@@ -288,7 +288,7 @@ document.onclick=function(e){
 				
 				pani=pani.parentElement;
 			}
-			infobox.innerText=stb;
+			infobox.value=stb;
 
 		return;
 	}
