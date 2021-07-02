@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Net;
 using System.Collections.Generic;
@@ -17,12 +18,17 @@ namespace eroneto
 		[DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
 		public static extern int system(string command);
 		
+		[DllImport("kernel32.dll")]
+		public static extern uint GetTickCount();
+		
 		public static char[] sep0x5d = { ']' };
 		public static char[] sepDuo = { ',' };
+		public static char[] sepdot = { '.' };
 		public static char[] sepMao = { ':' };
 		public static char[] sepXie = { '/' };
 		public static char[] sepTab = { '\t' };
 		public static char[] sepQuo = { '\"' };
+		public static char[] sepArwQuo = { '<','>','\''};
 		const int sepjslen=50000;
 		
 		static string[] js50src;
@@ -375,6 +381,218 @@ namespace eroneto
 				Thread.Sleep(30000);
 			}
 		}
+
+		const string gpir=@"Q:\z\bookpdf\0bak\tu\ar\2\g\";
+		static void fkcimh()
+		{
+			string[] html=Directory.GetFiles(gpir,"*.*",SearchOption.AllDirectories);
+			int hl=html.Length;
+			for(int i=0;i<hl;i++)
+			{
+				html[i]=html[i].Replace(gpir,"'").Replace("\\","/");
+			}
+			html[hl-1]+="',\n";
+			string  yz=string.Join("',\n",html);
+			int huzm=1+(2048/hl);
+			var fo=new StreamWriter("locimh.js");
+			fo.WriteLine("var cimh=[");
+
+			for(int i=0;i<huzm;i++)
+			{
+				fo.Write(yz);
+			}
+			fo.Write("];");
+			fo.Close();
+
+			
+
+		}
+		
+		static void rrsrt(string fna,string ky="ky.txt")
+		{
+			fna+=".txt";
+			Dictionary<ulong,List<string>> oq = new Dictionary<ulong,List<string>>();
+			string[] kyy=File.ReadAllLines(ky);
+			int kyl=kyy.Length;
+			
+			
+			
+			
+			string[] stt=File.ReadAllLines("../"+fna);
+			int sttl=stt.Length;
+			bool endpause=false;
+			
+			
+			string lztsig=string.Empty;
+			for(int i=0;i<sttl;i++)
+			{
+				var oz=stt[i].Replace(" ",string.Empty).Split(sepDuo);
+				var ozl=oz.Length;
+				
+				if(ozl[0]==lztsig)
+				{
+					Console.WriteLine(oz[2]);
+					lztsig=oz[0];
+					endpause=true;
+					continue;
+				}
+				lztsig=oz[0];
+				
+				
+				
+				for(int v=0;v<3;v++)
+				{
+					oz[v]=string.Empty;
+					
+				}
+				string tztstr=string.Join(",",oz);
+				
+				ulong skor=0;
+				
+				for(int v=0;v<kyl;v++)
+				{
+					if(tztstr.Contains(kyy[v]))
+					{
+						skor+=(1<<v);
+					}
+					
+				}
+				
+				List<string> kle;
+				if(oq.TryGetValue(skor,out kle))
+				{
+					kle.Add(stt[i]);
+				}
+				else
+				{
+					kle=new List<string>();
+					kle.Add(stt[i]);
+					oq[skor]=kle;
+				}
+				
+			}
+			
+			var sortedDict = from entry in oq orderby entry.Key descending select entry.Value;
+			List<string> rzt=new List<string>();
+			foreach(var ss in sortedDict)
+			{
+				rzt.Add(string.Join("\n",ss));
+			}
+			File.WriteAllText(fna,string.Join("\n",rzt));
+		
+		}
+		
+		static string[] imgextt={".jpg",".png",".gif"};
+		
+		static void imhan_all(WebClient dndr)
+		{
+			
+			string[] html=Directory.GetFiles(@"Q:\z\bookpdf\0bak\tu\ar\2","*.stop.txt",SearchOption.TopDirectoryOnly);
+			if(html.Length==0){
+				fkcimh();
+				return;}
+				
+			dndr.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+			
+			int sta=int.Parse(html[0].Split(sepdot)[1]);
+			
+			system("klen.bat "+(sta-1));
+			
+			string cfn="0dta."+sta+".run.txt";
+			File.Move(html[0],cfn);
+			swtwtk = File.AppendText(cfn);
+			
+			
+			
+			
+			
+			
+			for(int i=sta;i<688500;i+=512)
+			{
+				uint timesta=GetTickCount();
+				try{
+				html = dndr.DownloadString("https://imhentai.xxx/gallery/"+i+"/").Split(sepArwQuo);
+				}catch{}
+				int nl=html.Length;
+				int pgnum=0;
+				List<string> prd=new List<string>();
+				string typi=string.Empty;
+				string sig=string.Empty;
+				for(int vv=0;vv<nl;vv++)
+				{
+					string nas=html[vv];
+					if(nas=="li class=\"pages\"")
+					{
+						pgnum=int.Parse(html[vv+1].Substring(7));
+					}
+					else if(nas.StartsWith("/parody/")||nas.StartsWith("/tag/")||nas.StartsWith("/group/"))
+					{
+						prd.Add(nas.Split(sepXie)[2]);
+					}
+					else if(nas.StartsWith("/category/"))
+					{
+						typi = nas.Split(sepXie)[2];
+					}
+					else if(nas.EndsWith("/1t.jpg\" /"))
+					{
+						string[] hoo=nas.Split(sepQuo);
+						sig=hoo[hoo.Length-2].Substring(9).Replace("/1t.jpg",string.Empty);
+						break;
+					}
+				
+				}
+				
+				
+				int tstdown=pgnum/2;
+				int next=0;
+			zapi:
+					try{
+						dndr.DownloadFile("https://m"+sig+"/"+tstdown+imgextt[next],"g\\"+sta+"\\"+sig.Substring(sig.Length-11)+imgextt[next]);
+				
+					}
+					catch{
+					if(next<2)
+					{
+						next++;
+						goto zapi;
+					}
+					}
+				
+				pgnum=1+(pgnum/5);
+				switch(next)
+				{
+					case 1:
+						sig=sig.Replace(".imhentai.xxx/","@p"+pgnum+"@");
+						break;
+					case 2:
+						sig=sig.Replace(".imhentai.xxx/","@g"+pgnum+"@");
+						break;
+					default:
+						sig=sig.Replace(".imhentai.xxx/","@j"+pgnum+"@");
+						break;
+				}
+				
+				swtwtk.WriteLine("'"+sig+"',\t//,"+i+", "+typi+", "+string.Join(", ",prd));
+				swtwtk.Flush();
+				
+				
+				timesta=GetTickCount()-timesta;
+				int slp=5000-(int)timesta;
+				if(slp>0)
+				{
+					Thread.Sleep(slp);
+				}
+				
+				
+				
+			}
+			
+			sta+=1;
+			swtwtk.Close();
+			File.Move(cfn,"0dta."+sta+".stop.txt");
+				
+		}
+		
 		const string tubsig="/thumb.jpg";
 		static void imhan_anima(WebClient dndr)
 		{
@@ -418,8 +636,8 @@ namespace eroneto
 			
 
 			//client.Encoding = Encoding.UTF8; 
-			imhan_anima(new WebClient());
-			system("pause");
+			imhan_all(new WebClient());
+			//system("pause");
 			
 		}
 		const string schpa=@"Q:\z\bookpdf\0bak\tu\ar\";
