@@ -49,7 +49,7 @@ namespace eroneto
 		{
 			//inin=fix0x20(inin);
 			inin=inin.Replace("female","girl");
-			if(inin.Contains("guro")||inin.Contains("furry")||inin.Contains("yaoi")||inin.Contains("males-only"))
+			if(inin.Contains("guro")||inin.Contains("scat")||inin.Contains("furry")||inin.Contains("yaoi")||inin.Contains("males-only"))
 			{
 				dzt["trash"].WriteLine(inin);
 				return;
@@ -71,7 +71,7 @@ namespace eroneto
 				
 		}
 
-		static void rrsrt(string fna,string ky="ky.txt")
+		static void rrsrt(string fna,string ky)
 		{
 			fna+=".txt";
 			Dictionary<ulong,List<string>> oq = new Dictionary<ulong,List<string>>();
@@ -85,34 +85,51 @@ namespace eroneto
 			int sttl=stt.Length;
 			int endpause=0;
 			
+			//int wholeloop=0; //!!!!!!!!!
 			
 			string lztsig=string.Empty;
 			for(int i=0;i<sttl;i++)
 			{
 				var oz=stt[i].Replace(" ",string.Empty).Split(sepDuo);
 				var ozl=oz.Length;
-				
+				if(ozl<4){continue;}
 				if(oz[0]==lztsig)
 				{
 					Console.WriteLine("imhentai.xxx/gallery/"+oz[2]+"/");
-					
-					lztsig=oz[0];
 					endpause++;
 					continue;
 				}
 				lztsig=oz[0];
 				
-				
-				
-				for(int v=0;v<3;v++)
-				{
-					oz[v]=string.Empty;
-					
-				}
-				string tztstr=string.Join(",",oz);
-				
 				ulong skor=0;
 				
+				/*
+				//184329,583902
+				for(int v=0;v<kyl;v++)
+				{
+					int izp=Array.IndexOf(oz,kyy[v]);
+					if(izp<0){wholeloop+=ozl;}
+					else{skor+=((ulong)1<<v);wholeloop+=izp;}
+				}
+				*/
+				
+					
+				//138241,423662
+				for(int v=3;v<ozl;v++)
+				{
+					int izp=Array.IndexOf(kyy,oz[v]);
+					if(izp>0){skor+=((ulong)1<<izp);
+						//wholeloop+=izp;
+					}
+					else if(izp==0){skor++;}
+					//else{wholeloop+=kyl;}
+				}
+				
+				
+				
+				/*
+				for(int v=0;v<3;v++){oz[v]=string.Empty;}
+				string tztstr=string.Join(",",oz);
 				for(int v=0;v<kyl;v++)
 				{
 					if(tztstr.Contains(kyy[v]))
@@ -121,6 +138,7 @@ namespace eroneto
 					}
 					
 				}
+				*/
 				
 				List<string> kle;
 				if(oq.TryGetValue(skor,out kle))
@@ -140,11 +158,18 @@ namespace eroneto
 			List<string> rzt=new List<string>();
 			foreach(var ss in sortedDict)
 			{
-				rzt.Add(string.Join("\n",ss));
+				if(ss.Count==1){
+				rzt.Add(ss[0]+", ^");}
+				else{
+					rzt.Add(string.Join("\n",ss));
+					rzt.Add("//==");
+				}
+				
 			}
 			rzt.Add(string.Empty);
 			File.WriteAllText(fna,string.Join("\n",rzt));
 
+			//Console.WriteLine(wholeloop);
 			if(endpause>0){
 				Console.WriteLine("dup: "+endpause);
 				Console.ReadKey();
@@ -153,17 +178,30 @@ namespace eroneto
 		
 		}
 
-		static void gpsrt(string fna)
+		static void rrslp()
 		{
-			string[] stt=File.ReadAllLines(fna);
+			lpha:
+			Console.WriteLine("to Clean: ");
+			string fna=Console.ReadLine();
+			string ky="ky.txt";
+			if(fna=="3trash"){ky="kygb.txt";}
+			rrsrt(fna,ky);
+			goto lpha;
+		}
+		static Dictionary<string,int> oqcot;
+
+		static void gpsrt(string[] stt)
+		{
+			
 			int sttl=stt.Length;
 			
-			Dictionary<string,int> oqcot=new Dictionary<string,int>();
+			
 			
 			for(int i=0;i<sttl;i++)
 			{
 				var oz=stt[i].Replace(" ",string.Empty).Split(sepDuo);
 				var ozl=oz.Length;
+				if(ozl<4){continue;}
 				for(int v=3;v<ozl;v++)
 				{
 					int rfout=0;
@@ -179,18 +217,35 @@ namespace eroneto
 				}
 			}
 
+			
+		}
+
+		static void oqALL()
+		{
+			oqcot=new Dictionary<string,int>();
+			string[] fnaz=Directory.GetFiles(@"Q:\z\bookpdf\0bak\tu\ar\2\g","*.txt",SearchOption.TopDirectoryOnly);
+
+			foreach(var fna in fnaz)
+			{
+				gpsrt(File.ReadAllLines(fna));
+			}
+
 			var sortedDict = from entry in oqcot orderby entry.Value ascending select entry;
 			foreach(var ss in sortedDict)
 			{
 				if(ss.Value>5)
 					Console.WriteLine(ss.Key+"\t"+ss.Value);
 			}
+
 		}
 		
 		static void klen()
 		{
-			dzt["misc"]=File.AppendText("3msc.txt");
-			dzt["misc-lo"]=dzt["misc"];
+			var mzc=File.AppendText("3msc.txt");
+			dzt["misc"]=mzc;
+			dzt["misc-lo"]=mzc;
+			dzt["non-h"]=mzc;
+			dzt["non-h-lo"]=mzc;
 			dzt["trash"]=File.AppendText("3trash.txt");
 			dzt["manga"]=File.AppendText("2ma.txt");
 			dzt["artist-cg"]=File.AppendText("2cg.txt");
@@ -263,11 +318,14 @@ namespace eroneto
 		
 		static void Main(string[] args)
 		{
+			klen();
+			/*
 			if(args.Length>1)
 			{
 				rrsrt(args[0],args[1]);
 			}
 			else{rrsrt(args[0]);}
+			*/
 		}
 		
 	}
