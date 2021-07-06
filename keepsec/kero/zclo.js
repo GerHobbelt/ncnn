@@ -1,3 +1,12 @@
+//====
+var mkimh=mkimh_fake;
+if(1)
+{
+	mkimh=mkimh_real;
+	mkscript('0bak/locimh.js');
+}
+//====
+
 
 var PozMode=0x2;
 const pozimg='<img style="-webkit-filter: url(#cur)" src="poz.png" />';
@@ -543,7 +552,7 @@ function imhnxt(dst,ctrlarw)
 	ctrlarw.innerText=' < '+y+' + ';
 	if(usesrcset)
 	{
-		var skl=' '+this.srcset.split(' ')[1];
+		var skl=' '+ymg.srcset.split(' ')[1];
 		ymg.srcset=imhbox.bs+y+imhbox.ext+skl;
 	}
 	else
@@ -581,7 +590,8 @@ function imherr()
 
 }
 
-//var mkimh=mkimh_fake;
+
+
 
 function mkimh_fake(imhbox,sig)
 {
@@ -603,7 +613,7 @@ function mkimh_fake(imhbox,sig)
 
 
 
-function mkimh(imhbox,sig)
+function mkimh_real(imhbox,sig)
 {
 	var imhsig=cimh[(sig&0x1FF8)>>3];	//[(sig&0x1FF)|((sig&0xC00)>>1)];
 	var humi=imhsig.split('@');
@@ -622,9 +632,16 @@ function mkimh(imhbox,sig)
 
 	}
 	endo=parseInt(humi[1].substr(1),10)*5;
-	var sta=sig%endo;
+	var sta=1+(sig%endo);
+
 	
-	if(sta==0){sta=1;}
+	if((sta+25)>endo){
+		sta=endo-25;
+		if(sta<1){sta=1;}
+	}
+	else{endo=sta+25;}
+
+	
 
 	
 	imhsig='https://m'+humi[0]+'.imhentai.xxx/'+humi[2]+'/'
@@ -633,8 +650,7 @@ function mkimh(imhbox,sig)
 	imhbox.innerText='*** '+humi[2]+' ***';
 	imhbox.bs=imhsig;
 	imhbox.ext=ext;
-	var tmpendo=sta+25;
-	if(tmpendo<endo){endo=tmpendo};
+	
 	
 	for(var i=sta;i<endo;i+=5)
 	{
@@ -1355,7 +1371,7 @@ function llimgThis(ele,nx,depth)
 				if(tgg=='B')
 				{
 					ele.innerText='';
-					mkimh(ele,(Math.random()*2048)<<3);
+					mkimh(ele,(Math.random()*0x4000)<<0);
 				}
 				
 			}
@@ -1765,7 +1781,7 @@ function setklyi2()
 
 function chgfpgMode()
 {
-	if(fullpgALL===fullpgALLcur&&curEro>0x7F){curEro-=0x80;}
+	if(fullpgALL===fullpgALLcur&&curEro>1021){curEro-=1022;}
 	
 	fpgMode++;
 	pvklyi=Date.now()&(-1);
@@ -2100,6 +2116,8 @@ function mkscript(sksrc)
 
 function insp(apa)
 {
+
+
 
 var uv=location.href.split('#');
 if(uv.length>1){
