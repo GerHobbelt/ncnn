@@ -1,11 +1,4 @@
-//====
-var mkimh=mkimh_fake;
-if(1)
-{
-	mkimh=mkimh_real;
-	mkscript('0bak/locimh.js');
-}
-//====
+
 
 
 var PozMode=0x2;
@@ -371,7 +364,29 @@ if(selefocus){
 	
 	selefocus.scrollIntoView();
 	setTimeout(function(){selefocus.style.border=null;}, 5000);
-} else{ParseSVG_name(tblarea,sst);}
+} else{
+
+var senta=document.getElementsByTagName("center");
+var sefo=senta.length;
+if(sefo)
+{
+	for(var i=0;i<sefo;i++)
+	{
+		var rect=senta[i].getBoundingClientRect();
+		if(rect.y<0&&(rect.y+rect.height)>0)
+		{
+			sefo=senta[i];
+			break;
+		}
+
+	}
+
+
+} else {sefo=tblarea;}
+ParseSVG_name(sefo,sst);
+
+
+}
 
 }
 
