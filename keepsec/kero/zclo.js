@@ -684,6 +684,11 @@ function mkimh_real(imhbox,sig)
 	
 }
 
+function pChgChika()
+{
+	changechika((Math.random() *2048)&0x3ff);
+}
+
 function pChika()
 {
 	recarea.value=recarea.value.substr(6);
@@ -691,7 +696,7 @@ function pChika()
 	changechikaChain();
 }
 
-var FuncList = {'svg':pSVG,'p':pPick,'chick':pChika};
+var FuncList = {'chi':pChgChika,'svg':pSVG,'p':pPick,'chick':pChika};
 function kall(funcname,param)
 {
 	return FuncList[funcname](param);
