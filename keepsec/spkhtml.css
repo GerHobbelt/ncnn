@@ -5,5 +5,6 @@ body {
 }
 
 .yka {
+	filter: url("#blmpg");
 	border:30px #00f dotted;
 }

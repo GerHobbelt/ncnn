@@ -3,6 +3,10 @@
 <link href="spkhtml.css" rel="stylesheet"/>
 </head>
 <body>
+<svg class="animated"><defs>
+<filter id="blmpg"><feGaussianBlur stdDeviation="3" result="bml" />
+<feBlend mode="screen" in="bml" in2="SourceGraphic" /></filter>
+</defs></svg>
 
 </body>
 <script src="txt.js" charset="gb18030"></script>
@@ -27,6 +31,16 @@ function foka()
 	txtsec[curspk].scrollIntoView();
 }
 
+var spking=true;
+function psrs()
+{
+	if(spking){synth.pause();}
+	else{synth.resume();}
+
+	spking=!spking;
+
+}
+
 function startspk()
 {
 	filltzec();
@@ -35,6 +49,7 @@ function startspk()
 	synth.speak(utterThis);
 	txtsec[0].className='yka';
 	document.body.onclick=foka;
+	document.onkeydown=psrs;
 	
 }
 
