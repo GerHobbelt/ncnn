@@ -1,0 +1,94 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb18030">
+<link href="spkhtml.css" rel="stylesheet"/>
+</head>
+<body>
+
+</body>
+<script src="txt.js" charset="gb18030"></script>
+<script>
+var curspk=0;
+function vend()
+{
+	curspk++;
+	var tossp=txtarray[curspk];
+	
+	utterThis.text=tossp;
+	synth.speak(utterThis);
+
+	txtsec[curspk-1].className='';
+	txtsec[curspk].className='yka';
+	txtsec[curspk].scrollIntoView();
+
+}
+
+function foka()
+{
+	txtsec[curspk].scrollIntoView();
+}
+
+function startspk()
+{
+	filltzec();
+	voi=synth.getVoices()[0];
+	utterThis.voice=voi;
+	synth.speak(utterThis);
+	txtsec[0].className='yka';
+	document.body.onclick=foka;
+	
+}
+
+
+function ppp()
+{
+	var preshow=document.createElement('pre');
+	document.body.appendChild(preshow);
+	var txtl=txtarray.length;
+	var otstr='var txtarray=[';
+	var tmpcole='';
+	var tlcot=0;
+	for(var i=0;i<txtl;i++)
+	{
+		if(tmpcole.length>1024)
+		{
+			otstr+="'"+tmpcole+"',\n";
+			tmpcole='';
+		}
+		tmpcole+=txtarray[i]+'\\'+'n';
+
+		
+	}
+	otstr+="'"+tmpcole+"'];";
+	preshow.innerText=otstr;
+
+
+}
+
+function filltzec()
+{
+	var txtl=txtarray.length;
+	
+	for(var i=0;i<txtl;i++)
+	{
+		var txtshow=document.createElement('h2');
+		txtshow.innerHTML=txtarray[i].replaceAll('\n','<br><br><br>').replaceAll('。','。<br><br>');
+		document.body.appendChild(document.createTextNode("spk="+i));
+		document.body.appendChild(txtshow);
+
+		txtsec[i]=txtshow;
+	}
+
+}
+
+var txtsec=new Array(txtarray.length);
+
+
+var synth = window.speechSynthesis;
+var voi=null;
+var utterThis = new SpeechSynthesisUtterance(txtarray[0]);
+utterThis.onend=vend;
+document.body.onclick=startspk;
+</script>
+
+
+</html>
