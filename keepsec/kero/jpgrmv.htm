@@ -1,0 +1,135 @@
+<html>
+<body>
+
+
+</body>
+<script>
+
+var outputname;
+document.body.style.backgroundColor='#464';
+var bsimg=document.createElement('img');
+bsimg.onclick=proc;
+document.body.appendChild(bsimg);
+var infoz=document.createElement('h2');
+document.body.appendChild(infoz);
+var canv=document.createElement('canvas');
+canv.onclick=dlcanvas;
+document.body.appendChild(canv);
+var infocanv=document.createElement('canvas');
+document.body.appendChild(infocanv);
+
+
+function loadimg(sna)
+{
+	outputname=sna;
+	bsimg.src='j/'+sna+'.jpg';
+
+}
+
+const Pr = 0.2126, Pg = 0.7152, Pb = 0.0722;
+
+var defco= new Array(3);
+var thrs=20;
+
+function distEuclidean(r,g,b) {
+var rd = r-defco[0];
+var gd = g-defco[1];
+var bd = b-defco[2];
+
+return Math.sqrt(Pr*rd*rd + Pg*gd*gd + Pb*bd*bd) <<0;
+}
+
+function dlcanvas()
+{
+  var link = document.createElement('a');
+  link.download = outputname+'_j.png';
+  link.href = canv.toDataURL()
+  link.click();
+link.remove();
+}
+
+function procpix(b8,infob8,pixcoord)
+{
+		var i4=pixcoord<<2;
+		
+
+		var ccode='#';
+		for(var i=0;i<3;i++)
+		{
+			var tst=b8[i4+i];
+			if(tst<0x10)
+			{
+				ccode+='0'+tst.toString(16);
+			}
+			else
+			{
+				ccode+=tst.toString(16);
+			}
+			defco[i]=tst;
+			
+			
+		}
+		infoz.style.backgroundColor=ccode;
+		infoz.innerText=ccode+'\nR: '+defco[0]+', G: '+defco[1]+', B: '+defco[2];
+		
+
+
+		var b8l=b8.length>>2;
+		for(var i=0;i<b8l;i++)
+		{
+			i4=i<<2;
+			var dst=distEuclidean(b8[i4],b8[i4+1],b8[i4+2]);
+			infob8[i4]=dst;
+			infob8[i4+1]=dst;
+			infob8[i4+2]=dst;
+			if(dst<thrs)
+			{
+				b8[i4]=defco[0];
+				b8[i4+1]=defco[1];
+				b8[i4+2]=defco[2];
+				b8[i4+3]=0;
+			}
+		}
+
+}
+
+function proc(ev)
+{
+	var bsimgw=bsimg.naturalWidth;
+	var bsimgh=bsimg.naturalHeight;
+	var pixcoord=(ev.offsetY<<0)*bsimgw+(ev.offsetX<<0);
+	canv.width = bsimgw;
+	canv.height = bsimgh;
+	infocanv.width = bsimgw;
+	infocanv.height = bsimgh;
+	var infoctx = infocanv.getContext("2d");
+	var ctx = canv.getContext("2d");
+	ctx.drawImage(bsimg,0,0);
+	infoctx.drawImage(bsimg,0,0);
+
+	var imgd = ctx.getImageData(0, 0, bsimgw, bsimgh);
+	var infoimgd = infoctx.getImageData(0, 0, bsimgw, bsimgh);
+
+	procpix(imgd.data,infoimgd.data,pixcoord);
+
+	ctx.putImageData(imgd, 0, 0);
+	infoctx.putImageData(infoimgd, 0, 0);
+
+	//ctx.drawImage(canv, 0, 0, bsimgw, bsimgh);
+
+}
+
+function byurl()
+{
+	var uv=location.href.split('?');
+	if(uv.length>1)
+	{
+		loadimg(uv[1]);
+	}
+
+}
+
+byurl();
+
+</script>
+</html>
