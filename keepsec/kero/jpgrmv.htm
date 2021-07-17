@@ -1,6 +1,14 @@
 <html>
 <body>
-
+<style>
+img {
+	display:none;
+}
+canvas {
+	-webkit-transform: matrix(2,0,0,2,0,0);
+	margin: 500px;
+}
+</style>
 
 </body>
 <script>
@@ -8,15 +16,24 @@
 var outputname;
 document.body.style.backgroundColor='#464';
 var bsimg=document.createElement('img');
-bsimg.onclick=proc;
+bsimg.onload=mkimgd;
+//bsimg.onclick=proc;
 document.body.appendChild(bsimg);
+
+
+
+
+var infocanv=document.createElement('canvas');
+infocanv.onclick=proc;
+document.body.appendChild(infocanv);
+
 var infoz=document.createElement('h2');
 document.body.appendChild(infoz);
+
 var canv=document.createElement('canvas');
 canv.onclick=dlcanvas;
 document.body.appendChild(canv);
-var infocanv=document.createElement('canvas');
-document.body.appendChild(infocanv);
+
 
 
 function loadimg(sna)
@@ -28,19 +45,20 @@ function loadimg(sna)
 
 const Pr = 0.2126, Pg = 0.7152, Pb = 0.0722;
 
-var defco= new Array(3);
+var defco= null;
 var thrs=20;
 
-function distEuclidean(r,g,b) {
-var rd = r-defco[0];
-var gd = g-defco[1];
-var bd = b-defco[2];
+function distEuclidean(curdefco,r,g,b) {
+var rd = r-curdefco[0];
+var gd = g-curdefco[1];
+var bd = b-curdefco[2];
 
 return Math.sqrt(Pr*rd*rd + Pg*gd*gd + Pb*bd*bd) <<0;
 }
 
 function dlcanvas()
 {
+canv.onclick=null;
   var link = document.createElement('a');
   link.download = outputname+'_j.png';
   link.href = canv.toDataURL()
@@ -48,11 +66,62 @@ function dlcanvas()
 link.remove();
 }
 
-function procpix(b8,infob8,pixcoord)
+var bsimgw=0;
+var bsimgh=0;
+var infoctx=null;
+var ctx=null;
+var imgd=null;
+var infoimgd =null;
+
+const bgkos=['#464','#644','#446','#080','#008','#800'];
+var ibgkos=0;
+
+function chgbgkos()
 {
+	canv.style.backgroundColor=bgkos[ibgkos];
+	ibgkos++;
+	if(ibgkos==6){ibgkos=0;}
+
+}
+
+setInterval(chgbgkos,1000);
+
+function mkimgd()
+{
+	bsimgw=bsimg.naturalWidth;
+	bsimgh=bsimg.naturalHeight;
+	
+	canv.width = bsimgw;
+	canv.height = bsimgh;
+	infocanv.width = bsimgw;
+	infocanv.height = bsimgh;
+	infoctx = infocanv.getContext("2d");
+	ctx = canv.getContext("2d");
+	ctx.drawImage(bsimg,0,0);
+	
+
+	imgd = ctx.getImageData(0, 0, bsimgw, bsimgh);
+	infoctx.putImageData(imgd, 0, 0);
+	infoimgd = infoctx.getImageData(0, 0, bsimgw, bsimgh);
+
+}
+
+
+
+function procpix(b8,infob8,x,y)
+{
+
+		var pixcoord=y*bsimgw+x;
 		var i4=pixcoord<<2;
 		
+		var firsttime=false;
+		if(!defco)
+		{
+			defco=new Uint8Array(3);
+			firsttime=true;
+		}
 
+		var curdefco=new Uint8Array(3);
 		var ccode='#';
 		for(var i=0;i<3;i++)
 		{
@@ -65,7 +134,9 @@ function procpix(b8,infob8,pixcoord)
 			{
 				ccode+=tst.toString(16);
 			}
-			defco[i]=tst;
+			curdefco[i]=tst;
+			if(firsttime){defco[i]=tst;}
+			
 			
 			
 		}
@@ -74,11 +145,172 @@ function procpix(b8,infob8,pixcoord)
 		
 
 
+		//y+,x+
+		for(var my=y;my<bsimgh;my++)
+		{
+			var mx=x;
+			var i4=(my*bsimgw+mx)<<2;
+			var dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
+			infob8[i4]=dst;
+			infob8[i4+1]=dst;
+			infob8[i4+2]=dst;
+			if(dst<thrs)
+			{
+				b8[i4]=defco[0];
+				b8[i4+1]=defco[1];
+				b8[i4+2]=defco[2];
+				b8[i4+3]=0;
+			} else {break;}
+			mx++;	//!!!
+
+			var mybsimgw=my*bsimgw;
+			for(;mx<bsimgw;mx++)
+			{
+				i4=(mybsimgw+mx)<<2;
+				dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
+				infob8[i4]=dst;
+				infob8[i4+1]=dst;
+				infob8[i4+2]=dst;
+				if(dst<thrs)
+				{
+					b8[i4]=defco[0];
+					b8[i4+1]=defco[1];
+					b8[i4+2]=defco[2];
+					b8[i4+3]=0;
+				} else {break;}
+
+			}
+
+			
+		}
+
+
+		//y+,x-
+		for(var my=y;my<bsimgh;my++)
+		{
+			var mx=x-1;
+			var i4=(my*bsimgw+mx)<<2;
+			var dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
+			infob8[i4]=dst;
+			infob8[i4+1]=dst;
+			infob8[i4+2]=dst;
+			if(dst<thrs)
+			{
+				b8[i4]=defco[0];
+				b8[i4+1]=defco[1];
+				b8[i4+2]=defco[2];
+				b8[i4+3]=0;
+			} else {break;}
+			mx--;	//!!!
+
+			var mybsimgw=my*bsimgw;
+			for(;mx>=0;mx--)
+			{
+				i4=(mybsimgw+mx)<<2;
+				dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
+				infob8[i4]=dst;
+				infob8[i4+1]=dst;
+				infob8[i4+2]=dst;
+				if(dst<thrs)
+				{
+					b8[i4]=defco[0];
+					b8[i4+1]=defco[1];
+					b8[i4+2]=defco[2];
+					b8[i4+3]=0;
+				} else {break;}
+
+			}
+
+			
+		}
+
+		//y-,x+
+		for(var my=y-1;my>=0;my--)
+		{
+			var mx=x;
+			var i4=(my*bsimgw+mx)<<2;
+			var dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
+			infob8[i4]=dst;
+			infob8[i4+1]=dst;
+			infob8[i4+2]=dst;
+			if(dst<thrs)
+			{
+				b8[i4]=defco[0];
+				b8[i4+1]=defco[1];
+				b8[i4+2]=defco[2];
+				b8[i4+3]=0;
+			} else {break;}
+			mx++;	//!!!
+
+			var mybsimgw=my*bsimgw;
+			for(;mx<bsimgw;mx++)
+			{
+				i4=(mybsimgw+mx)<<2;
+				dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
+				infob8[i4]=dst;
+				infob8[i4+1]=dst;
+				infob8[i4+2]=dst;
+				if(dst<thrs)
+				{
+					b8[i4]=defco[0];
+					b8[i4+1]=defco[1];
+					b8[i4+2]=defco[2];
+					b8[i4+3]=0;
+				} else {break;}
+
+			}
+
+			
+		}
+
+
+		//y-,x-
+		for(var my=y-1;my>=0;my--)
+		{
+			var mx=x-1;
+			var i4=(my*bsimgw+mx)<<2;
+			var dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
+			infob8[i4]=dst;
+			infob8[i4+1]=dst;
+			infob8[i4+2]=dst;
+			if(dst<thrs)
+			{
+				b8[i4]=defco[0];
+				b8[i4+1]=defco[1];
+				b8[i4+2]=defco[2];
+				b8[i4+3]=0;
+			} else {break;}
+			mx--;	//!!!
+
+			var mybsimgw=my*bsimgw;
+			for(;mx>=0;mx--)
+			{
+				i4=(mybsimgw+mx)<<2;
+				dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
+				infob8[i4]=dst;
+				infob8[i4+1]=dst;
+				infob8[i4+2]=dst;
+				if(dst<thrs)
+				{
+					b8[i4]=defco[0];
+					b8[i4+1]=defco[1];
+					b8[i4+2]=defco[2];
+					b8[i4+3]=0;
+				} else {break;}
+
+			}
+
+			
+		}
+
+		
+
+		/*
 		var b8l=b8.length>>2;
 		for(var i=0;i<b8l;i++)
 		{
 			i4=i<<2;
-			var dst=distEuclidean(b8[i4],b8[i4+1],b8[i4+2]);
+			var dst=distEuclidean(curdefco,b8[i4],b8[i4+1],b8[i4+2]);
 			infob8[i4]=dst;
 			infob8[i4+1]=dst;
 			infob8[i4+2]=dst;
@@ -90,32 +322,23 @@ function procpix(b8,infob8,pixcoord)
 				b8[i4+3]=0;
 			}
 		}
+		*/
 
 }
 
 function proc(ev)
 {
-	var bsimgw=bsimg.naturalWidth;
-	var bsimgh=bsimg.naturalHeight;
-	var pixcoord=(ev.offsetY<<0)*bsimgw+(ev.offsetX<<0);
-	canv.width = bsimgw;
-	canv.height = bsimgh;
-	infocanv.width = bsimgw;
-	infocanv.height = bsimgh;
-	var infoctx = infocanv.getContext("2d");
-	var ctx = canv.getContext("2d");
-	ctx.drawImage(bsimg,0,0);
-	infoctx.drawImage(bsimg,0,0);
 
-	var imgd = ctx.getImageData(0, 0, bsimgw, bsimgh);
-	var infoimgd = infoctx.getImageData(0, 0, bsimgw, bsimgh);
-
-	procpix(imgd.data,infoimgd.data,pixcoord);
+	//console.log(ev.offsetY);
+	//return;
+	
+	
+	procpix(imgd.data,infoimgd.data,(ev.offsetX<<0),(ev.offsetY<<0));
 
 	ctx.putImageData(imgd, 0, 0);
 	infoctx.putImageData(infoimgd, 0, 0);
 
-	//ctx.drawImage(canv, 0, 0, bsimgw, bsimgh);
+	
 
 }
 
