@@ -1,0 +1,216 @@
+<html>
+<body>
+</body>
+<script src="g/0000/jj2.js"></script>
+<script>
+
+var cidx=jjp.length-1;
+document.body.style.backgroundColor='#464';
+var infoz=document.createElement('pre');
+document.body.appendChild(infoz);
+
+var bsimg=document.createElement('img');
+bsimg.onload=proc;
+document.body.appendChild(bsimg);
+
+var canv=document.createElement('canvas');
+
+document.body.appendChild(canv);
+
+var FFF=false;
+
+var pxcot = new Uint32Array(512);
+
+function printpxcot()
+{
+	var sumu=0;
+	for(var i=0;i<512;i++)
+	{
+		if(pxcot[i]!=0)
+		{
+			console.log(i.toString(16)+' = '+pxcot[i]);
+			sumu+=pxcot[i];
+		}
+	}
+	console.log(sumu*4);
+	
+
+}
+
+function doload()
+{
+	bsimg.src=jjpa+jjp[cidx]+'.jpg';
+	cidx--;
+}
+
+var doklen=true;
+function iscolorAll(naukot)
+{
+	var k=0;
+
+	for(var i=0;i<0x8;i++){
+		var ydx=0x49*i;
+		k+=pxcot[ydx];
+		pxcot[ydx]=0;
+	}
+	if(k>naukot){return false;}
+
+
+	doklen=false;
+	k=0;
+	for(var i=0;i<512;i++)
+	{
+		if(pxcot[i]&0xffffff00){
+
+			k++;
+			
+		}
+		pxcot[i]=0;
+	}
+
+	if(k>4){return true;}
+	return false;
+
+}
+
+function iscolor(r,g,b)
+{
+	if(r!=g){return 1;}
+	if(g!=b){return 1;}
+	return 0;
+}
+
+function iscolor_old(r,g,b)
+{
+	if(Math.abs(r-g)>10){return 1;}
+	if(Math.abs(r-b)>10){return 1;}
+	if(Math.abs(g-b)>10){return 1;}
+	return 0;
+}
+
+function clampp(v)
+{
+
+	return v>>4;
+	/*
+	var tbs=v>>4;
+	if(tbs==0xf){return 0xf;}
+
+	
+	if(v&8){return tbs+1;}
+	return tbs;
+	*/
+
+}
+
+function proc(ev)
+{
+
+	
+
+	if(cidx>=0)
+	{
+		if(doklen){for(var i=0;i<512;i++){pxcot[i]=0;}};
+		setTimeout(doload, 500);
+	}
+	else
+	{
+		jjp[0]='cd zc\\\n';
+		infoz.innerText=jjp.join('.jpg xx\\\nmove ').replaceAll('@.jpg xx\\','.jpg ok\\');
+		return;
+	}
+	doklen=true;
+	bsimgw=bsimg.naturalWidth;
+	bsimgh=bsimg.naturalHeight;
+	
+	
+	canv.width = bsimgw;
+	canv.height = bsimgh;
+	
+	var ctx = canv.getContext("2d");
+	ctx.drawImage(bsimg,0,0);
+	
+
+	var imgd = ctx.getImageData(0, 0, bsimgw, bsimgh);
+	var b8=imgd.data;
+
+	var b8l=b8.length>>5;
+	
+	//var izco=0;
+	for(var i=0;i<b8l;i++)
+	{
+
+	for(var vv=0;vv<8;vv++)
+	{
+		var i4=(i+(vv*b8l))<<2;
+		
+		/*
+		var rr=(b8[i4]>>4);
+		var gg=(b8[i4+1]>>4);
+		var bb=(b8[i4+2]>>4);
+
+		izco+=iscolor(rr,gg,bb);//iscolor(b8[i4],b8[i4+1],b8[i4+2]);
+		*/
+		var idx=((b8[i4]<<1)&0x1c0)|((b8[i4+1]>>2)&0x38)|(b8[i4+2]>>5);
+
+		/*
+		if(FFF)
+		{
+			console.log((b8[i4]>>5).toString(8)+'-'+(b8[i4+1]>>5).toString(8)+'-'+(b8[i4+2]>>5).toString(8));
+			console.log(idx.toString(8));
+		}
+		*/
+		
+
+		pxcot[idx]++;
+		//var notblnk=true;
+		if(pxcot[idx]>b8l)
+		{
+			//notblnk=false;
+			//console.log(idx.toString(16));
+			if(iscolorAll(i*7))
+			{
+			//infoz.appendChild(bsimg.cloneNode(true));
+			//infoz.appendChild(document.createTextNode(jjp[cidx+1]+"','"));
+				jjp[cidx+1]+='@';
+			}
+			else
+			{
+				//infoz.appendChild(document.createTextNode(jjp[cidx+1]+'@'));
+			}
+			return;
+		}
+	}
+				
+	}
+
+
+	
+
+}
+
+function tstgrd()
+{
+var ctx = canv.getContext("2d");
+
+	var imgd = ctx.getImageData(0, 0, bsimgw, bsimgh);
+	var b8=imgd.data;
+
+var b8l=b8.length>>2;
+	
+	//var izco=0;
+	for(var i=0;i<b8l;i++)
+	{
+		var i4=i<<2;
+		b8[i4]&=0xe0;
+		b8[i4+1]&=0xe0;
+		b8[i4+2]&=0xe0;
+	}
+	ctx.putImageData(imgd, 0, 0);
+
+}
+
+doload();
+
+</script>
+</html>

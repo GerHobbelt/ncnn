@@ -15,7 +15,7 @@ var curspk=0;
 function vend()
 {
 	curspk++;
-	var tossp=txtarray[curspk];
+	var tossp=txt[curspk];
 	
 	utterThis.text=tossp;
 	synth.speak(utterThis);
@@ -53,15 +53,61 @@ function startspk()
 	
 }
 
+var yetpaste=true;
+
+function ppp2()
+{
+document.body.onclick=null;
+if(yetpaste)
+{
+
+	yetpaste=false;
+	var preshow=document.createElement('textarea');
+	preshow.cols=200;
+	preshow.rows=100;
+	preshow.onblur=ppp2;
+	document.body.appendChild(preshow);
+
+	
+
+}
+else
+{
+
+	
+	this.onblur=null;
+	var tzt=this.value.replaceAll('\r','').replaceAll("'",'"').split('\n');
+
+	var txtl=tzt.length;
+	var otstr='var txt=[';
+	var tmpcole='';
+	for(var i=0;i<txtl;i++)
+	{
+		if(tzt[i].length==0){continue;}
+		if(tmpcole.length>1024)
+		{
+			otstr+="'"+tmpcole+"',\n";
+			tmpcole='';
+		}
+		tmpcole+=tzt[i]+'\\'+'n';
+
+		
+	}
+
+	this.value=otstr.replaceAll('\\'+"n',","\',")+"'"+tmpcole+"'];";
+
+}
+
+}
 
 function ppp()
 {
+	document.body.onclick=null;
 	var preshow=document.createElement('pre');
 	document.body.appendChild(preshow);
-	var txtl=txtarray.length;
-	var otstr='var txtarray=[';
+	var txtl=txt.length;
+	var otstr='var txt=[';
 	var tmpcole='';
-	var tlcot=0;
 	for(var i=0;i<txtl;i++)
 	{
 		if(tmpcole.length>1024)
@@ -69,7 +115,7 @@ function ppp()
 			otstr+="'"+tmpcole+"',\n";
 			tmpcole='';
 		}
-		tmpcole+=txtarray[i]+'\\'+'n';
+		tmpcole+=txt[i]+'\\'+'n';
 
 		
 	}
@@ -81,12 +127,12 @@ function ppp()
 
 function filltzec()
 {
-	var txtl=txtarray.length;
+	var txtl=txt.length;
 	
 	for(var i=0;i<txtl;i++)
 	{
 		var txtshow=document.createElement('h2');
-		txtshow.innerHTML=txtarray[i].replaceAll('\n','<br><br><br>').replaceAll('。','。<br><br>');
+		txtshow.innerHTML=txt[i].replaceAll('\n','<br><br><br>').replaceAll('。','。<br><br>');
 		document.body.appendChild(document.createTextNode("spk="+i));
 		document.body.appendChild(txtshow);
 
@@ -95,12 +141,12 @@ function filltzec()
 
 }
 
-var txtsec=new Array(txtarray.length);
+var txtsec=new Array(txt.length);
 
 
 var synth = window.speechSynthesis;
 var voi=null;
-var utterThis = new SpeechSynthesisUtterance(txtarray[0]);
+var utterThis = new SpeechSynthesisUtterance(txt[0]);
 utterThis.onend=vend;
 document.body.onclick=startspk;
 </script>
