@@ -40,14 +40,24 @@ FL { float:right;}
 	border:10px #f0f dotted;
 }
 
-.yki {
+.ykilongbar {
 	width:300px;
 	-webkit-filter: url(#longbar)
 }
 
-.ykis1 {
+.ykis1longbar {
 	width:211px;
 	-webkit-filter: url(#longbar)
+}
+
+.ykilongbarJ {
+	width:300px;
+	-webkit-filter: url(#longbarJ)
+}
+
+.ykis1longbarJ {
+	width:211px;
+	-webkit-filter: url(#longbarJ)
 }
 
 .ykis2 {
