@@ -635,7 +635,7 @@ function mkimh_real(imhbox,sig)
 	var humi=imhsig.split('@');
 	
 
-	var ext='.jpg';
+	var ext=exxt[10];
 	var endo=humi[1].charCodeAt(0);
 	switch(endo)
 	{
@@ -643,7 +643,7 @@ function mkimh_real(imhbox,sig)
 		ext='.gif';
 		break;
 		case 112:
-		ext='.png';
+		ext=exxt[0];
 		break;
 
 	}
@@ -1289,7 +1289,7 @@ if(fpgMode==1)
 }	
 
 
-if(ele.src.endsWith('.jpg'))
+if(ele.src.endsWith(exxt[10]))
 {
 	var naa=ele.alt;
 	if(naa)
@@ -1367,6 +1367,18 @@ ele.onmouseover=null;
 ele.onclick=kv;
 
 }
+const exxt=['.png','.b.png','.c.png','.d.png','.e.png',
+	'.f.png','.g.png','.h.png','.i.png','.j.png','.jpg'];
+
+
+function tranzsw()
+{
+	var ycrepl=this.crepl+1;
+	if(ycrepl>=this.nrepl){ycrepl=0};
+
+	this.src=this.src.split('.')[0]+exxt[ycrepl];
+	this.crepl=ycrepl;
+}
 
 function llimgThis(ele,nx,depth)
 {
@@ -1386,13 +1398,32 @@ function llimgThis(ele,nx,depth)
 			n6-=(n6%6);
 			var fnaya=chikaJ[n6+5];
 			ele.style.cssText = null;
+		
+		var isJ=false;
+		if(chikaJ[n6+4]<1.0){
 			ele.src=xjpa[0]+fnaya+'.jpg';
-			var wu=chikaJ[n6+2];
-			ele.style.zIndex= 9999;
-			ele.style.width=wu;
-		if(chikaJ[n6+4]<1.0){ele.style.webkitMask='url('+xjpa[1]+fnaya+'_j.png) 0% 0% / 100%';}
+			isJ=true;
+		} else{
+			ele.src=xjpa[1]+fnaya+'.png';
+			var dov=chikaJ[n6+1]%10;
+			if(dov>0){
+				ele.crepl=0;
+				ele.nrepl=dov+1;
+				ele.onmouseover=tranzsw;
+			}
+
+		}
 			
+			var wu=chikaJ[n6+2];
+			ele.style.width=wu;
 			ele.style.margin=(chikaJ[n6+3]>>2)+'px -'+(wu>>2)+'px';
+			ele.style.position='relative'
+			//ele.style.style.right=0
+			//ele.style.zIndex= 9999;
+			
+		if(isJ){ele.style.webkitMask='url('+xjpa[1]+fnaya+'_j.png) 0% 0% / 100%';}
+			
+			
 			
 		}
 		else
@@ -1826,15 +1857,22 @@ SVGf[1].changechika=function(n6)
 	
 	n6*=6;
 
-
+	var yv=chikaJ[n6+1];
 	if(chikaJ[n6+4]>1.0){
-		SVGf[0].changechikaPNG(chikaJ[n6],chikaJ[n6+1],chikaJ[n6+2],chikaJ[n6+3],xjpa[0]+chikaJ[n6+5]+'.png');
+		var dov=yv%10;
+		if(dov>0){
+			yv-=dov;
+			dov++;
+				
+		}
+		
+		SVGf[0].changechikaPNG(chikaJ[n6],yv,chikaJ[n6+2],chikaJ[n6+3],xjpa[1]+chikaJ[n6+5]+exxt[(n6%11)%dov]);
 		SVGf_cursvg_id='longbar';
 		return;
 	}
 	SVGf_cursvg_id='longbarJ';
 	
-	var yv=chikaJ[n6+1];
+	
 	
 
 	this.setAttribute('x',chikaJ[n6]);
@@ -1844,7 +1882,7 @@ SVGf[1].changechika=function(n6)
 
 	var img1=this.firstChild;
 	var fnaya=chikaJ[n6+5];
-	img1.setAttribute('href',xjpa[0]+fnaya+'.jpg');
+	img1.setAttribute('href',xjpa[0]+fnaya+exxt[10]);
 	img1=img1.nextSibling;
 	img1.setAttribute('href',xjpa[1]+fnaya+'_j.png');
 	
