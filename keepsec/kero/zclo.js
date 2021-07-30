@@ -159,18 +159,41 @@ function xchg6(y,nx,lop)
 
 }
 
+function xchg6J(y,nx,lop)
+{
+	y*=6;
+	nx*=6;
+
+	for(var m=0;m<lop;m++)
+	{
+		
+		var tmp=chikaJ[y];
+		chikaJ[y]=chikaJ[nx];
+		chikaJ[nx]=tmp;
+		
+		y++;
+		nx++;
+	}
+
+}
+
 function shuflocfi()
 {
 	
 	var ibz=((chika.length/6)&(-1))-1;
+	var ibzJ=((chikaJ.length/6)&(-1))-1;
 
 	for(var i=0;i<locfiL;i++)
 	{
 		
 		var nx=(Math.random() *locfiL)>>0;
 
-		xchg6(ibz,nx%ibz,6+(i&0x3f)*6);
+		var exlop=6+(i&0x3f)*6;
+		xchg6(ibz,nx%ibz,exlop);
+		xchg6J(ibzJ,nx%ibzJ,exlop);
 		ibz--;
+		ibzJ--;
+		
 		//if(ibz<=0){ibz=((chika.length/6)&(-2))-2;}
 
 		
@@ -1370,14 +1393,82 @@ ele.onclick=kv;
 const exxt=['.png','.b.png','.c.png','.d.png','.e.png',
 	'.f.png','.g.png','.h.png','.i.png','.j.png','.jpg'];
 
+function rstopev(ele)
+{
+
+	klyi&=0xffffff0f;
+	ele.style.pointerEvents='auto';
+if(ele.nrepl){
+	ele.onmousemove=tranzsw;
+	
+}
+}
+
+function rstomovr(ele)
+{
+if(ele.nrepl){
+
+	ele.style.pointerEvents='none';
+	setTimeout(function(){rstopev(ele)}, 1500);
+}
+}
 
 function tranzsw()
 {
-	var ycrepl=this.crepl+1;
-	if(ycrepl>=this.nrepl){ycrepl=0};
 
-	this.src=this.src.split('.')[0]+exxt[ycrepl];
-	this.crepl=ycrepl;
+	klyi++;
+	if(klyi&0xf0)
+	{
+	
+	var ele=this;
+	ele.onmousemove=null;
+	
+	var ycrepl=ele.crepl+1;
+	if(ycrepl>=ele.nrepl){ycrepl=0};
+
+	ele.src=ele.src.split('.')[0]+exxt[ycrepl];
+	ele.crepl=ycrepl;
+
+	
+	setTimeout(function(){rstomovr(ele);}, 1500);
+	}
+
+}
+
+
+
+function traspscale()
+{
+	this.onload=null;
+	var skl=(this.wu/this.naturalWidth).toFixed(3);
+	this.style.webkitTransform='matrix('+skl+',0,0,'+skl+',0,-'+this.hu+')';
+
+}
+
+function through15s3(ele)
+{
+	
+	ele.style.pointerEvents='auto';
+if(ele.nrepl){
+	ele.onmouseover=through15s;
+	
+}
+}
+
+function through15s2(ele)
+{
+	if(ele.nrepl){
+	ele.style.pointerEvents='none';
+	setTimeout(function(){through15s3(ele)}, 1500);
+	}
+}
+
+function through15s()
+{
+	var ele=this;
+	ele.onmouseover=null;
+	setTimeout(function(){through15s2(ele);}, 1500);
+
 }
 
 function llimgThis(ele,nx,depth)
@@ -1392,7 +1483,8 @@ function llimgThis(ele,nx,depth)
 		
 		if(cursvg==1)
 		{
-			ele.onmouseover=null;
+			ele.onmouseover=through15s;
+			ele.nrepl=99;
 			ele.onclick=hv0fast[1];
 			var n6=Math.random() *chikaJ.length;
 			n6-=(n6%6);
@@ -1409,17 +1501,21 @@ function llimgThis(ele,nx,depth)
 			if(dov>0){
 				ele.crepl=0;
 				ele.nrepl=dov+1;
-				ele.onmouseover=tranzsw;
+				ele.onmouseover=null;
+				ele.onmousemove=tranzsw;
+				//ele.onmouseover=tranzsw;
 			}
 
 		}
 			
-			var wu=chikaJ[n6+2];
+			ele.wu=chikaJ[n6+2];
+			ele.hu=(chikaJ[n6+3]>>2);
+			ele.onload=traspscale;
+			/*
 			ele.style.width=wu;
-			ele.style.margin=(chikaJ[n6+3]>>2)+'px -'+(wu>>2)+'px';
+			ele.style.margin='-'+hu+'px -'+(wu>>2)+'px '+hu+'px';
 			ele.style.position='relative'
-			//ele.style.style.right=0
-			//ele.style.zIndex= 9999;
+			*/
 			
 		if(isJ){ele.style.webkitMask='url('+xjpa[1]+fnaya+'_j.png) 0% 0% / 100%';}
 			
@@ -1566,7 +1662,10 @@ var hv0fast=new Array(2);
 hv0fast[0]=function(e) {hv0func(e.currentTarget,0x100);}
 hv0fast[1]=function(e) {
 
+
 var tg=e.currentTarget;
+tg.onmousemove=null;
+tg.nrepl=0;
 /*
 var h8p=tg.height>>3;
 var w8p=tg.width>>3;
@@ -1833,7 +1932,7 @@ SVGf[0].changechika=function(n6)
 }
 
 
-var SVGf_cursvg_id=null;
+var SVGf_cursvg_id='longbar';
 
 SVGf[0].changechikaPNG=function(x,y,wid,hgt,pic)
 {
@@ -1850,15 +1949,17 @@ SVGf[0].changechikaPNG=function(x,y,wid,hgt,pic)
 const xjpa=['0bak/tu/xj/','0bak/tu/xj/fyn/gb/'];
 SVGf[1].changechika=function(n6)
 {
-	n6=n6&0x1f;
+	n6=n6&0x1ff;
 	
 	if(this.fna===n6){return;}
 	this.fna=n6;
 	
-	n6*=6;
+	
 
-	var yv=chikaJ[n6+1];
-	if(chikaJ[n6+4]>1.0){
+	
+	if(chikaJ[n6*6+4]>0){
+		SVGf[0].changechika(n6);
+		/*
 		var dov=yv%10;
 		if(dov>0){
 			yv-=dov;
@@ -1867,9 +1968,12 @@ SVGf[1].changechika=function(n6)
 		}
 		
 		SVGf[0].changechikaPNG(chikaJ[n6],yv,chikaJ[n6+2],chikaJ[n6+3],xjpa[1]+chikaJ[n6+5]+exxt[(n6%11)%dov]);
+		*/
 		SVGf_cursvg_id='longbar';
 		return;
 	}
+	n6*=6;
+	var yv=chikaJ[n6+1];
 	SVGf_cursvg_id='longbarJ';
 	
 	
