@@ -1,0 +1,387 @@
+<html>
+<body>
+<style>
+.hyde {
+	display:none;
+}
+.scal2x {
+	-webkit-transform: matrix(2,0,0,2,0,0);
+	margin: 500px;
+}
+</style>
+<svg><defs>
+<filter id="sharpen"><feConvolveMatrix order="5 5" preserveAlpha="true" 
+kernelMatrix="-1 -1 -1 -1 -1
+	-1 -1 -1 -1 -1
+	-1 -1 50 -1 -1
+	-1 -1 -1 -1 -1
+	-1 -1 -1 -1 -1"/></filter>
+
+<filter id="edge5x5"><feConvolveMatrix order="5 5" preserveAlpha="true" 
+kernelMatrix="-1 -1 -1 -1 -1
+	-1 -1 -1 -1 -1
+	-1 -1 24 -1 -1
+	-1 -1 -1 -1 -1
+	-1 -1 -1 -1 -1"/></filter>
+
+</defs></svg>
+
+</body>
+<script>
+
+function mkele(tag,claz='',apnd=true)
+{
+	var ele=document.createElement(tag);
+	if(claz){ele.className=claz;}
+	if(apnd){document.body.appendChild(ele);}
+	return ele;
+}
+
+function mkcanvas(dstctxarr,dsti,claz='')
+{
+	var ele=mkele('canvas',claz);
+
+	ele.width = bsimgw;
+	ele.height = bsimgh;
+	dstctxarr[dsti] = ele.getContext("2d");
+
+}
+
+function addSourceToVideo(element, src, type) {
+    var source = document.createElement('source');
+
+    source.src = src;
+    source.type = type;
+
+    element.appendChild(source);
+}
+
+var outputname=null;
+
+
+var bsimg=mkele('img','hyde');
+var bsvid=mkele('video','hyde');
+//bsvid.preload=true;
+bsvid.autoplay = true;
+bsvid.muted = true;
+bsvid.onplaying=buildframez;
+var canv=mkele('canvas');
+var ctx;
+var imgd;
+var frames;
+var frames_ctx;
+var frames_imgd;
+var frames_map;
+var frameloaded=0;
+var infoz=mkele('h2');
+
+
+
+
+
+
+function loadvid(sna)
+{
+	outputname=sna;
+	addSourceToVideo(bsvid,'enc/'+sna+'.mp4','video/mp4');
+	bsvid.play();
+	bsimg.src='zb'+sna+'.png';
+	
+}
+
+
+
+function buildframez()
+{
+	this.onplaying=null;
+	this.pause();
+
+	frmcot=this.webkitDecodedFrameCount;
+	bsimgw=this.videoWidth;
+	bsimgh=this.videoHeight;
+	
+
+	canv.width = bsimgw;
+	canv.height = bsimgh;
+	ctx = canv.getContext("2d");
+	
+	frames = new Array(frmcot);
+	frames_ctx = new Array(frmcot);
+	frames_imgd = new Array(frmcot);
+	frames_map = new Array(frmcot-1);
+
+	for(let i=0;i<frmcot;i++)
+	{
+		frames[i]=mkcanvas(frames_ctx,i,'hyde');
+		setTimeout(function(){draw_t(i);},100+i*100);
+		
+	}
+
+
+}
+
+function draw_t(ynt)
+{
+	bsvid.currentTime=ynt*10.001;
+	setTimeout(function(){draw(ynt);},100);
+}
+
+function draw(ynt)
+{
+	frames_ctx[ynt].drawImage(bsvid, 0, 0, bsimgw, bsimgh);
+	frames_imgd[ynt]=frames_ctx[ynt].getImageData(0, 0, bsimgw, bsimgh);
+
+	frameloaded++;
+	if(frameloaded==frmcot)
+	{
+		proc2();
+	}
+}
+
+function mktriang(dmap)
+{
+	for(var y=1;y<h4-1;y++)
+	{
+		for(var x=1;x<w4-1;x++)
+		{
+			var bzdir=y*w4+x;
+			if(dmap[bzdir]==0xff)
+			{
+				var kw=(dmap[(y-1)*w4+(x)]==0)?1:0;
+				var ka=(dmap[(y)*w4+(x-1)]==0)?2:0;
+				var ks=(dmap[(y+1)*w4+(x)]==0)?4:0;
+				var kd=(dmap[(y)*w4+(x+1)]==0)?8:0;
+				
+				var syum=(kw+ka+ks+kd);
+				//syum=(syum-(syum%3))/3;
+				
+				if(syum>0){dmap[bzdir]=syum;}
+				
+				/*
+				if((kw&&ka)&&!(ks||kd)){dmap[bzdir]=1;}
+				else if((kw&&kd)&&!(ks||ka)){dmap[bzdir]=2;}
+				else if((ka&&ks)&&!(kw||kd)){dmap[bzdir]=3;}
+				else if((kd&&ks)&&!(kw||ka)){dmap[bzdir]=4;}
+				*/
+			}
+		}
+
+	}
+
+}
+
+function proc2()
+{
+
+	ctx.drawImage(bsimg, 0, 0, bsimgw, bsimgh);
+	imgd=ctx.getImageData(0, 0, bsimgw, bsimgh);
+	var b8=imgd.data;
+	
+
+	var dmap=new Uint8Array((bsimgw*bsimgh)>>6);
+	dmap.fill(0);
+
+	var b8bs=frames_imgd[0].data;
+	var b8df=frames_imgd[1].data;
+
+	w4=bsimgw>>3;
+	h4=bsimgh>>3;
+
+	for(var y4=0;y4<h4;y4++)
+	{
+		//var by4=(y4<<2)*bsimgw
+		for(var x4=0;x4<w4;x4++)
+		{
+			var difadd=0;
+			//var bx4=(x4<<2);
+			for(var y=0;y<8;y++)
+			{
+				//var by=y*bsimgw;
+				for(var x=0;x<8;x++)
+				{
+					var k=((y4*8+y)*bsimgw+(x4*8+x))<<2;
+					//k=(by4+by+bx4+x)<<2;
+					difadd+=distEuclidean(b8bs[k],b8bs[k+1],b8bs[k+2],b8df[k],b8df[k+1],b8df[k+2]);
+				}
+			}
+			
+			if(difadd<0xff)
+			{
+				dmap[y4*w4+x4]=0xff;
+				/*
+				for(var y=0;y<8;y++)
+				{
+					
+					for(var x=0;x<8;x++)
+					{
+						var k=((y4*8+y)*bsimgw+(x4*8+x))<<2;
+						b8[k]=0;
+						b8[k+1]=0;
+						b8[k+2]=0;
+						b8[k+3]=0;
+					}
+				}
+				*/
+
+			}
+			
+			//if(difadd>0xfe){difadd=0xff;}
+			
+			//dmap[y4*w4+x4]=difadd;
+		}
+
+	}
+
+	mktriang(dmap);
+
+
+	for(var y4=0;y4<h4;y4++)
+	{
+		for(var x4=0;x4<w4;x4++)
+		{
+			var pdvalue=dmap[y4*w4+x4];
+			var dvalue=pdvalue/3;
+
+			if(dvalue==1 || pdvalue==7 || pdvalue==11) {
+				for(var y=0;y<8;y++)
+				{
+					
+					for(var x=(8-y);x<8;x++)
+					{
+						var k=((y4*8+y)*bsimgw+(x4*8+x))<<2;
+						b8[k]=0;
+						b8[k+1]=0;
+						b8[k+2]=0;
+						b8[k+3]=0;
+					}
+				}
+
+			} else if(dvalue==3) {
+				for(var y=0;y<8;y++)
+				{
+					
+					for(var x=0;x<y;x++)
+					{
+						var k=((y4*8+y)*bsimgw+(x4*8+x))<<2;
+						b8[k]=0;
+						b8[k+1]=0;
+						b8[k+2]=0;
+						b8[k+3]=0;
+					}
+				}
+
+			} else if(dvalue==2) {
+
+				for(var y=0;y<8;y++)
+				{
+					
+					for(var x=(y+1);x<8;x++)
+					{
+						var k=((y4*8+y)*bsimgw+(x4*8+x))<<2;
+						b8[k]=0;
+						b8[k+1]=0;
+						b8[k+2]=0;
+						b8[k+3]=0;
+					}
+				}
+			
+			} else if(dvalue==4 || pdvalue==13 || pdvalue==14) {
+
+				for(var y=0;y<8;y++)
+				{
+					
+					for(var x=0;x<(7-y);x++)
+					{
+						var k=((y4*8+y)*bsimgw+(x4*8+x))<<2;
+						b8[k]=0;
+						b8[k+1]=0;
+						b8[k+2]=0;
+						b8[k+3]=0;
+					}
+				}
+			} else if(dvalue==5) {
+				for(var y=2;y<6;y++)
+				{
+					
+					for(var x=2;x<6;x++)
+					{
+						var k=((y4*8+y)*bsimgw+(x4*8+x))<<2;
+						b8[k]=0;
+						b8[k+1]=0;
+						b8[k+2]=0;
+						b8[k+3]=0;
+					}
+				}
+			
+
+			}else if(dvalue!=0){
+				for(var y=0;y<8;y++)
+				{
+					
+					for(var x=0;x<8;x++)
+					{
+						var k=((y4*8+y)*bsimgw+(x4*8+x))<<2;
+						b8[k]=0;
+						b8[k+1]=0;
+						b8[k+2]=0;
+						b8[k+3]=0;
+					}
+				}
+			} 
+		}
+	}
+
+
+	ctx.putImageData(imgd, 0, 0);
+
+	//frames_map[0]=dmap;
+	setTimeout(dl,500);
+
+	
+
+}
+
+const Pr = 0.2126, Pg = 0.7152, Pb = 0.0722;
+
+
+function distEuclidean(r0,g0,b0,r,g,b) {
+var rd = r-r0;
+var gd = g-g0;
+var bd = b-b0;
+
+var sumu=Pr*rd*rd + Pg*gd*gd + Pb*bd*bd;
+if(sumu==0){return 0;}
+
+return Math.sqrt(sumu) <<0;
+}
+
+function dl()
+{
+var link = document.createElement('a');
+	link.download = 'zb'+outputname+'_v.png';
+	link.href = canv.toDataURL("image/png");
+	link.click();
+	link.remove();
+
+}
+
+
+
+
+
+
+
+function byurl()
+{
+	var uv=location.href.split('?');
+	if(uv.length>1)
+	{
+		loadvid(uv[1]);
+	}
+
+}
+
+byurl();
+
+</script>
+</html>
