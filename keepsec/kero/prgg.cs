@@ -122,6 +122,24 @@ namespace eroneto
 		[DllImport("kernel32.dll")]
 		public static extern uint GetTickCount();
 		
+		
+		public static string[] vtwimg={
+			"https://pbs.twimg.com/ext_tw_video_thumb/",	"https://pbs.twimg.com/amplify_video_thumb/",	"https://pbs.twimg.com/tweet_video_thumb/","https://pbs.twimg.com/media/"};
+		public static string[] vtwvid={
+			"https://video.twimg.com/ext_tw_video/",		"https://video.twimg.com/amplify_video/",		"https://video.twimg.com/tweet_video/"};
+		public static string[] vtwsig=	{
+			string.Empty,									"@",											"!",										"+"};
+		
+		static string trimthumb(string thupic)
+		{
+			for(int i=0;i<4;i++)
+			{
+				thupic = thupic.Replace(vtwimg[i], vtwsig[i]);
+				if (thupic[0] != 'h') {return thupic;}
+			}
+			return thupic;
+		}
+		
 		public static char[] sep0x5d = { ']' };
 		public static char[] sepDuo = { ',' };
 		public static char[] sepdot = { '.' };
@@ -540,7 +558,7 @@ namespace eroneto
 			string[] html=File.ReadAllLines("twtkold.csv");
 			int nl=html.Length;
 			
-			for(int i=0;i<nl;i++)
+			for(int i=0;i<nl;i+=2)
 			{
 				deuu.Add(html[i]);
 			}
@@ -548,7 +566,7 @@ namespace eroneto
 			html=File.ReadAllLines("twtknu.csv");
 			nl=html.Length;
 			
-			for(int i=0;i<nl;i++)
+			for(int i=0;i<nl;i+=2)
 			{
 				deuu.Add(html[i]);
 			}
@@ -566,12 +584,22 @@ namespace eroneto
 					
 					nl=html.Length;
 					
+					bool dowrtymg=false;
 					for(int i=0;i<nl;i++)
 					{
-						if(html[i]==" value="&&html[i-1]=="x")
+						if(dowrtymg&&html[i]=="><img data-src=")
+						{
+							
+							swtwtk.WriteLine(trimthumb(html[i+1]));
+							dowrtymg=false;
+						}
+						else if(html[i]==" value="&&html[i-1]=="x")
 						{
 							if(chknwrt(html[i+1]))
-							{gsome++;}
+							{
+								dowrtymg=true;
+								
+								gsome++;}
 							
 							
 							
@@ -581,7 +609,7 @@ namespace eroneto
 					{Console.WriteLine("tk2d"+pg+", "+gsome);}
 					
 				
-				
+				dowrtymg=false;
 				gsome=0;
 				try{
 						html = dndr.DownloadString("https://tw-dl.net/hozon.php?p="+pg).Split(sepQuo);
@@ -596,7 +624,9 @@ namespace eroneto
 						{
 							
 							if(chknwrt(html[i].Split('=')[1]))
-							{gsome++;}
+							{
+								swtwtk.WriteLine(trimthumb(html[i+2].Split('?')[0]));
+								gsome++;}
 						}
 					
 					}
@@ -635,79 +665,6 @@ namespace eroneto
 
 		}
 		
-		static void rrsrt(string fna,string ky="ky.txt")
-		{
-			fna+=".txt";
-			Dictionary<ulong,List<string>> oq = new Dictionary<ulong,List<string>>();
-			string[] kyy=File.ReadAllLines(ky);
-			int kyl=kyy.Length;
-			
-			
-			
-			
-			string[] stt=File.ReadAllLines("../"+fna);
-			int sttl=stt.Length;
-			bool endpause=false;
-			
-			
-			string lztsig=string.Empty;
-			for(int i=0;i<sttl;i++)
-			{
-				var oz=stt[i].Replace(" ",string.Empty).Split(sepDuo);
-				var ozl=oz.Length;
-				
-				if(ozl[0]==lztsig)
-				{
-					Console.WriteLine(oz[2]);
-					lztsig=oz[0];
-					endpause=true;
-					continue;
-				}
-				lztsig=oz[0];
-				
-				
-				
-				for(int v=0;v<3;v++)
-				{
-					oz[v]=string.Empty;
-					
-				}
-				string tztstr=string.Join(",",oz);
-				
-				ulong skor=0;
-				
-				for(int v=0;v<kyl;v++)
-				{
-					if(tztstr.Contains(kyy[v]))
-					{
-						skor+=(1<<v);
-					}
-					
-				}
-				
-				List<string> kle;
-				if(oq.TryGetValue(skor,out kle))
-				{
-					kle.Add(stt[i]);
-				}
-				else
-				{
-					kle=new List<string>();
-					kle.Add(stt[i]);
-					oq[skor]=kle;
-				}
-				
-			}
-			
-			var sortedDict = from entry in oq orderby entry.Key descending select entry.Value;
-			List<string> rzt=new List<string>();
-			foreach(var ss in sortedDict)
-			{
-				rzt.Add(string.Join("\n",ss));
-			}
-			File.WriteAllText(fna,string.Join("\n",rzt));
-		
-		}
 		
 		static string[] imgextt={".jpg",".png",".gif"};
 		
@@ -863,8 +820,8 @@ namespace eroneto
 			
 
 			//client.Encoding = Encoding.UTF8; 
-			imhan_all(new WebClient());
-			//system("pause");
+			twtk(new WebClient());
+			system("pause");
 			
 		}
 		const string schpa=@"Q:\z\bookpdf\0bak\tu\ar\";

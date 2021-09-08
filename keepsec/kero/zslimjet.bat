@@ -1,0 +1,1 @@
+start "" zb\smj\slimjet.exe --allow-file-access-from-files --allow-file-access --allow-cross-origin-auth-prompt --user-data-dir="Q:\z\bookpdf\zb\smj\pf" --disk-cache-dir=fuck:\yaawa\

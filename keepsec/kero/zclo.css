@@ -34,6 +34,10 @@ img {
 }
 FL { float:right;}
 
+.jmask {
+	-webkit-mask-image: url(0bak/tu/xj/fyn/gb/69tjx4l7im_j.png);
+}
+
 .yka {
 	display: inline-block;
 	vertical-align: text-top;
