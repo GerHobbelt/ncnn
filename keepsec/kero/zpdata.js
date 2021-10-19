@@ -49,7 +49,7 @@ var chika=[
 -52,164,700,570,0.5,'sjm324',
 -252,204,500,570,0.5,'sjm101',
 //========
--342,203,600,600,0.5,'pux651',
+-342,204,600,600,0.5,'pux651',
 -391,204,700,540,0.5,'pux495',
 -91,204,700,800,0.5,'pux330',
 11,203,750,500,0.5,'pux256',
@@ -3136,8 +3136,8 @@ var chikaJ=[
 const area8=[2,0,2,2,2, 0, 2,2,	//x
 	1,1, 1, 0,1,1,1,0];	//y
 
-
-const chikagifpa=['0bak/tu/','0bak/tu/xx/_',
+const chikagifpa1='0bak/tu/xx/_';
+const chikagifpa=['0bak/tu/',
 '0bak/tu/xx/b_','0bak/tu/xx/c_','0bak/tu/xx/d_',
 '0bak/tu/xx/e_','0bak/tu/xx/f_','0bak/tu/xx/g_',
 '0bak/tu/xx/h_'];

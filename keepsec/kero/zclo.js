@@ -700,6 +700,9 @@ function mkimh_real(imhbox,sig)
 		case 103:
 		ext='.gif';
 		break;
+		case 116:
+		ext='t.jpg';
+		break;
 		case 112:
 		ext=exxt[0];
 		break;
@@ -1295,7 +1298,7 @@ function lynklocfi_small(sig)
 	if(n6&2)
 	{
 		n6*=6;
-		var chkkpai=chikagifpa[1];
+		var chkkpai=chikagifpa1;
 		var dov=chika[1+n6]%10;
 		if(dov>0){
 		
