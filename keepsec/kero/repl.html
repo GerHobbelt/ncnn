@@ -1,12 +1,15 @@
 <html><head><base target="_blank"><style>
 .i200 {width: 200px;}
 .i400 {width: 400px;}
-iframe {border:10px #ff0 solid;}
-</style><script>
+object {border:30px #440 solid;}
+</style></head><body><textarea id="team" rows=20 cols=300 ondblclick=repurl(this)></textarea><br>
+<object data="repl.txt"></object> <object data="twtknu.csv"></object> <object data="repl_v.txt"></object>
+
+<script>
 var klyk=-1;
 var lynks=null;
 var keynv=true;
-
+var tblarea = document.getElementById('team');
 
 function kypreUP(e) {
 if(keynv)
@@ -49,13 +52,31 @@ var ele=e.currentTarget;
 window.open(vidstr(ele.alt), null, null);
 }
 
-var twsyg='https://www.twi-videos.net/v.php?video=';	//'https://twitter.com/i/status/'
+var twsyg=null;
+
+function dtw(){twsyg='https://twitter.com/i/status/';}
+function dps(){twsyg='https://tw.monstics.com/v';}
+function dhz(){twsyg='https://www.twi-videos.net/v.php?video=';}
+dhz();
 
 var kvpg=function(e)
 {
 var ele=e.currentTarget;
 ele.className='';
 window.open(twsyg+ele.alt, null, null);
+
+}
+
+const frmta='" /></form><scr'+'ipt src="kform.js"></scr'+'ipt></body></html>';
+
+var kvpg_fall=function(e)
+{
+var ele=e.currentTarget;
+ele.className='';
+
+var wnd=window.open("", null, null);
+wnd.document.write('<html><body><form method="post" action="https://tk2dl.com/t/playtw.html"><input type="hidden" name="x" value="'+ele.alt+
+frmta);
 
 }
 
@@ -107,11 +128,19 @@ function mkymg(str)
 
 }
 
-
-
 function repurl(yina)
 {
-var yza=yina.value.split('\n');
+	repurl_r(yina.value);
+}
+
+function repurlo()
+{
+	repurl_r(this.contentDocument.body.children[0].innerText);
+}
+
+function repurl_r(oyza)
+{
+var yza=oyza.split('\n');
 var yzal=yza.length;
 
 document.body.style.backgroundColor = 'black';
@@ -139,7 +168,7 @@ if(yza[0].charCodeAt(0)==118)	//==v
 	{
 	if(yza[i].charCodeAt(0)==59){
 		var azo=yza[i].split(';');
-		yza[i]=kx1+azo[1]+kx2;
+		yza[i]=kx1+azo[2]+kx2;
 		imgarr[yzal-i]='<img class="i400" title="'+azo[1]+'" alt=";'+azo[2]+mgx3;
 		}
 	else{
@@ -153,7 +182,7 @@ if(yza[0].charCodeAt(0)==118)	//==v
 	
 }
 
-yina.outerHTML=imgarr.join('x')+yza.join(' ');
+tblarea.outerHTML=imgarr.join('x')+yza.join(' ');
 
 lynks=document.getElementsByTagName('img');
 klyk=lynks.length;
@@ -178,5 +207,13 @@ function largsvg(ele)
 	islarg=true;
 }
 
-</script></head><body><textarea rows=40 cols=300 ondblclick=repurl(this)></textarea><br>
-<object data="repl.txt"></object><object data="twtknu.csv"></object><br><br><br><br><iframe src="effsvg.svg.txt" onfocus=largsvg(this)></iframe></body></html>
+function attachobj()
+{
+	var ob=document.getElementsByTagName("object");
+	for (var i=0; i<ob.length; i++) {ob[i].onfocus=repurlo;}
+
+}
+
+attachobj();
+
+</script></body></html>

@@ -140,6 +140,16 @@ namespace eroneto
 			return thupic;
 		}
 		
+		static string trimvid(string vid)
+		{
+			for(int i=0;i<3;i++)
+			{
+				vid = vid.Replace(vtwvid[i], vtwsig[i]);
+				if (vid[0] != 'h') {return vid;}
+			}
+			return vid;
+		}
+		
 		public static char[] sep0x5d = { ']' };
 		public static char[] sepDuo = { ',' };
 		public static char[] sepdot = { '.' };
@@ -147,6 +157,7 @@ namespace eroneto
 		public static char[] sepXie = { '/' };
 		public static char[] sepTab = { '\t' };
 		public static char[] sepQuo = { '\"' };
+		public static char[] sepQuo_s = { '\'' };
 		public static char[] sepArwQuo = { '<','>','\''};
 		const int sepjslen=50000;
 		
@@ -543,6 +554,9 @@ namespace eroneto
 		static HashSet<string> deuu = new HashSet<string>();
 		static StreamWriter swtwtk;
 		
+		static HashSet<string> deuu2 = new HashSet<string>();
+		static StreamWriter swtwtk2;
+		
 		static bool chknwrt(string src)
 		{
 			if (!deuu.Contains(src)) {
@@ -551,6 +565,16 @@ namespace eroneto
 					return true;}
 			return false;
 		}
+		
+		static bool chknwrt2(string src)
+		{
+			if (!deuu2.Contains(src)) {
+					deuu2.Add(src);
+					swtwtk2.WriteLine(src);
+					return true;}
+			return false;
+		}
+		static StreamWriter replv;
 		
 		static void twtk(WebClient dndr)
 		{
@@ -571,15 +595,33 @@ namespace eroneto
 				deuu.Add(html[i]);
 			}
 			
+			html=File.ReadAllLines("twtkold_v.csv");
+			nl=html.Length;
+			
+			for(int i=0;i<nl;i+=2)
+			{
+				deuu2.Add(html[i]);
+			}
+			
+			html=File.ReadAllLines("twtknu_v.csv");
+			nl=html.Length;
+			
+			for(int i=0;i<nl;i+=2)
+			{
+				deuu2.Add(html[i]);
+			}
+			
 			
 			swtwtk = File.AppendText("twtknu.csv");
-			for(int pg=0;pg<315;pg++)
+			swtwtk2 = File.AppendText("twtknu_v.csv");
+			replv = File.AppendText("repl_v.txt");
+			for(int pg=0;pg<101;pg++)
 			{
 				int gsome=0;
-				
+				int zyo=((pg%12)*40);
 					
 					try{
-						html = dndr.DownloadString("https://tk2dl.com/t/recent.html?start="+((pg%12)*40)).Split(sepQuo);
+						html = dndr.DownloadString("https://tk2dl.com/t/recent.html?start="+zyo).Split(sepQuo);
 					}catch{}
 					
 					nl=html.Length;
@@ -606,37 +648,127 @@ namespace eroneto
 						}
 					}
 					if(gsome!=0)
-					{Console.WriteLine("tk2d"+pg+", "+gsome);}
+					{Console.WriteLine("tk2d"+zyo+", "+gsome);}
 					
+					if(zyo==0){
+						dowrtymg=false;
+						gsome=0;
+						try{
+								html = dndr.DownloadString("https://www.twi-videos.net/hozon.php").Split(sepQuo);
+							}catch{}
+						nl=html.Length;
+						for(int i=0;i<nl;i++)
+						{
+							int hlll=html[i].Length;
+							if(hlll>0x10&&hlll<0x24)
+							{
+								if(html[i].StartsWith("./v.php?video="))
+								{
+									
+									if(chknwrt(html[i].Split('=')[1]))
+									{
+										swtwtk.WriteLine(trimthumb(html[i+2].Split('?')[0]));
+										gsome++;}
+								}
+							
+							}
+						}
+						if(gsome!=0){Console.WriteLine("hozon, "+gsome);}
+					}
+				
 				
 				dowrtymg=false;
 				gsome=0;
+				List<string> dyl=new List<string>();
 				try{
-						html = dndr.DownloadString("https://tw-dl.net/hozon.php?p="+pg).Split(sepQuo);
+						html = dndr.DownloadString("https://tw.monstics.com/user/postman080/?page="+pg).Split(sepQuo);
 					}catch{}
 				nl=html.Length;
 				for(int i=0;i<nl;i++)
 				{
-					int hlll=html[i].Length;
-					if(hlll>0x10&&hlll<0x24)
+					if(html[i].StartsWith("https://tw.monstics.com/v"))
 					{
-						if(html[i].StartsWith("./v.php?video="))
+						string seaa=html[i].Substring(25);
+						if(chknwrt2(seaa))
 						{
-							
-							if(chknwrt(html[i].Split('=')[1]))
-							{
-								swtwtk.WriteLine(trimthumb(html[i+2].Split('?')[0]));
-								gsome++;}
+							dyl.Add(seaa);
+							swtwtk2.WriteLine("-");
+							//swtwtk2.WriteLine(trimthumb(html[i-6].Split('?')[0]));
+							gsome++;
 						}
-					
 					}
 				}
-				if(gsome!=0)
-				{Console.WriteLine("hozon"+pg+", "+gsome);}
-				else {Console.WriteLine("---nohozon"+pg);}
+				
 				swtwtk.Flush();
-				Thread.Sleep(30000);
+				swtwtk2.Flush();
+				
+				if(gsome!=0)
+				{
+					Console.WriteLine("pst"+pg+", "+gsome);
+					int pautime=150000/gsome;
+					if(pautime>10000){pautime=10000;}
+					
+					foreach(string dy in dyl)
+					{
+						twtk_dlv(dndr,dy);
+						Thread.Sleep(pautime);
+					}
+					
+					pautime=30000-(pautime*gsome);
+					if(pautime>0)
+					{
+						Thread.Sleep(pautime);
+					}
+				
+				}
+				else {
+					Console.WriteLine("---nopst"+pg);
+					Thread.Sleep(30000);
+				}
+				
+				
+				
+				
+				
+				
+				
+				
 			}
+			replv.Close();
+			swtwtk.Close();
+			swtwtk2.Close();
+		}
+		static void twtk_dlv(WebClient dndr,string chife)
+		{
+			try{
+						
+						
+						string htmlst = dndr.DownloadString("https://tw.monstics.com/abuse_reporting_tool.php?v="+chife);
+						if(htmlst.Length>20)
+						{
+							string[] html=htmlst.Split(sepQuo);
+							int nl=html.Length;
+							
+							for(int i=0;i<nl;i++)
+							{
+								if(html[i]=="><img src=")
+								{
+									string keti=trimthumb(html[i+1].Split('?')[0])+"\t"+trimvid(html[i-1])+"\tv"+chife;
+									
+									replv.WriteLine(keti);
+									//Console.WriteLine(keti);
+									replv.Flush();
+									break;
+								}
+							}
+							
+							
+							
+							
+						}
+						
+							
+					}catch{}
 		}
 
 		const string gpir=@"Q:\z\bookpdf\0bak\tu\ar\2\g\";
@@ -665,6 +797,59 @@ namespace eroneto
 
 		}
 		
+		static void twtk_fixvrepl(WebClient dndr)
+		{
+			StreamWriter replfx = File.AppendText("replfx.txt");
+			string[] ofe=File.ReadAllLines("twtknu_v00.csv");
+			int ofel=ofe.Length;
+			
+			for(int jj=0;jj<ofel;jj+=2)
+			{
+				string tz=ofe[jj];
+				if(tz.Length>10)
+				{
+					
+					try{
+						string chife=tz;//tz.Split(sepQuo_s)[1];
+						
+						string htmlst = dndr.DownloadString("https://tw.monstics.com/abuse_reporting_tool.php?v="+chife);
+						if(htmlst.Length>20)
+						{
+							string[] html=htmlst.Split(sepQuo);
+							int nl=html.Length;
+							
+							for(int i=0;i<nl;i++)
+							{
+								if(html[i]=="><img src=")
+								{
+									string keti=trimthumb(html[i+1].Split('?')[0])+"\t"+trimvid(html[i-1])+"\tv"+chife;
+									//ofe[jj]=string.Empty;
+									//ofe[jj+1]=string.Empty;
+									replfx.WriteLine(keti);
+									Console.WriteLine(keti);
+									replfx.Flush();
+									break;
+								}
+							}
+							
+							
+							
+							
+						}
+						Thread.Sleep(10000);
+							
+					}catch{}
+					
+					
+					
+					
+				}
+			}
+			replfx.Close();
+
+			//File.WriteAllLines("twtknufix.csv+",ofe);
+		}
+		
 		
 		static string[] imgextt={".jpg",".png",".gif"};
 		
@@ -687,12 +872,16 @@ namespace eroneto
 			swtwtk = File.AppendText(cfn);
 			
 			
+			string[] kon=File.ReadAllLines(@"Q:\z\bookpdf\0bak\tu\ar\2\v\"+sta+".txt");
+			int konl=kon.Length;
 			
 			
-			
-			
-			for(int i=sta;i<688500;i+=512)
+			//for(int i=688500+sta;i<730000;i+=32)
+			for(int uuu=0;uuu<konl;uuu++)
 			{
+				string i=kon[uuu];
+					
+					
 				uint timesta=GetTickCount();
 				try{
 				html = dndr.DownloadString("https://imhentai.xxx/gallery/"+i+"/").Split(sepArwQuo);
@@ -821,7 +1010,7 @@ namespace eroneto
 
 			//client.Encoding = Encoding.UTF8; 
 			twtk(new WebClient());
-			system("pause");
+			//system("pause");
 			
 		}
 		const string schpa=@"Q:\z\bookpdf\0bak\tu\ar\";
