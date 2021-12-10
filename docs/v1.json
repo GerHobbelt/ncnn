@@ -90,6 +90,15 @@
     "Status": "GA"
   },
   {
+    "Name": "zh-CN-XiaoyouNeural",
+    "ShortName": "zh-CN-XiaoyouNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Microsoft Xiaoyu Online (Natural) - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
     "Name": "Microsoft Server Speech Text to Speech Voice (zh-CN, YunyangNeural)",
     "ShortName": "zh-CN-YunyangNeural",
     "Gender": "Female",
