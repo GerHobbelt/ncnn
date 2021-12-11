@@ -1,92 +1,12 @@
 [
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (af-ZA, AdriNeural)",
-    "ShortName": "af-ZA-AdriNeural",
-    "Gender": "Female",
-    "Locale": "af-ZA",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Adri Online (Natural) - Afrikaans (South Africa)",
-    "Status": "GA"
-  },
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (am-ET, MekdesNeural)",
-    "ShortName": "am-ET-MekdesNeural",
-    "Gender": "Female",
-    "Locale": "am-ET",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Mekdes Online (Natural) - Amharic (Ethiopia)",
-    "Status": "GA"
-  },
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (ar-EG, SalmaNeural)",
-    "ShortName": "ar-EG-SalmaNeural",
-    "Gender": "Female",
-    "Locale": "ar-EG",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Salma Online (Natural) - Arabic (Egypt)",
-    "Status": "GA"
-  },
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (ar-SA, ZariyahNeural)",
-    "ShortName": "ar-SA-ZariyahNeural",
-    "Gender": "Female",
-    "Locale": "ar-SA",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Zariyah Online (Natural) - Arabic (Saudi Arabia)",
-    "Status": "GA"
-  },
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (bn-BD, NabanitaNeural)",
-    "ShortName": "bn-BD-NabanitaNeural",
-    "Gender": "Female",
-    "Locale": "bn-BD",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Nabanita Online (Natural) - Bangla (Bangladesh)",
-    "Status": "GA"
-  },
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (bg-BG, KalinaNeural)",
-    "ShortName": "bg-BG-KalinaNeural",
-    "Gender": "Female",
-    "Locale": "bg-BG",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Kalina Online (Natural) - Bulgarian (Bulgaria)",
-    "Status": "GA"
-  },
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (my-MM, NilarNeural)",
-    "ShortName": "my-MM-NilarNeural",
-    "Gender": "Female",
-    "Locale": "my-MM",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Nilar Online (Natural) - Burmese (Myanmar)",
-    "Status": "GA"
-  },
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (ca-ES, JoanaNeural)",
-    "ShortName": "ca-ES-JoanaNeural",
-    "Gender": "Female",
-    "Locale": "ca-ES",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Joana Online (Natural) - Catalan (Spain)",
-    "Status": "GA"
-  },
-  {
-    "Name": "Microsoft Server Speech Text to Speech Voice (zh-HK, HiuMaanNeural)",
-    "ShortName": "zh-HK-HiuMaanNeural",
-    "Gender": "Female",
-    "Locale": "zh-HK",
-    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft HiuMaan Online (Natural) - Chinese (Hong Kong)",
-    "Status": "GA"
-  },
+
   {
     "Name": "Microsoft Server Speech Text to Speech Voice (zh-CN, XiaoxiaoNeural)",
     "ShortName": "zh-CN-XiaoxiaoNeural",
     "Gender": "Female",
     "Locale": "zh-CN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)",
+    "FriendlyName": "Xiaoxiao - Chinese (Mainland)",
     "Status": "GA"
   },
   {
@@ -95,16 +15,70 @@
     "Gender": "Female",
     "Locale": "zh-CN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Xiaoyu Online (Natural) - Chinese (Mainland)",
+    "FriendlyName": "Xiaoyou - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-XiaomoNeural",
+    "ShortName": "zh-CN-XiaomoNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Xiaomo - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-XiaoxuanNeural",
+    "ShortName": "zh-CN-XiaoxuanNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Xiaoxuan - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-XiaohanNeural",
+    "ShortName": "zh-CN-XiaohanNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Xiaohan - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-XiaoruiNeural",
+    "ShortName": "zh-CN-XiaoruiNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Xiaorui - Chinese (Mainland)",
     "Status": "GA"
   },
   {
     "Name": "Microsoft Server Speech Text to Speech Voice (zh-CN, YunyangNeural)",
     "ShortName": "zh-CN-YunyangNeural",
-    "Gender": "Female",
+    "Gender": "Male",
     "Locale": "zh-CN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Yunyang Online (Natural) - Chinese (Mainland)",
+    "FriendlyName": "Yunyang - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-YunyeNeural",
+    "ShortName": "zh-CN-YunyeNeural",
+    "Gender": "Male",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Yunye - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-YunxiNeural",
+    "ShortName": "zh-CN-YunxiNeural",
+    "Gender": "Male",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Yunxi - Chinese (Mainland)",
     "Status": "GA"
   },
   {
@@ -113,7 +87,160 @@
     "Gender": "Female",
     "Locale": "zh-TW",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft HsiaoChen Online (Natural) - Chinese (Taiwan)",
+    "FriendlyName": "HsiaoChen - Chinese (Taiwan)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-TW-HsiaoYuNeural",
+    "ShortName": "zh-TW-HsiaoYuNeural",
+    "Gender": "Female",
+    "Locale": "zh-TW",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "HsiaoYu - Chinese (Taiwan)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-TW-YunJheNeural",
+    "ShortName": "zh-TW-YunJheNeural",
+    "Gender": "Male",
+    "Locale": "zh-TW",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "YunJhe - Chinese (Taiwan)",
+    "Status": "GA"
+  },
+ {
+    "Name": "Microsoft Server Speech Text to Speech Voice (zh-HK, HiuMaanNeural)",
+    "ShortName": "zh-HK-HiuMaanNeural",
+    "Gender": "Female",
+    "Locale": "zh-HK",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "HiuMaan - Chinese (Hong Kong)",
+    "Status": "GA"
+  },
+ {
+    "Name": "zh-HK-HiuGaaiNeural",
+    "ShortName": "zh-HK-HiuGaaiNeural",
+    "Gender": "Female",
+    "Locale": "zh-HK",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "HiuGaai - Chinese (Hong Kong)",
+    "Status": "GA"
+  },
+ {
+    "Name": "zh-HK-WanLungNeural",
+    "ShortName": "zh-HK-WanLungNeural",
+    "Gender": "Male",
+    "Locale": "zh-HK",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "WanLung - Chinese (Hong Kong)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-XiaochenNeural",
+    "ShortName": "zh-CN-XiaochenNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Xiaochen - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-XiaoqiuNeural",
+    "ShortName": "zh-CN-XiaoqiuNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Xiaoqiu - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-XiaoshuangNeural",
+    "ShortName": "zh-CN-XiaoshuangNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Xiaoshuang - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "zh-CN-XiaoyanNeural",
+    "ShortName": "zh-CN-XiaoyanNeural",
+    "Gender": "Female",
+    "Locale": "zh-CN",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Xiaoyan - Chinese (Mainland)",
+    "Status": "GA"
+  },
+  {
+    "Name": "Microsoft Server Speech Text to Speech Voice (af-ZA, AdriNeural)",
+    "ShortName": "af-ZA-AdriNeural",
+    "Gender": "Female",
+    "Locale": "af-ZA",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Adri - Afrikaans (South Africa)",
+    "Status": "GA"
+  },
+  {
+    "Name": "Microsoft Server Speech Text to Speech Voice (am-ET, MekdesNeural)",
+    "ShortName": "am-ET-MekdesNeural",
+    "Gender": "Female",
+    "Locale": "am-ET",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Mekdes - Amharic (Ethiopia)",
+    "Status": "GA"
+  },
+  {
+    "Name": "Microsoft Server Speech Text to Speech Voice (ar-EG, SalmaNeural)",
+    "ShortName": "ar-EG-SalmaNeural",
+    "Gender": "Female",
+    "Locale": "ar-EG",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Salma - Arabic (Egypt)",
+    "Status": "GA"
+  },
+  {
+    "Name": "Microsoft Server Speech Text to Speech Voice (ar-SA, ZariyahNeural)",
+    "ShortName": "ar-SA-ZariyahNeural",
+    "Gender": "Female",
+    "Locale": "ar-SA",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Zariyah - Arabic (Saudi Arabia)",
+    "Status": "GA"
+  },
+  {
+    "Name": "Microsoft Server Speech Text to Speech Voice (bn-BD, NabanitaNeural)",
+    "ShortName": "bn-BD-NabanitaNeural",
+    "Gender": "Female",
+    "Locale": "bn-BD",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Nabanita - Bangla (Bangladesh)",
+    "Status": "GA"
+  },
+  {
+    "Name": "Microsoft Server Speech Text to Speech Voice (bg-BG, KalinaNeural)",
+    "ShortName": "bg-BG-KalinaNeural",
+    "Gender": "Female",
+    "Locale": "bg-BG",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Kalina - Bulgarian (Bulgaria)",
+    "Status": "GA"
+  },
+  {
+    "Name": "Microsoft Server Speech Text to Speech Voice (my-MM, NilarNeural)",
+    "ShortName": "my-MM-NilarNeural",
+    "Gender": "Female",
+    "Locale": "my-MM",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Nilar - Burmese (Myanmar)",
+    "Status": "GA"
+  },
+  {
+    "Name": "Microsoft Server Speech Text to Speech Voice (ca-ES, JoanaNeural)",
+    "ShortName": "ca-ES-JoanaNeural",
+    "Gender": "Female",
+    "Locale": "ca-ES",
+    "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
+    "FriendlyName": "Joana - Catalan (Spain)",
     "Status": "GA"
   },
   {
@@ -122,7 +249,7 @@
     "Gender": "Female",
     "Locale": "hr-HR",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Gabrijela Online (Natural) - Croatian (Croatia)",
+    "FriendlyName": "Gabrijela - Croatian (Croatia)",
     "Status": "GA"
   },
   {
@@ -131,7 +258,7 @@
     "Gender": "Female",
     "Locale": "cs-CZ",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Vlasta Online (Natural) - Czech (Czech)",
+    "FriendlyName": "Vlasta - Czech (Czech)",
     "Status": "GA"
   },
   {
@@ -140,7 +267,7 @@
     "Gender": "Female",
     "Locale": "da-DK",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Christel Online (Natural) - Danish (Denmark)",
+    "FriendlyName": "Christel - Danish (Denmark)",
     "Status": "GA"
   },
   {
@@ -149,7 +276,7 @@
     "Gender": "Female",
     "Locale": "nl-BE",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Dena Online (Natural) - Dutch (Belgium)",
+    "FriendlyName": "Dena - Dutch (Belgium)",
     "Status": "GA"
   },
   {
@@ -158,7 +285,7 @@
     "Gender": "Female",
     "Locale": "nl-NL",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Colette Online (Natural) - Dutch (Netherlands)",
+    "FriendlyName": "Colette - Dutch (Netherlands)",
     "Status": "GA"
   },
   {
@@ -167,7 +294,7 @@
     "Gender": "Female",
     "Locale": "en-AU",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Natasha Online (Natural) - English (Australia)",
+    "FriendlyName": "Natasha - English (Australia)",
     "Status": "GA"
   },
   {
@@ -176,7 +303,7 @@
     "Gender": "Female",
     "Locale": "en-CA",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Clara Online (Natural) - English (Canada)",
+    "FriendlyName": "Clara - English (Canada)",
     "Status": "GA"
   },
   {
@@ -185,7 +312,7 @@
     "Gender": "Female",
     "Locale": "en-IN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Neerja Online (Natural) - English (India)",
+    "FriendlyName": "Neerja - English (India)",
     "Status": "GA"
   },
   {
@@ -194,7 +321,7 @@
     "Gender": "Female",
     "Locale": "en-IE",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Emily Online (Natural) - English (Ireland)",
+    "FriendlyName": "Emily - English (Ireland)",
     "Status": "GA"
   },
   {
@@ -203,7 +330,7 @@
     "Gender": "Female",
     "Locale": "en-PH",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Rosa Online (Natural) - English (Philippines)",
+    "FriendlyName": "Rosa - English (Philippines)",
     "Status": "GA"
   },
   {
@@ -212,7 +339,7 @@
     "Gender": "Female",
     "Locale": "en-ZA",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Leah Online (Natural) - English (South Africa)",
+    "FriendlyName": "Leah - English (South Africa)",
     "Status": "GA"
   },
   {
@@ -221,7 +348,7 @@
     "Gender": "Female",
     "Locale": "en-GB",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Sonia Online (Natural) - English (United Kingdom)",
+    "FriendlyName": "Sonia - English (United Kingdom)",
     "Status": "GA"
   },
   {
@@ -230,7 +357,7 @@
     "Gender": "Female",
     "Locale": "en-US",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Aria Online (Natural) - English (United States)",
+    "FriendlyName": "Aria - English (United States)",
     "Status": "GA"
   },
   {
@@ -239,7 +366,7 @@
     "Gender": "Male",
     "Locale": "en-US",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Guy Online (Natural) - English (United States)",
+    "FriendlyName": "Guy - English (United States)",
     "Status": "GA"
   },
   {
@@ -248,7 +375,7 @@
     "Gender": "Female",
     "Locale": "en-US",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Jenny Online (Natural) - English (United States)",
+    "FriendlyName": "Jenny - English (United States)",
     "Status": "GA"
   },
   {
@@ -257,7 +384,7 @@
     "Gender": "Female",
     "Locale": "et-EE",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Anu Online (Natural) - Estonian (Estonia)",
+    "FriendlyName": "Anu - Estonian (Estonia)",
     "Status": "GA"
   },
   {
@@ -266,7 +393,7 @@
     "Gender": "Female",
     "Locale": "fil-PH",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Blessica Online (Natural) - Filipino (Philippines)",
+    "FriendlyName": "Blessica - Filipino (Philippines)",
     "Status": "GA"
   },
   {
@@ -275,7 +402,7 @@
     "Gender": "Female",
     "Locale": "fi-FI",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Noora Online (Natural) - Finnish (Finland)",
+    "FriendlyName": "Noora - Finnish (Finland)",
     "Status": "GA"
   },
   {
@@ -284,7 +411,7 @@
     "Gender": "Female",
     "Locale": "fr-BE",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Charline Online (Natural) - French (Belgium)",
+    "FriendlyName": "Charline - French (Belgium)",
     "Status": "GA"
   },
   {
@@ -293,7 +420,7 @@
     "Gender": "Female",
     "Locale": "fr-CA",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Sylvie Online (Natural) - French (Canada)",
+    "FriendlyName": "Sylvie - French (Canada)",
     "Status": "GA"
   },
   {
@@ -302,7 +429,7 @@
     "Gender": "Female",
     "Locale": "fr-FR",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Denise Online (Natural) - French (France)",
+    "FriendlyName": "Denise - French (France)",
     "Status": "GA"
   },
   {
@@ -311,7 +438,7 @@
     "Gender": "Female",
     "Locale": "fr-CH",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Ariane Online (Natural) - French (Switzerland)",
+    "FriendlyName": "Ariane - French (Switzerland)",
     "Status": "GA"
   },
   {
@@ -320,7 +447,7 @@
     "Gender": "Female",
     "Locale": "gl-ES",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Sabela Online (Natural) - Galician (Spain)",
+    "FriendlyName": "Sabela - Galician (Spain)",
     "Status": "GA"
   },
   {
@@ -329,7 +456,7 @@
     "Gender": "Female",
     "Locale": "de-AT",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Ingrid Online (Natural) - German (Austria)",
+    "FriendlyName": "Ingrid - German (Austria)",
     "Status": "GA"
   },
   {
@@ -338,7 +465,7 @@
     "Gender": "Female",
     "Locale": "de-DE",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Katja Online (Natural) - German (Germany)",
+    "FriendlyName": "Katja - German (Germany)",
     "Status": "GA"
   },
   {
@@ -347,7 +474,7 @@
     "Gender": "Female",
     "Locale": "de-CH",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Leni Online (Natural) - German (Switzerland)",
+    "FriendlyName": "Leni - German (Switzerland)",
     "Status": "GA"
   },
   {
@@ -356,7 +483,7 @@
     "Gender": "Female",
     "Locale": "el-GR",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Athina Online (Natural) - Greek (Greece)",
+    "FriendlyName": "Athina - Greek (Greece)",
     "Status": "GA"
   },
   {
@@ -365,7 +492,7 @@
     "Gender": "Female",
     "Locale": "gu-IN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Dhwani Online (Natural) - Gujarati (India)",
+    "FriendlyName": "Dhwani - Gujarati (India)",
     "Status": "GA"
   },
   {
@@ -374,7 +501,7 @@
     "Gender": "Female",
     "Locale": "he-IL",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Hila Online (Natural) - Hebrew (Israel)",
+    "FriendlyName": "Hila - Hebrew (Israel)",
     "Status": "GA"
   },
   {
@@ -383,7 +510,7 @@
     "Gender": "Female",
     "Locale": "hi-IN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Swara Online (Natural) - Hindi (India)",
+    "FriendlyName": "Swara - Hindi (India)",
     "Status": "GA"
   },
   {
@@ -392,7 +519,7 @@
     "Gender": "Female",
     "Locale": "hu-HU",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Noemi Online (Natural) - Hungarian (Hungary)",
+    "FriendlyName": "Noemi - Hungarian (Hungary)",
     "Status": "GA"
   },
   {
@@ -401,7 +528,7 @@
     "Gender": "Female",
     "Locale": "id-ID",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Gadis Online (Natural) - Indonesian (Indonesia)",
+    "FriendlyName": "Gadis - Indonesian (Indonesia)",
     "Status": "GA"
   },
   {
@@ -410,7 +537,7 @@
     "Gender": "Female",
     "Locale": "ga-IE",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Orla Online (Natural) - Irish(Ireland)",
+    "FriendlyName": "Orla - Irish(Ireland)",
     "Status": "GA"
   },
   {
@@ -419,7 +546,7 @@
     "Gender": "Female",
     "Locale": "it-IT",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Elsa Online (Natural) - Italian (Italy)",
+    "FriendlyName": "Elsa - Italian (Italy)",
     "Status": "GA"
   },
   {
@@ -428,7 +555,7 @@
     "Gender": "Female",
     "Locale": "ja-JP",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Nanami Online (Natural) - Japanese (Japan)",
+    "FriendlyName": "Nanami - Japanese (Japan)",
     "Status": "GA"
   },
   {
@@ -437,7 +564,7 @@
     "Gender": "Female",
     "Locale": "jv-ID",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Siti Online (Natural) - Javanese (Indonesia)",
+    "FriendlyName": "Siti - Javanese (Indonesia)",
     "Status": "GA"
   },
   {
@@ -446,7 +573,7 @@
     "Gender": "Female",
     "Locale": "km-KH",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Sreymom Online (Natural) - Khmer (Cambodia)",
+    "FriendlyName": "Sreymom - Khmer (Cambodia)",
     "Status": "GA"
   },
   {
@@ -455,7 +582,7 @@
     "Gender": "Female",
     "Locale": "ko-KR",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft SunHi Online (Natural) - Korean (Korea)",
+    "FriendlyName": "SunHi - Korean (Korea)",
     "Status": "GA"
   },
   {
@@ -464,7 +591,7 @@
     "Gender": "Female",
     "Locale": "lv-LV",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Everita Online (Natural) - Latvian (Latvia)",
+    "FriendlyName": "Everita - Latvian (Latvia)",
     "Status": "GA"
   },
   {
@@ -473,7 +600,7 @@
     "Gender": "Female",
     "Locale": "lt-LT",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Ona Online (Natural) - Lithuanian (Lithuania)",
+    "FriendlyName": "Ona - Lithuanian (Lithuania)",
     "Status": "GA"
   },
   {
@@ -482,7 +609,7 @@
     "Gender": "Female",
     "Locale": "ms-MY",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Yasmin Online (Natural) - Malay (Malaysia)",
+    "FriendlyName": "Yasmin - Malay (Malaysia)",
     "Status": "GA"
   },
   {
@@ -491,7 +618,7 @@
     "Gender": "Female",
     "Locale": "mt-MT",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Grace Online (Natural) - Maltese (Malta)",
+    "FriendlyName": "Grace - Maltese (Malta)",
     "Status": "GA"
   },
   {
@@ -500,7 +627,7 @@
     "Gender": "Female",
     "Locale": "mr-IN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Aarohi Online (Natural) - Marathi (India)",
+    "FriendlyName": "Aarohi - Marathi (India)",
     "Status": "GA"
   },
   {
@@ -509,7 +636,7 @@
     "Gender": "Female",
     "Locale": "nb-NO",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Pernille Online (Natural) - Norwegian (Bokmål, Norway)",
+    "FriendlyName": "Pernille - Norwegian (Bokmal, Norway)",
     "Status": "GA"
   },
   {
@@ -518,7 +645,7 @@
     "Gender": "Female",
     "Locale": "fa-IR",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Dilara Online (Natural) - Persian (Iran)",
+    "FriendlyName": "Dilara - Persian (Iran)",
     "Status": "GA"
   },
   {
@@ -527,7 +654,7 @@
     "Gender": "Female",
     "Locale": "pl-PL",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Zofia Online (Natural) - Polish (Poland)",
+    "FriendlyName": "Zofia - Polish (Poland)",
     "Status": "GA"
   },
   {
@@ -536,7 +663,7 @@
     "Gender": "Female",
     "Locale": "pt-BR",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Francisca Online (Natural) - Portuguese (Brazil)",
+    "FriendlyName": "Francisca - Portuguese (Brazil)",
     "Status": "GA"
   },
   {
@@ -545,7 +672,7 @@
     "Gender": "Female",
     "Locale": "pt-PT",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Raquel Online (Natural) - Portuguese (Portugal)",
+    "FriendlyName": "Raquel - Portuguese (Portugal)",
     "Status": "GA"
   },
   {
@@ -554,7 +681,7 @@
     "Gender": "Female",
     "Locale": "ro-RO",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Alina Online (Natural) - Romanian (Romania)",
+    "FriendlyName": "Alina - Romanian (Romania)",
     "Status": "GA"
   },
   {
@@ -563,7 +690,7 @@
     "Gender": "Female",
     "Locale": "ru-RU",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Svetlana Online (Natural) - Russian (Russia)",
+    "FriendlyName": "Svetlana - Russian (Russia)",
     "Status": "GA"
   },
   {
@@ -572,7 +699,7 @@
     "Gender": "Female",
     "Locale": "sk-SK",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Viktoria Online (Natural) - Slovak (Slovakia)",
+    "FriendlyName": "Viktoria - Slovak (Slovakia)",
     "Status": "GA"
   },
   {
@@ -581,7 +708,7 @@
     "Gender": "Female",
     "Locale": "sl-SI",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Petra Online (Natural) - Slovenian (Slovenia)",
+    "FriendlyName": "Petra - Slovenian (Slovenia)",
     "Status": "GA"
   },
   {
@@ -590,7 +717,7 @@
     "Gender": "Female",
     "Locale": "so-SO",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Ubax Online (Natural) - Somali (Somalia)",
+    "FriendlyName": "Ubax - Somali (Somalia)",
     "Status": "GA"
   },
   {
@@ -599,7 +726,7 @@
     "Gender": "Female",
     "Locale": "es-AR",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Elena Online (Natural) - Spanish (Argentina)",
+    "FriendlyName": "Elena - Spanish (Argentina)",
     "Status": "GA"
   },
   {
@@ -608,7 +735,7 @@
     "Gender": "Female",
     "Locale": "es-CO",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Salome Online (Natural) - Spanish (Colombia)",
+    "FriendlyName": "Salome - Spanish (Colombia)",
     "Status": "GA"
   },
   {
@@ -617,7 +744,7 @@
     "Gender": "Female",
     "Locale": "es-MX",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Dalia Online (Natural) - Spanish (Mexico)",
+    "FriendlyName": "Dalia - Spanish (Mexico)",
     "Status": "GA"
   },
   {
@@ -626,7 +753,7 @@
     "Gender": "Female",
     "Locale": "es-ES",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Elvira Online (Natural) - Spanish (Spain)",
+    "FriendlyName": "Elvira - Spanish (Spain)",
     "Status": "GA"
   },
   {
@@ -635,7 +762,7 @@
     "Gender": "Female",
     "Locale": "su-ID",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Tuti Online (Natural) - Sundanese (Indonesia)",
+    "FriendlyName": "Tuti - Sundanese (Indonesia)",
     "Status": "GA"
   },
   {
@@ -644,7 +771,7 @@
     "Gender": "Female",
     "Locale": "sw-KE",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Zuri Online (Natural) - Swahili (Kenya)",
+    "FriendlyName": "Zuri - Swahili (Kenya)",
     "Status": "GA"
   },
   {
@@ -653,7 +780,7 @@
     "Gender": "Female",
     "Locale": "sv-SE",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Sofie Online (Natural) - Swedish (Sweden)",
+    "FriendlyName": "Sofie - Swedish (Sweden)",
     "Status": "GA"
   },
   {
@@ -662,7 +789,7 @@
     "Gender": "Female",
     "Locale": "ta-IN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Pallavi Online (Natural) - Tamil (India)",
+    "FriendlyName": "Pallavi - Tamil (India)",
     "Status": "GA"
   },
   {
@@ -671,7 +798,7 @@
     "Gender": "Female",
     "Locale": "te-IN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Shruti Online (Natural) - Telugu (India)",
+    "FriendlyName": "Shruti - Telugu (India)",
     "Status": "GA"
   },
   {
@@ -680,7 +807,7 @@
     "Gender": "Female",
     "Locale": "th-TH",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Premwadee Online (Natural) - Thai (Thailand)",
+    "FriendlyName": "Premwadee - Thai (Thailand)",
     "Status": "GA"
   },
   {
@@ -689,7 +816,7 @@
     "Gender": "Female",
     "Locale": "tr-TR",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Emel Online (Natural) - Turkish (Turkey)",
+    "FriendlyName": "Emel - Turkish (Turkey)",
     "Status": "GA"
   },
   {
@@ -698,7 +825,7 @@
     "Gender": "Female",
     "Locale": "uk-UA",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Polina Online (Natural) - Ukrainian (Ukraine)",
+    "FriendlyName": "Polina - Ukrainian (Ukraine)",
     "Status": "GA"
   },
   {
@@ -707,7 +834,7 @@
     "Gender": "Female",
     "Locale": "ur-PK",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Uzma Online (Natural) - Urdu (Pakistan)",
+    "FriendlyName": "Uzma - Urdu (Pakistan)",
     "Status": "GA"
   },
   {
@@ -716,7 +843,7 @@
     "Gender": "Female",
     "Locale": "uz-UZ",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Madina Online (Natural) - Uzbek (Uzbekistan)",
+    "FriendlyName": "Madina - Uzbek (Uzbekistan)",
     "Status": "GA"
   },
   {
@@ -725,7 +852,7 @@
     "Gender": "Female",
     "Locale": "vi-VN",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft HoaiMy Online (Natural) - Vietnamese (Vietnam)",
+    "FriendlyName": "HoaiMy - Vietnamese (Vietnam)",
     "Status": "GA"
   },
   {
@@ -734,7 +861,7 @@
     "Gender": "Female",
     "Locale": "cy-GB",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Nia Online (Natural) - Welsh (United Kingdom)",
+    "FriendlyName": "Nia - Welsh (United Kingdom)",
     "Status": "GA"
   },
   {
@@ -743,7 +870,7 @@
     "Gender": "Female",
     "Locale": "zu-ZA",
     "SuggestedCodec": "audio-24khz-48kbitrate-mono-mp3",
-    "FriendlyName": "Microsoft Thando Online (Natural) - Zulu (South Africa)",
+    "FriendlyName": "Thando - Zulu (South Africa)",
     "Status": "GA"
   }
 ]
