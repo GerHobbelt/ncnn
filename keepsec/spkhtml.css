@@ -1,5 +1,5 @@
 body {
-	width: 50%;
+	width: 800px;
 	background-color: black;
 	color: #0C0;
 }
@@ -7,4 +7,11 @@ body {
 .yka {
 	filter: url("#blmpg");
 	border:30px #00f dotted;
+}
+
+CT {
+	position:fixed;
+	border:10px #f00 inset;
+	white-space: nowrap;
+	-webkit-transform:matrix(0, 2, -2, 0, 750, 200);
 }

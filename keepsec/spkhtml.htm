@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb18030">
 <link href="spkhtml.css" rel="stylesheet"/>
 </head>
 <body>
+<CT><a>👇</a><input type="number"><a>☝</a></CT>
 <svg class="animated"><defs>
 <filter id="blmpg"><feGaussianBlur stdDeviation="3" result="bml" />
 <feBlend mode="screen" in="bml" in2="SourceGraphic" /></filter>
@@ -12,54 +14,371 @@
 <script src="txt.js" charset="gb18030"></script>
 <script>
 var curspk=0;
+var spking=true;
+var askladd=0;
+
+var ispkvoice=78;
+
+
+/*
+var edgV=[
+'CN-Xiaoxiao','+0','+5',['angry','affectionate','serious','chat','calm','cheerful','sad','fearful','disgruntled','gentle','lyrical','newscast','customerservice','assistant'],
+'CN-Xiaoxuan','+0','+5',[null,'calm','cheerful','angry','fearful','disgruntled','serious','depressed','gentle'],
+'CN-Xiaohan','+0','+5',[null,'cheerful','sad','angry','fearful','disgruntled','serious','embarrassed','affectionate','gentle'],
+'CN-Xiaochen','+0','+5',null,
+'CN-Xiaoqiu','+0','+5',null,
+'CN-Xiaoyan','+0','+3',null,
+'CN-Yunyang','+10','+3',[null,'customerservice'],
+'CN-Xiaomo','-10','+5',[null,'calm','cheerful','angry','fearful','disgruntled','serious','depressed','gentle'],
+'CN-Xiaoyou','-10','+8',null,
+'CN-Xiaorui','+0','+5',[null,'sad','angry','fearful'],
+'CN-Yunye','+10','+5',[null,'calm','cheerful','sad','angry','fearful','disgruntled','serious'],
+'CN-Yunxi','+10','+3',[null,'assistant','cheerful','sad','angry','fearful','disgruntled','serious','depressed','embarrassed'],
+'TW-HsiaoChen','+10','+8',null,
+'CN-Xiaoshuang','+0','+5',[null,'chat'],
+];
+var expdrgg='2';
+
+
+function tranz()
+{
+	var gl=edgV.length;
+	var retstr="";
+	for(var i=0;i<gl;i+=4)
+	{
+		var hyd="<voice name='zh-"+edgV[i]+"Neural'><prosody pitch='"+edgV[i+1]+"Hz' rate ='"+edgV[i+2]+"%' volume='+0%'>";
+		var styarr=edgV[i+3];
+		if(styarr)
+		{
+			var styl=styarr.length;
+			for(var j=0;j<styl;j++)
+			{
+				if(styarr[j])
+				{
+					retstr+='"'+hyd+"<mstts:express-as style='"+styarr[j]+"' styledegree='"+expdrgg+"'>"+'",true,\n';
+				}
+				else
+				{
+					retstr+='"'+hyd+'",false,\n';
+				}
+			}
+		}
+		else
+		{
+			retstr+='"'+hyd+'",false,\n';
+		}
+		
+	}
+	return retstr;
+
+}
+*/
+
+
+var edgV=[
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+3%' volume='+5%'><mstts:express-as style='angry' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='affectionate' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='serious' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='chat' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='calm' styledegree='2'>",
+
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+3%' volume='-3%'><mstts:express-as style='cheerful' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='sad' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+3%' volume='+8%'><mstts:express-as style='fearful' styledegree='1'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='disgruntled' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='gentle' styledegree='2'>",
+//1
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='lyrical' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+5%'><mstts:express-as style='newscast' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='customerservice' styledegree='2'>",
+"<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='assistant' styledegree='2'>",
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'>",
+
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='calm' styledegree='2'>",
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='cheerful' styledegree='2'>",
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='angry' styledegree='2'>",
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='fearful' styledegree='2'>",
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='disgruntled' styledegree='2'>",
+//2
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='serious' styledegree='2'>",
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='depressed' styledegree='2'>",
+"<voice name='zh-CN-XiaoxuanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='gentle' styledegree='2'>",
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'>",
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='cheerful' styledegree='2'>",
+
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='sad' styledegree='2'>",
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='angry' styledegree='2'>",
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='fearful' styledegree='2'>",
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='disgruntled' styledegree='2'>",
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='serious' styledegree='2'>",
+//3
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='embarrassed' styledegree='2'>",
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='affectionate' styledegree='2'>",
+"<voice name='zh-CN-XiaohanNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='gentle' styledegree='2'>",
+"<voice name='zh-CN-XiaochenNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'>",
+"<voice name='zh-CN-XiaoyouNeural'><prosody pitch='-10Hz' rate ='+8%' volume='+0%'>",
+
+"<voice name='zh-CN-XiaoqiuNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'>",
+"<voice name='zh-TW-HsiaoChenNeural'><prosody pitch='+10Hz' rate ='+8%' volume='+0%'>",
+"<voice name='zh-CN-XiaoyanNeural'><prosody pitch='+0Hz' rate ='+3%' volume='+0%'>",
+"<voice name='zh-CN-YunyangNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'>",
+"<voice name='zh-CN-YunyangNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='customerservice' styledegree='2'>",
+//4
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'>",
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='calm' styledegree='2'>",
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='cheerful' styledegree='2'>",
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='angry' styledegree='2'>",
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='fearful' styledegree='2'>",
+
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='disgruntled' styledegree='2'>",
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='serious' styledegree='2'>",
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='depressed' styledegree='2'>",
+"<voice name='zh-CN-XiaomoNeural'><prosody pitch='-10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='gentle' styledegree='2'>",
+"<voice name='zh-CN-XiaoruiNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'>",
+//5
+"<voice name='zh-CN-XiaoruiNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='sad' styledegree='2'>",
+"<voice name='zh-CN-XiaoruiNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='angry' styledegree='2'>",
+"<voice name='zh-CN-XiaoruiNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='fearful' styledegree='2'>",
+"<voice name='zh-CN-YunyeNeural'><prosody pitch='+10Hz' rate ='+5%' volume='+0%'>",
+"<voice name='zh-CN-YunyeNeural'><prosody pitch='+10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='calm' styledegree='2'>",
+
+"<voice name='zh-CN-YunyeNeural'><prosody pitch='+10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='cheerful' styledegree='2'>",
+"<voice name='zh-CN-YunyeNeural'><prosody pitch='+10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='sad' styledegree='2'>",
+"<voice name='zh-CN-YunyeNeural'><prosody pitch='+10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='angry' styledegree='2'>",
+"<voice name='zh-CN-YunyeNeural'><prosody pitch='+10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='fearful' styledegree='2'>",
+"<voice name='zh-CN-YunyeNeural'><prosody pitch='+10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='disgruntled' styledegree='2'>",
+//6
+"<voice name='zh-CN-YunyeNeural'><prosody pitch='+10Hz' rate ='+5%' volume='+0%'><mstts:express-as style='serious' styledegree='2'>",
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'>",
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='assistant' styledegree='2'>",
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='cheerful' styledegree='2'>",
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='sad' styledegree='2'>",
+
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='angry' styledegree='2'>",
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='fearful' styledegree='2'>",
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='disgruntled' styledegree='2'>",
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='serious' styledegree='2'>",
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='depressed' styledegree='2'>",
+//7
+"<voice name='zh-CN-YunxiNeural'><prosody pitch='+10Hz' rate ='+3%' volume='+10%'><mstts:express-as style='embarrassed' styledegree='2'>",
+"<voice name='zh-CN-XiaoshuangNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'>",
+"<voice name='zh-CN-XiaoshuangNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'><mstts:express-as style='chat' styledegree='2'>",
+];
+
+const edgVl=edgV.length;
+var ivoi=edgVl;
+var curspkbox=null;
+
+
+function vprefix(tossp){
+	if(tossp.startsWith('<voice')){return tossp;}
+
+
+	//return "<voice name='zh-CN-XiaoxiaoNeural'><prosody pitch='+0Hz' rate ='+5%' volume='+0%'>"+tossp+"</prosody></voice>";
+	return edgV[3]+tossp+'</mstts:express-as></prosody></voice>';
+
+	if(ivoi==edgVl)
+	{
+		shuffedgV();
+		ivoi=0;
+	}
+	
+
+
+	var pfx = edgV[ivoi];
+	document.title=pfx;
+	var afx="</prosody></voice>";
+	if(pfx.length > 100 ){afx='</mstts:express-as></prosody></voice>';}
+	
+
+
+	ivoi++;
+	return pfx+tossp+afx;
+
+}
+
+function resetskrol(ste)
+{
+	curspk+=ste;
+	if(curspk>=txtl){curspk=0;}
+	askladd=0;
+	curspkbox.value=curspk;
+
+}
+
+function prepctrl()
+{
+	var ctrl=document.getElementsByTagName("CT")[0];
+	
+
+	curspkbox=ctrl.children[1];
+	curspkbox.setV=function(){curspk=parseInt(this.value,10)-1;}
+	curspkbox.onblur=curspkbox.setV;
+	
+	ctrl.children[0].onclick=function(){resetskrol(-1);}
+	ctrl.children[2].onclick=function(){resetskrol(1);}
+	
+}
+prepctrl();
+
+
+function shuffedgV()
+{
+	for(var i=0;i<edgVl;i++)
+	{
+		var dst=(Math.random() *edgVl)>>0;
+		
+		if(i!=dst)
+		{
+			
+			
+			
+				var tmp=edgV[dst];
+				edgV[dst]=edgV[i];
+				edgV[i]=tmp;
+			
+			i++;
+		}
+	}
+}
+
+
 function vend()
 {
-	curspk++;
+	resetskrol(1);
 	var tossp=txt[curspk];
 	
-	utterThis.text=tossp;
+	if(ispkvoice)
+	{
+	utterThis.text=vprefix(tossp);
+	} else {utterThis.text=tossp;}
 	synth.speak(utterThis);
 
-	txtsec[curspk-1].className='';
+	
 	txtsec[curspk].className='yka';
 	txtsec[curspk].scrollIntoView();
-
+	txtsec[curspk-1].className='';
+	
 }
 
 function foka()
 {
 	txtsec[curspk].scrollIntoView();
+	document.scrollingElement.scrollTop+=askladd;
 }
 
-var spking=true;
+
 function psrs()
 {
 	if(spking){synth.pause();}
 	else{synth.resume();}
 
 	spking=!spking;
+	foka();
 
+}
+
+function atsckl()
+{
+	if(spking){askladd+=100;}
 }
 
 function startspk()
 {
-	filltzec();
-	voi=synth.getVoices()[0];
+
+	txtsec=new Array(txt.length);
+	voi=synth.getVoices()[ispkvoice];
+
+	
+	
 	utterThis.voice=voi;
+	utterThis.onend=vend;
+
+	if(ispkvoice)
+	{
+	utterThis.text=vprefix(txt[curspk]);
+	} else {utterThis.text=txt[curspk];}
+
+	
+
+	filltzec();
+	
+	
 	synth.speak(utterThis);
 	txtsec[0].className='yka';
 	document.body.onclick=foka;
 	document.onkeydown=psrs;
+
+	setInterval(atsckl, 12000);
+
+	resetskrol(0);
 	
 }
 
 var yetpaste=true;
+var gspta='\n';
 
-function ppp2()
+function ppp(spta)
 {
+
+if(yetpaste)
+{
+	if(spta){gspta=spta;}
+	yetpaste=false;
+	var preshow=document.createElement('textarea');
+	preshow.cols=200;
+	preshow.rows=100;
+	preshow.onblur=ppp;
+	document.body.appendChild(preshow);
+}
+else
+{
+
+	if(this.value.length<10){return;}
+
+	this.onblur=null;
+	txt=[];
+	
+	var tzt=this.value.replaceAll('\r','').replaceAll("'",'"').split(gspta);
+
+	var txtl=tzt.length;
+	
+	var tmpcole='';
+	for(var i=0;i<txtl;i++)
+	{
+		if(tzt[i].length==0){continue;}
+		if(tmpcole.length>1024)
+		{
+			txt.push(tmpcole);
+			tmpcole='';
+		}
+		tmpcole+=tzt[i]+'\n';
+
+		
+	}
+	txt.push(tmpcole);
+	this.outerHTML='';
+
+	if(navigator.userAgent.includes(' Edg/'))
+	{
+		ispkvoice=1;
+	}
+
+	synth = window.speechSynthesis;
+	utterThis = new SpeechSynthesisUtterance('4321');
+	document.body.onclick=startspk;
+}
+
+}
+
+function ppp2(spta)
+{
+
+
 document.body.onclick=null;
 if(yetpaste)
 {
+	if(spta){gspta=spta;}
 
 	yetpaste=false;
 	var preshow=document.createElement('textarea');
@@ -76,7 +395,7 @@ else
 
 	
 	this.onblur=null;
-	var tzt=this.value.replaceAll('\r','').replaceAll("'",'"').split('\n');
+	var tzt=this.value.replaceAll('\r','').replaceAll("'",'"').split(gspta);
 
 	var txtl=tzt.length;
 	var otstr='var txt=[';
@@ -100,7 +419,7 @@ else
 
 }
 
-function ppp()
+function ppp3()
 {
 	document.body.onclick=null;
 	var preshow=document.createElement('pre');
@@ -127,7 +446,7 @@ function ppp()
 
 function filltzec()
 {
-	var txtl=txt.length;
+	txtl=txt.length;
 	
 	for(var i=0;i<txtl;i++)
 	{
@@ -141,14 +460,54 @@ function filltzec()
 
 }
 
-var txtsec=new Array(txt.length);
+function ldtxtn(namu)
+{
+	var sk = document.createElement('script');
+	sk.type = "text/javascript";
+	sk.charset = "gb18030";
+	sk.src='pad/'+namu+'.js';
+	document.body.appendChild(sk);
+
+}
+
+const wndconfig='directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,width=910';
+function byurl()
+{
+	var uv=location.href.split('?');
+if(uv.length>1){
+	if(uv[1]=='zzz')
+	{
+		window.open('spkhtml.htm','',wndconfig);
+		ppp();
+		return;
+	}
+	else if(uv[1].endsWith('zzz'))
+	{
+		window.open('spkhtml.htm?'+uv[1].slice(0, -3),'',wndconfig);
+		ppp();
+		return;
+	}
+
+	ldtxtn(uv[1]);
+}
+	
+	
+	if(navigator.userAgent.includes(' Edg/'))
+	{
+		ispkvoice=4;
+	}
+
+	
+	synth = window.speechSynthesis;
+	utterThis = new SpeechSynthesisUtterance('4321');
+
+	document.body.onclick=startspk;
+
+}
+
+byurl();
 
 
-var synth = window.speechSynthesis;
-var voi=null;
-var utterThis = new SpeechSynthesisUtterance(txt[0]);
-utterThis.onend=vend;
-document.body.onclick=startspk;
 </script>
 
 
