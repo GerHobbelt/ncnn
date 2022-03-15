@@ -1,11 +1,125 @@
 <html><head><base target="_blank"><style>
+
+FL { float:left;}
 .i200 {width: 200px;}
 .i400 {width: 400px;}
 object {border:30px #440 solid;}
-</style></head><body><textarea id="team" rows=20 cols=300 ondblclick=repurl(this)></textarea><br>
-<object data="repl.txt"></object> <object data="twtknu.txt"></object>  replv=<object data="repl_v.txt"></object>
+</style></head><body><FL><textarea rows=50 cols=150></textarea></FL><FL>
+<object data="kk.js"></object><br/><object data="kk2.js"></object><br/><object data="kk3.js"></object></FL>
 
 <script>
+
+var glis=null;
+var txtout=null;
+function prepglis(text)
+{
+	var lines=text.split('\n');
+	var linesl=lines.length;
+	glis=new Array(linesl);
+	if(lines[0].split('\t').length > 1)
+	{
+		for(var i=0;i<linesl;i++)
+		{
+			if(lines[i].length > 15)
+			{
+			glis[i]=lines[i].split('\t')[0];
+			}
+			else{glis[i]='';}
+		}
+	}
+	else
+	{
+		glis=lines;
+	}
+
+}
+
+function totxt(text)
+{
+	txtout.value='var cimh=[\n'+text+'\n];';
+
+}
+
+function sortbyage_out()
+{
+	var linesl=glis.length;
+	var dzt={};
+	var dztkey=[];
+	for(var i=0;i<linesl;i++)
+	{
+		if(glis[i].length > 15)
+		{
+			var frg=glis[i].split('@');
+			var num=parseInt(frg[0].substr(1)+frg[2].substr(0,3));
+			if(dztkey.includes(num))
+			{
+				dzt[num].push(glis[i]);
+			}
+			else
+			{
+				dztkey.push(num);
+				dzt[num]=[glis[i]];
+			}
+		}
+	}
+	dztkey.sort();
+	linesl=dztkey.length;
+	var kgrp=new Array(linesl);
+	for(var i=0;i<linesl;i++)
+	{
+		kgrp[i]=dzt[dztkey[i]].join('\n');
+	}
+	
+	totxt(kgrp.join('\n\n'));
+
+
+}
+
+function setup()
+{
+	var objs=document.getElementsByTagName('object');
+	for(var i=0;i<3;i++)
+	{
+		objs[i].onfocus=getobjcont;
+	}
+	txtout=document.getElementsByTagName('textarea')[0];
+	txtout.onblur=procrawtxt;
+}
+
+function procrawtxt()
+{
+	var txt=txtout.value;
+	if(txt.length > 15)
+	{
+		txtout.onblur=null;
+		prepglis(txt);
+		sortbyage_out();
+	}
+}
+
+function tot()
+{
+	var txt=txtout.value;
+	txtout.value=txt.replace('@j','@t').replace('@p','@t').replace('@g','@t');
+}
+
+function getobjcont()
+{
+txtout.onblur=null;
+if(!glis)
+{
+
+var vyz=this.contentWindow.document;
+prepglis(vyz.body.children[0].innerText);
+this.onfocus=null;
+sortbyage_out();
+
+
+}
+}
+setup();
+
+/*
 var klyk=-1;
 var lynks=null;
 var keynv=true;
@@ -21,9 +135,6 @@ lynks[klyk].innerText='0';
 }
 }
 
-const vtwsig=[0,				64/*@*/,				33/*!*/,			43/*+*/];
-const vtwimg=['https://pbs.twimg.com/ext_tw_video_thumb/',	'https://pbs.twimg.com/amplify_video_thumb/',	'https://pbs.twimg.com/tweet_video_thumb/','https://pbs.twimg.com/media/'];
-const vtwvid=['https://video.twimg.com/ext_tw_video/',		'https://video.twimg.com/amplify_video/',		'https://video.twimg.com/tweet_video/'];
 
 
 function vidstr(src)
@@ -235,5 +346,5 @@ function attachobj()
 }
 
 attachobj();
-
+*/
 </script></body></html>

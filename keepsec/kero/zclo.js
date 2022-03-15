@@ -29,12 +29,20 @@ var fpgMode=0;
 var RDMarr=null;
 var iRDMarr=0xF00000;
 
+function fixtext() {
+document.oncontextmenu=null;
+document.body.innerText=recarea.value;
+}
+
 function byvid(vy)
 {
 	var msgl=thumb.length;
 	for(var i=0;i<msgl;i++)
 	{
-		if(vids[i].includes(vy)){return i+'\nhttps://twitter.com/'+msgs[i];}
+		if(vids[i].includes(vy)){
+			curEro=i;
+			return i+'\nhttps://twitter.com/'+msgs[i];
+			}
 	}
 }
 
@@ -44,7 +52,7 @@ function bythum(thuna)
 	
 	for(var i=0;i<msgl;i++)
 	{
-		if(thumb[i].includes(thuna)){return vidstr(vids[i]);}
+		if(thumb[i].includes(thuna)){return i+'\n'+vidstr(vids[i]);}
 	}
 
 }
@@ -230,7 +238,7 @@ function shuflocfi()
 
 		var exlop=6+(i&0x3f)*6;
 		xchg6(ibz,nx,exlop);
-		//xchg6J(ibzJ,nx%ibzJ,exlop);
+		xchg6J(ibzJ,nx%ibzJ,exlop);
 		ibz--;
 		ibzJ--;
 		
@@ -244,11 +252,18 @@ function shuflocfi()
 		locfi[nx]=tmp;
 
 		var y=i;
+		var lztgood=cimh[0];
 		for(var vv=0;vv<ypit;vv++)
 		{
-			tmp=cimh[y];
-			cimh[y]=cimh[nx];
-			cimh[nx]=tmp;
+			tmp=cimh[nx];
+			if(tmp)
+			{
+			lztgood=tmp;
+			var tmp2=cimh[y];
+			if(!tmp2){tmp2=lztgood;}
+			cimh[nx]=tmp2;
+			cimh[y]=tmp;
+			}
 			y+=locfiL;
 			nx+=locfiL;
 		}
@@ -275,6 +290,21 @@ function testdov()
 
 	tblarea.innerHTML=ymgstr;
 	shuflocfi();
+}
+
+
+function ehurl(srcc)
+{
+	var extdict={'t':'.gif','g':'.gif','j':'.jpg','p':'.png'};
+	var sz=srcc.split('@');
+	var pglim=parseInt(sz[1].substr(1),10);
+	var ext=extdict[sz[1].charAt(0)];
+	var ffurl='https://m'+sz[0]+'.imhentai.xxx/'+sz[2];
+	var pglims=(pglim*5).toString();
+	return ffurl+'/'+pglims+ext;
+
+	//fov=ffurl.rfind('/')
+	//print(" '"+ffurl[:fov]+"', '"+ffurl[fov+1:]+"', "+pglims)
 }
 
 function findimgerr()
@@ -534,7 +564,7 @@ function printsele()
 
 }
 
-const imhscale=' 0.7x';
+const imhscale=' 0.8x';
 const exxt=['.png','.b.png','.c.png','.d.png','.e.png',
 	'.f.png','.g.png','.h.png','.i.png','.j.png','.jpg'];
 
@@ -551,8 +581,19 @@ function imhlarge()
 	var yx =parseFloat(ostr);
 
 	if(isNaN(yx)){
-		imhnxt(ostr.substr(1),this);
-		return;
+		var c=ostr.charCodeAt(0);
+		switch(c)
+		{
+			case 122:
+			imhnxt(ostr.substr(1),this);
+			return;
+			case 120:
+			this.parentElement.remove();
+			return;
+			default:
+			return;
+		}
+		
 	} else if(yx>10) {
 		var imhbox=this.parentElement;
 		var ymg=document.createElement('img');
@@ -608,7 +649,8 @@ function imhlarge()
 function mkctrlarw(imhbox,ymg,y)
 {
 	var ctrlarw=document.createElement('b');
-	ctrlarw.innerText=' < '+y+' + ';
+	ctrlarw.style.verticalAlign="-50px"
+	ctrlarw.innerText=' ^ '+y+' + ';
 	ctrlarw.ctrlimg=ymg;
 	ctrlarw.onclick=imhlarge;
 	ymg.ctrlarw=ctrlarw;
@@ -637,7 +679,7 @@ function imhnxt(dst,ctrlarw)
 
 
 	
-	ctrlarw.innerText=' < '+y+' + ';
+	ctrlarw.innerText=' ^ '+y+' + ';
 	
 	var skl=' '+ymg.srcset.split(' ')[1];
 	ymg.srcset=imhbox.bs+y+imhbox.ext+skl;
@@ -677,21 +719,31 @@ function imherr()
 }
 
 
+function simphide() {this.srcset='';}
 
-
-function mkimh_fake(imhbox,sig)
+function mkimh_fake(imhbox,sta)
 {
+	
+	sta=(sta<<3)%cimh.length;
+	//var sta=sig>>2;//(sig&0x0FF8)>>1;
+	// //var imhbox=document.createElement('b');
 
-	var sta=sig>>2;//(sig&0x0FF8)>>1;
-	//var imhbox=document.createElement('b');
-	var endo=sta+4;
-	for(var i=sta;i<endo;i++)
+	for(var k=0;k<8;k++)
 	{
+		var i=sta+k;
+		var tuk=cimh[i];
+		if(tuk) {
 		var ymg=document.createElement('img');
-		ymg.srcset='0bak/tu/ar/2/g/'+cimh[i]+imhscale;
+		ymg.srcset='0bak/tu/ar/2/g/'+tuk+imhscale;
 		ymg.diz=i;
+		ymg.onclick=simphide;
 		mkctrlarw(imhbox,ymg,i);
 
+		var nx = (cimh.length*Math.random())<<0;
+		cimh[i]=cimh[nx];
+		//cimh[nx]=tuk;
+
+		}
 	}
 	//contan.appendChild(imhbox);
 	
@@ -699,12 +751,12 @@ function mkimh_fake(imhbox,sig)
 
 
 
-function mkimh_real(imhbox,sig)
+function mkimh_real(imhbox,sta)
 {
-	var sta=(sig>>4)%cimh.length;
+	sta=sta%cimh.length;
 	var imhsig=cimh[sta];//[(sig&0x1FF8)>>3];	//[(sig&0x1FF)|((sig&0xC00)>>1)];
 	var humi=imhsig.split('@');
-	
+	imhbox.innerText='* '+imhsig+' *';
 	var tmb=false;
 	var ext=exxt[10];
 	var endo=humi[1].charCodeAt(0);
@@ -723,7 +775,7 @@ function mkimh_real(imhbox,sig)
 
 	}
 	endo=parseInt(humi[1].substr(1),10);
-	var sta=1+(sta%endo);
+	sta=1+(sta%endo);
 
 	
 	
@@ -734,7 +786,7 @@ function mkimh_real(imhbox,sig)
 	imhsig='https://m'+humi[0]+'.imhentai.xxx/'+humi[2]+'/'
 
 	
-	imhbox.innerText='*** '+humi[2]+' ***';
+	
 	imhbox.bs=imhsig;
 	var dizadd=1;
 	if(tmb)
@@ -807,7 +859,27 @@ function nwdvid(vidurl)
 
 var canfire=true;
 
-function repg(ele){repgv(ele.value);}
+function repg(ele){
+if(ele.value)
+{
+repgv(ele.value);
+}
+else
+{
+	ele.value=curEro;
+	curEro-=(curEro%100);
+	if(keyerocount<0)
+	{
+		keyerocount=-100;
+		klyi=0x400|(klyi&0xFF);
+		setTimeout(fullpgALL[fpgMode], 0);
+		return;
+	}
+	menuFunction();
+}
+
+
+}
 
 function repgv(elevalue)
 {
@@ -818,7 +890,7 @@ function repgv(elevalue)
 	if(keyerocount<0)
 	{
 		keyerocount=-100;
-		curEro=parseInt(elevalue,10);
+		curEro+=parseInt(elevalue,10);
 		klyi=0x400|(klyi&0xFF);
 		setTimeout(fullpgALL[fpgMode], 0);
 		return;
@@ -889,8 +961,8 @@ function SetPozMode00()
 		pozcurpic.innerHTML=pozinputN;
 		pozcurpic.className='nv';
 		pozcurpic.style.top=null;
-		pozcurpic.style.left=0;
-		pozcurpic.style.bottom=10;
+		pozcurpic.style.left="0px";
+		pozcurpic.style.bottom="10px";
 		return;
 		//case 0x100:
 		//return;
@@ -916,7 +988,7 @@ function SetPozMode()
 		pozcurpic.innerHTML=pozinput;
 		pozcurpic.className='nvmid';
 		pozcurpic.style.bottom=null;
-		pozcurpic.style.left=5;
+		pozcurpic.style.left="5px";
 		return;
 		default:
 		PozMode=(PozMode&0xffffff00);
@@ -953,7 +1025,7 @@ function skrback()
 pvklyi=-1;
 document.body.background='';
 document.body.scrollTop+=20;
-document.body.scrollLeft=0;
+document.documentElement.scrollLeft=0;
 }
 
 var pvklyi=-10;
@@ -972,7 +1044,7 @@ function xtp()
 	}
 
 	recarea.value+='\n:'+pvklyi;
-	document.body.scrollLeft+=2000;
+	document.documentElement.scrollLeft+=2000;
 	setTimeout(skrback, 1000);
 	//recarea.value+='\nhttps://twitter.com/'+msgs[pvklyi];
 }
@@ -1034,10 +1106,18 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 						containfl.hazbp=true;
 						var al=document.createElement('a');
 						var bp=document.createElement('img');
-						//bp.style.display='block';
 						al.appendChild(bp);
 						containfl.appendChild(al);
-						bigparit(bp,2);
+
+						
+						
+						var tiz9=iszrda&11;
+						if(tiz9==2) {bigparit0(bp,iszrda);}
+						else if(tiz9==10) {bigparit9(bp,iszrda);}
+						else {bigparit(bp,2,iszrda);}
+						
+						
+						
 					}
 					}
 
@@ -1088,7 +1168,7 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 			
 		}
 		else if(klyi2==1){
-			document.body.scrollLeft+=2000;
+			document.documentElement.scrollLeft+=2000;
 			setTimeout(skrback, 1000);
 			
 
@@ -1096,6 +1176,83 @@ var iszrda = parseInt(ele.innerText.substring(1),10);
 		klyi2++;
 	}
 }
+
+function bigparit0(bp,syg)
+{
+	bp.parentElement.href='0bak/tu/lu/'+locfi[syg%locfiL]+'.mp4';
+	var n6=(syg&0x3ff)*6;
+	var dov=chika[n6+1];
+	var wyd=chika[n6+2]; //(chika[n6+2]/1.2)<<0;
+	//if(wyd>400){wyd=400;}
+	bp.width=wyd;
+	//bp.style.webkitTransform='matrix(1.2,0,0,1.2,0,-'+dov+')';
+	
+	bp.style.marginLeft=(wyd>>1);
+	bp.style.marginRight=-100;
+	bp.style.marginTop=-(200+chika[n6+3]*3);
+
+	dov=dov%10;
+	if(dov==0)
+	{
+		bp.src=chikagifpa[0]+chika[n6+5]+'.gif';
+	}
+	else
+	{
+		bp.src=chikagifpa[syg%(dov+1)]+chika[n6+5]+'.gif';
+	}
+	
+
+	
+}
+
+function bigparit9(bp,syg)
+{
+	bp.parentElement.href='0bak/tu/lu/'+locfi[syg%locfiL]+'.mp4';
+	var n6=(syg&0x3ff)*6;
+	var enlarg=chika[n6+4];
+
+	if(enlarg>1.0)
+	{
+		enlarg-=1.0;
+		bp.style.imageRendering = 'pixelated';
+	}
+	//if(enlarg>=0.5){enlarg=0.9;}
+	
+	
+
+	bp.style.marginLeft=215;
+	bp.style.marginTop=-1500;
+	bp.srcset=chikagifpa1+chika[n6+5]+'.gif '+enlarg.toFixed(2)+'x';
+
+
+	bp.onload=rptsz;
+}
+
+function rptsz()
+{
+	this.onload=null;
+	var ivoa=this.naturalWidth/1300;
+	
+	var huz=this.srcset.split(' ');
+	var ksz=parseFloat(huz[1]);
+	ivoa*=ksz;
+	
+console.log(ivoa.toFixed(2)+":: "+this.srcset);
+	//if(ivoa<1&&ivoa>0.3){console.log(ivoa.toFixed(2)+":: "+this.srcset)}
+
+}
+
+function bigparit1(bp,syg)
+{
+	bp.parentElement.href='0bak/tu/lu/'+locfi[syg%locfiL]+'.mp4';
+}
+
+function bigparit8(bp,syg)
+{
+	bp.parentElement.href='0bak/tu/lu/'+locfi[syg%locfiL]+'.mp4';
+}
+
+
 
 function rmvimg()
 {
@@ -1153,7 +1310,7 @@ function setPozCur(x,y)
 function setPozCur2(y)
 {
 	pozcur[1]=y;
-	pozcurpic.style.top=y-5;
+	pozcurpic.style.top=(y-5)+"px";
 }
 
 function PozCurKlicK()
@@ -1613,14 +1770,21 @@ function traspscale()
 
 }
 
-function bigparit(ele,ack)
+function bigparit(ele,ack,n6r)
 {
 			ele.onmouseover=through15s;
 			ele.nrepl=99;
 			ele.onclick=hv0fast[ack];
-
-
-			var n6=Math.random() *chikaJ.length;//144;//
+			
+			var n6=n6r;
+			if(ack==1)
+			{
+				n6=Math.random() *chikaJ.length;//144;//
+			}
+			else if(ack==2)
+			{
+				n6=n6%chikaJ.length;
+			}
 			n6-=(n6%6);
 			var fnaya=chikaJ[n6+5];
 			ele.style.cssText = null;
@@ -1711,9 +1875,12 @@ function bigparit(ele,ack)
 		
 		if(ack==2)
 		{
-			skl=1.3;
-			//mvtt=(mvtt*6)>>3;
-			mvtt=',70,-'+mvtt;
+			skl=(0.8/skl);//1.3;
+
+			if(skl<1){skl=1.3;}
+			skl=skl.toFixed(3);
+
+			mvtt=',50,-'+mvtt;
 			ele.lf=n6%locfiL;
 		} else {
 			mvtt=',0,-'+(mvtt>>2);
@@ -1739,7 +1906,7 @@ function llimgThis(ele,nx,depth)
 		if(cursvg==1)
 		{
 			cursvg=0;
-			bigparit(ele,1);
+			bigparit(ele,1,0);
 
 			
 		}
@@ -1774,7 +1941,7 @@ function llimgThis(ele,nx,depth)
 				if(tgg=='B')
 				{
 					ele.innerText='';
-					mkimh(ele,(Math.random()*0x4000)<<0);
+					mkimh(ele,(Math.random()*cimh.length)<<0);
 				}
 				
 			}
@@ -1804,6 +1971,13 @@ ele.onclick=null;
 ele.outerHTML=kx3t+vidurl+kx4+thumburl+kx5b;
 
 
+
+}
+
+function shouldIMH(sigN)
+{
+	if((sigN%17)==0){return (sigN>>4);}
+	return -1;
 
 }
 
@@ -1838,11 +2012,15 @@ var thumburl=ele.src.slice(0,-6);
 ele.outerHTML=kx3t+vidstr(vids[sigN])+kx4+thumburl+'" width=200 />'+lynklocfi(sigN)+'</a>';
 
 }
-else if((sigN%17)==0)
+else
 {
+	var nxa=shouldIMH(sigN);
+	if(nxa>=0)
+	{
 	var imhbox=document.createElement('b');
-	mkimh(imhbox,sigN);
+	mkimh(imhbox,nxa);
 	ele.parentElement.appendChild(imhbox);
+	}
 }
 
 
@@ -1850,6 +2028,14 @@ return;
 
 
 
+
+}
+
+function tz756(sigN)
+{
+	var nku=sigN&0x3F;
+	if(nku==7||nku==56){return true;}
+	return false;
 
 }
 
@@ -1900,15 +2086,15 @@ if(h8>0 && w8>0 && h8<h8p && w8<w8p)
 
 hv0fast[2]=function(e) {
 	var ele=e.currentTarget;
-	var vlf=(ele.lf&0x1f)<<5;
+	var vlf=100+((ele.lf&0x1f)<<5);
 	var lf='0bak/tu/lu/'+locfi[ele.lf]+'.mp4';
 	clearlbr(ele);
-	//ele.outerHTML='<a href='+lf+'>@</a>';	//@@@@LOKAL@@@@@
+	
 	ele.src='poz.png';
 	ele.style.webkitFilter='url(#longbar)';
 
 	
-	ele.style.marginLeft=0x100;
+	ele.style.marginLeft=350;
 	ele.style.marginTop=-vlf;
 	//ele.style.marginBottom=vlf;
 	
@@ -1948,7 +2134,7 @@ function sixbkmark(dvvsta)
 
 function asgn()
 {
-	document.body.scrollLeft=100;
+	document.documentElement.scrollLeft=100;
 	klyi=0x400|(klyi&0xFF);
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
@@ -1960,7 +2146,7 @@ const c1bkg= '<br><img ';
 
 function asgn_s(ym)
 {
-	document.body.scrollLeft=0;
+	document.documentElement.scrollLeft=0;
 	tblarea.innerHTML=ym.join(' /></b><b> =<a href="https://twitter.com/');
 	var ymgs=document.getElementsByTagName('img');
 	var ymgsl=ymgs.length;
@@ -2010,7 +2196,7 @@ asgn();
 function fullpgALLcur1()
 {
 	
-	var dvvsta=curEro;
+	var dvvsta=curEro<<3;
 	var dvvendo=dvvsta+512;
 	var pidx=1;
 	var ym=new Array(1026);
@@ -2032,7 +2218,7 @@ for(var jj=dvvsta;jj<dvvendo;jj++)
 }
 	
 	asgn_s(ym);
-	curEro+=1024;
+	curEro+=128;
 	
 }
 
@@ -2146,7 +2332,7 @@ function fullpg()
 	if(gloefya){senta.style.webkitFilter=gloefya;}
 	tblarea.appendChild(senta);
 	
-	document.body.scrollLeft=100;
+	document.documentElement.scrollLeft=100;
 }
 
 function fastrscroll(ev) {return false;}
@@ -2181,13 +2367,24 @@ SVGf[0].changechika=function(n6)
 		chkpai=chikagifpa[(n6%11)%dov];
 	}
 	
+	var xpu=chika[n6];
+	var wpu=chika[n6+2];
+	var hpu=chika[n6+3];
+	if(keyerocount>0)
+	{
+		if(xpu>0){xpu-=100;}
+		if(wpu>550)
+		{
+			var dv=(500/wpu)+0.1;
+			wpu=(wpu*dv)<<0;
+			hpu=(hpu*dv)<<0;
+		}
+	}
 	
-	
-	
-	this.setAttribute('x',chika[n6]);
+	this.setAttribute('x',xpu);
 	this.setAttribute('y',-yv);
-	this.setAttribute('width',chika[n6+2]);
-	this.setAttribute('height',chika[n6+3]);
+	this.setAttribute('width',wpu);
+	this.setAttribute('height',hpu);
 	this.firstChild.setAttribute('href',chkpai+chika[n6+5]+'.gif');
 	
 }
@@ -2441,7 +2638,7 @@ switch (ekeyCode) {
 		document.oncontextmenu=menuFunction;
 		document.onmousemove=kuriakey;
 		fullpgALL=fullpgALLcur;
-		document.body.scrollLeft=0;
+		document.documentElement.scrollLeft=0;
 	return;
 
 
@@ -2558,13 +2755,13 @@ switch (ekeyCode) {
 	return;
 
 	case 100:
-		document.body.scrollLeft-=500;
-		if(document.body.scrollLeft<600){document.body.background='';}
+		document.documentElement.scrollLeft-=500;
+		if(document.documentElement.scrollLeft<600){document.body.background='';}
 		document.body.scrollTop+=10;
 	return;
 
 	case 102:
-		document.body.scrollLeft+=500;
+		document.documentElement.scrollLeft+=500;
 		document.body.scrollTop+=10;
 	return;
 
@@ -2574,11 +2771,11 @@ switch (ekeyCode) {
 	
 
 	case 37:
-		document.body.scrollLeft-=100;
+		document.documentElement.scrollLeft-=100;
 	return;
 
 	case 39:
-		document.body.scrollLeft+=100;
+		document.documentElement.scrollLeft+=100;
 	return;
 
 	case 27:
