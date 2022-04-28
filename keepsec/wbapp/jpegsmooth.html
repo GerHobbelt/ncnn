@@ -1,0 +1,92 @@
+<html><body>
+<input onblur="kk(this)" /><br>
+<img id=save />
+
+<script>
+
+
+function kk(ele)
+{
+	var vlu=ele.value
+	if(vlu.length>3) {rq(vlu);}
+}
+
+var cmdline = "--optimize --info 0 --quality 6 --cpu 4";
+var cmd_size = cmdline.length;
+
+var saveElement = document.getElementById('save');
+
+Module = {
+	wasm_progress: function(percent) {},
+	wasm_return: function() {
+
+	var out_addr = Module.HEAPU32[prm_addr/4 + 3*2];
+	var out_size = Module.HEAPU32[prm_addr/4 + 4*2];
+
+	
+	Module._free(prm_addr);
+	if (out_addr) {
+		var output_data = Module.HEAPU8.slice(out_addr, out_addr + out_size);
+		Module._free(out_addr);
+		
+	}
+	
+
+	saveElement.src = window.URL.createObjectURL(new Blob([output_data]));
+	}
+
+};
+
+/*============================================================================*/
+
+var prm_addr = null;
+
+function cbProcess(input) {
+	
+	
+	
+	
+	
+
+	var inp_size = input.byteLength;
+	prm_addr = Module._malloc(5*8 + inp_size + cmd_size + 1);
+	Module.HEAPU8.set(new Uint8Array(5*8), prm_addr);
+	var inp_addr = prm_addr + 5*8;
+	var cmd_addr = prm_addr + 5*8 + inp_size;
+
+	Module.HEAPU8.set(new Uint8Array(input), inp_addr);
+
+	for (var i = 0; i < cmd_size; i++) {
+		var c = cmdline.charCodeAt(i);
+		if (c > 127) c = '?'.charCodeAt(0);
+		Module.HEAPU8[cmd_addr + i] = c; 
+	}
+	Module.HEAPU8[cmd_addr + cmd_size] = 0;
+
+	
+
+	Module.HEAPU32[prm_addr/4] = cmd_addr;
+	Module.HEAPU32[prm_addr/4 + 1*2] = inp_addr;
+	Module.HEAPU32[prm_addr/4 + 2*2] = inp_size;
+	Module._web_main(prm_addr);
+}
+
+
+
+
+function procbinary(blb)
+{
+	if (blb) {cbProcess(blb);}
+}
+
+function RetArrBuf(response) { return response.arrayBuffer();}
+
+function rq(fna)
+{
+fetch(fna).then(RetArrBuf).then(procbinary);
+}
+
+
+</script>
+<script async src=quantsmooth.js></script>
+</body></html>
