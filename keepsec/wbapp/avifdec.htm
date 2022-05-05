@@ -1,0 +1,53 @@
+<html><body></body><script>
+var dcot=102;
+
+
+
+var bsimg=document.createElement('img');
+bsimg.onload=proc;
+bsimg.onerror=nxt;
+document.body.appendChild(bsimg);
+
+var canv=document.createElement('canvas');
+document.body.appendChild(canv);
+
+var curymgna='';
+function downloadImage(data, filename = 'untitled.png') {
+    var a = document.createElement('a');
+    a.href = data;
+    a.download = filename;
+    a.innerText=filename+'\n\n'
+    document.body.appendChild(a);
+    //a.click();
+}
+
+function nxt()
+{
+	dcot-=1;
+	if(dcot >=0) { setTimeout(setimgsrc, 100); }
+}
+
+function proc()
+{
+	var bsimgw=bsimg.naturalWidth;
+	var bsimgh=bsimg.naturalHeight;
+
+	canv.width = bsimgw;
+	canv.height = bsimgh;
+
+	var ctx = canv.getContext("2d");
+	ctx.drawImage(bsimg,0,0);
+	downloadImage(canv.toDataURL("image/png").replace("image/png", "image/octet-stream"), curymgna);
+	nxt();
+
+}
+
+function setimgsrc()
+{
+	curymgna= dcot.toString().padStart(3, "0")+'.png';
+	bsimg.src=curymgna;
+}
+
+setimgsrc()
+
+</script></html>
