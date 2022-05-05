@@ -1,0 +1,164 @@
+<html><head><base target="_blank"><style>
+textarea {display:inline;}
+object {height:0px;}
+ul:before{
+	content:attr(data-header);
+	color: red;
+	margin-left:-30px;
+}
+</style></head><body><object data="stack.xml" onload="getxml()"></object></body>
+
+<script>
+var blendmode={
+'svg:src-over':0,
+'svg:multiply':1,
+'svg:screen':2,
+'svg:overlay':3,
+'svg:darken':4,
+'svg:lighten':5,
+'svg:color-dodge':6,
+'svg:color-burn':7,
+'svg:hard-light':8,
+'svg:soft-light':9,
+'svg:difference':10,
+'svg:color':11,
+'svg:luminosity':12,
+'svg:hue':13,
+'svg:saturation':14,
+'svg:plus':15,
+'svg:dst-in':16,
+'svg:dst-out':17,
+'svg:src-atop':18,
+'svg:dst-atop':19,
+'krita:soft_light':20,
+'krita:linear_dodge':21 }
+
+var txtout=document.createElement('p');
+document.body.appendChild(txtout);
+var Tree=document.createElement('ul');
+document.body.appendChild(Tree);
+
+var js_rb=[];
+var js_rbi=[];
+var n2data={};
+
+function mktextarea()
+{
+	var tmp=document.createElement('textarea');
+	tmp.rows = 50;
+	tmp.cols = 50;
+	txtout.appendChild(tmp);
+	return tmp;
+}
+
+
+function getxml()
+{
+	xml = document.getElementsByTagName("OBJECT")[0].contentDocument.children[0];
+	ultree=mktextarea();
+	jstxt=mktextarea();
+	cmd1=mktextarea();
+	newstk=mktextarea();
+
+	proc();
+
+}
+
+function parseOpa(n)
+{
+	var xa=n.attributes['opacity'].textContent;
+	if(xa == '1'){return 1.0;}
+	else{return parseFloat(xa);}
+	
+}
+
+
+function bs4096(upa) {return (1+(4096*upa)>>0).toString(16);}
+
+function xyFlagStr(n,upa)
+{
+	var flg=blendmode[n.attributes['composite-op'].textContent];
+	if(n.attributes['visibility'].textContent=='hidden') {flg+=32;}
+
+	
+	if(upa==1.0) {upa='_';}
+	else{upa=bs4096(upa);}
+
+	return n.attributes['y'].textContent+'.'+n.attributes['x'].textContent+'.'+upa+'.'+flg.toString(16);
+
+}
+
+function walk(pa,opa,pHead)
+{
+	var cl=pa.children.length;
+	for(var i=0;i<cl;i++)
+	{
+		var cur=pa.children[i];
+		switch(cur.tagName)
+		{
+			case 'stack':
+				var head=document.createElement('ul');
+				var kopa=opa*parseOpa(cur);
+				head.dataset.header=(cur.attributes['name'].textContent+'.'+xyFlagStr(cur,kopa)).replace('.0.0._.0','');
+				pHead.appendChild(head);
+				cur.setAttribute('opacity','1');
+				walk(cur,kopa,head);
+			break;
+			case 'layer':
+				var itm =document.createElement('li');
+				var kopa=opa*parseOpa(cur);
+				var lyrname=cur.attributes['name'].textContent;
+				var idx=js_rb.length;
+				n2data[idx]=[cur.attributes['src'].textContent,kopa,cur.attributes['composite-op'].textContent];
+
+				
+				js_rb.push(lyrname);
+				js_rbi.push(xyFlagStr(cur,kopa));
+				itm.title=idx;
+				itm.innerText=lyrname;
+				pHead.appendChild(itm);
+				cur.setAttribute('opacity','1');
+				cur.setAttribute('src','data/'+idx.toString().padStart(3, "0")+'.png');
+			break;
+		
+		}
+	}
+}
+
+function proc()
+{
+	var js9=xml.attributes['h'].textContent+','+xml.attributes['w'].textContent+');'
+	
+	
+
+	var root=xml.children[0];
+	walk(root,parseOpa(root),Tree);
+
+	ultree.value=Tree.outerHTML;
+	newstk.value=xml.outerHTML;
+	jstxt.value="rb=['"+js_rb.join("',\n'")+"'];\n\nrbi=['"+js_rbi.join("',\n'")+"'];\n\nsetup("+js9;
+
+	var obl=js_rb.length;
+
+	var txtout=[];
+	var renum=[];
+	for(var i=0;i<obl;i++)
+	{	var dname=n2data[i][0];
+		var d_raw=dname.replace('data/','');
+		var d_winp=dname.replace('/','\\')
+		var zk=n2data[i][1];
+		var threedigi=i.toString().padStart(3, "0");
+		renum.push(threedigi+'.png" "'+d_winp);
+		if(zk!=1.0)
+		{
+			
+			txtout.push(threedigi+'.'+bs4096(zk)+'.png" "0\\'+threedigi+'.png');
+		}
+	}
+
+	
+	cmd1.value='md 0\\pq\nmd 0\\af\nmd alph\\z\n\nmklink /H "0\\'+renum.join('"\nmklink /H "0\\')+'"\npause\nmklink /H "alph\\z\\'+txtout.join('"\nmklink /H "alph\\z\\')+'"';
+	
+}
+
+</script></html>
