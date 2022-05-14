@@ -168,7 +168,7 @@ namespace pSDtif
 		public static char[] sepAstro={'*'};
 		public static char[] sepgun={'|'};
 		
-		
+		public static char[] px32={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V'};
 		
 
 	[DllImport("kernel32.dll", EntryPoint = "CreateFileW", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -437,33 +437,50 @@ namespace pSDtif
     	Array.Copy(jtifhd,psd,0x150);
     	icur+=0x150;
     	icur+=ReadTo(fpa+"0.blo",icur);
+    	int kkcur=0x152;
     	fixed(byte* src=&psd[0x150])
     	{
     		
     		byte* cur=src+2;
     		for(int vv=0;vv<lyrCot;vv++)
     		{
-    			string bspa=fpa+dpaz[vv];
+    			string bspa=dpaz[vv];
+    			string msg=bspa+"\t"+kkcur.ToString("X");
+    			bspa=fpa+bspa;
+    			
+    			
     			cur+=0x10;
     			short chn=*(short*)cur;
-    			
     			cur+=2;
+    			
     			ChnnInfo* cyfo=(ChnnInfo*)cur;
+    			bool AnySv=false;
     			for(int i=0;i<chn;i++)
     			{
     				if(cyfo[i].DataLen!=2)
     				{
+    					AnySv=true;
 	    				int rsz=ReadTo(bspa+cyfo[i].id+".bin",icur);
 	    				cyfo[i].DataLen=rsz;
 	    				icur+=rsz;
     				} else {icur+=2;}
     			}
     			
-    			cur+=6*chn;
-    			LayerInfo lyfo=*(LayerInfo*)cur;
-    			cur+=0x10;
     			
-    			cur+=lyfo.extraL;
+    			
+    			int tt=6*chn;
+    			cur+=tt;
+    			kkcur+=0x12+tt;
+    			if(chn>4)
+    			{
+    				msg+="\tMzk\t"+(0x14+kkcur).ToString("X");
+    			}
+    			if(AnySv){Console.WriteLine(msg);}
+    			LayerInfo lyfo=*(LayerInfo*)cur;
+    			
+    			tt=0x10+lyfo.extraL;
+    			cur+=tt;
+    			kkcur+=tt;
     			
     			
     		}
@@ -528,6 +545,13 @@ namespace pSDtif
 		}
     }
     
+    static string x32(int n)
+    {
+    	string fma=px32[n>>5].ToString();
+    	return fma+px32[n&0x1f];
+    	
+    }
+    
     static unsafe void parse(string fna)
     {
     	
@@ -579,7 +603,7 @@ namespace pSDtif
     		for(int vv=0;vv<lyrCot;vv++)
     		{
     			
-    			dpaz[vv]=(lyrCot-vv)+"\\";
+    			dpaz[vv]=x32(lyrCot-vv)+"\\";
     			
     			
     			string[] yfodump=new string[25];
@@ -611,7 +635,7 @@ namespace pSDtif
     			XtraInfo(cur,yfodump,lyfo.extraL);
     			cur+=lyfo.extraL;
     			yfoAll[vv]=yfodump;
-    			//File.WriteAllLines(dpa+"/n.txt",yfodump);
+    			
     			
     		}
     		int dtaHier=(int)(cur-src);
@@ -670,7 +694,7 @@ namespace pSDtif
 	    			
 	    			
 	    			yfovv[1]=string.Join(string.Empty,kompinfo);
-	    			File.WriteAllLines(dpa+"n.txt",yfovv);
+	    			File.WriteAllLines(dpa+"!.txt",yfovv);
     			}
     		}
     		
