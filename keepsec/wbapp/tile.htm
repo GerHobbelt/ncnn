@@ -1,0 +1,425 @@
+<html><body style="margin:0;padding:0"></body><script>
+
+const vtwsig=[0,				64/*@*/,				33/*!*/,			43/*+*/];
+const vtwvid=['https://video.twimg.com/ext_tw_video/',		'https://video.twimg.com/amplify_video/',		'https://video.twimg.com/tweet_video/'];
+
+function vidstr(src)
+{
+	var c0=src.charCodeAt(0);
+	for(var i=1;i<3;i++){if(c0==vtwsig[i]){return vtwvid[i]+src.substring(1);}}
+	return vtwvid[0]+src;
+}
+
+function parseVurl()
+{
+	var uv=location.href.split('#');
+	if(uv.length>1){
+	var prm=uv[1];
+	switch(prm.length)
+	{
+		case 0:
+		vio=setupVideo('../tu/lu/'+uv[2]+'.mp4')
+		return;
+		case 1:
+		default:
+		vio=setupVideo(vidstr(prm));
+		return;
+	}
+	
+	}
+}
+
+document.body.style.backgroundImage='url(https://m3.imhentai.xxx/011/0d5gxb618p/45.jpg)';
+
+
+function unmute()
+{
+vio.volume=0.3;
+vio.muted=false;
+}
+
+function canvassz(mul)
+{
+	var miti=1.0+(mul/10);
+	canvas.width*=miti;
+	canvas.height*=miti;
+	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+}
+
+const u = {
+  set bg(name) {
+unmute();
+document.body.style.backgroundImage='url('+name+')'
+  },
+set s(mul)
+{
+	//unmute();
+	canvassz(mul);
+},
+set src(vsrc)
+{
+	vio.src=vsrc;
+	vio.onplaying=vplaying;
+	vio.play();
+}
+};
+
+const vertexShaderSource = `#version 300 es
+
+in vec4 a_position;
+uniform vec4 zux;
+out vec2 v_texcoord;
+
+
+void main() {
+
+gl_Position=a_position;
+v_texcoord = zux.xy+zux.zw*a_position.xy;
+
+}
+`;
+
+const fragmentShaderSource = `#version 300 es
+precision highp float;
+
+in vec2 v_texcoord;
+
+uniform sampler2D u_texture;
+
+out vec4 outColor;
+
+void main() {
+	vec4 tmp= texture(u_texture, v_texcoord);
+	/*
+	float cmax = max(tmp.r, max(tmp.g, tmp.b));
+	float cmin = min(tmp.r, min(tmp.g, tmp.b));
+	cmax/=cmin;
+	if(cmax < 1.2){tmp.a=cmax-0.5;}
+	//bad2
+	*/
+
+	if (tmp.r < 0.3  ){tmp.a=0.5-tmp.r;} //good1
+	//else if(abs(tmp.r-tmp.b)<0.2){tmp.a=tmp.r;}
+
+	//if(tmp.b > 0.8){tmp.a=tmp.b;}	//bad1
+	outColor =tmp;
+}
+`;
+
+
+const defaultShaderType = [
+  'VERTEX_SHADER',
+  'FRAGMENT_SHADER',
+];
+
+function error(msg) {
+  console.error(msg);
+}
+
+function loadShader(gl, shaderSource, shaderType, opt_errorCallback) {
+  const errFn = opt_errorCallback || error;
+  // Create the shader object
+  const shader = gl.createShader(shaderType);
+
+  // Load the shader source
+  gl.shaderSource(shader, shaderSource);
+
+  // Compile the shader
+  gl.compileShader(shader);
+
+  // Check the compile status
+  const compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  if (!compiled) {
+    // Something went wrong during compilation; get the error
+    const lastError = gl.getShaderInfoLog(shader);
+    errFn('*** Error compiling shader \'' + shader + '\':' + lastError);
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+function createProgram(gl, shaders, opt_attribs, opt_locations, opt_errorCallback) {
+  const errFn = opt_errorCallback || error;
+  const program = gl.createProgram();
+  shaders.forEach(function (shader) {
+    gl.attachShader(program, shader);
+  });
+  if (opt_attribs) {
+    opt_attribs.forEach(function (attrib, ndx) {
+      gl.bindAttribLocation(
+        program,
+        opt_locations ? opt_locations[ndx] : ndx,
+        attrib);
+    });
+  }
+  gl.linkProgram(program);
+
+  // Check the link status
+  const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+  if (!linked) {
+    // something went wrong with the link
+    const lastError = gl.getProgramInfoLog(program);
+    errFn('Error in program linking:' + lastError);
+
+    gl.deleteProgram(program);
+    return null;
+  }
+  return program;
+}
+
+function createProgramFromSources(gl, shaderSources, opt_attribs, opt_locations, opt_errorCallback) {
+  const shaders = [];
+  for (let ii = 0; ii < shaderSources.length; ++ii) {
+    shaders.push(loadShader(
+      gl, shaderSources[ii], gl[defaultShaderType[ii]], opt_errorCallback));
+  }
+  return createProgram(gl, shaders, opt_attribs, opt_locations, opt_errorCallback);
+}
+
+
+
+
+
+function vplaying() {
+	this.onplaying=null;
+	daWi=this.videoWidth;
+	daHi=this.videoHeight;
+	Dmulz=0;
+	if(daWi<400){mulz=1;}
+	var rxko=daWi/daHi;
+	if(rxko>0.8){adj_r(2,2);gl.uniform4fv(textureMatrixLocation,  matrixT);}
+	//else if(rxko > 0.8){{adj_r(2,1);gl.uniform4fv(textureMatrixLocation,  matrixT);}}
+	else{
+	canvas.width = (daWi*3)<<Dmulz;
+	canvas.height = daHi<<Dmulz;
+	}
+	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+	requestAnimationFrame(render);
+}
+
+
+
+function setupVideo(url) {
+var video = document.createElement('a');
+video.href=url;
+video.innerHTML="vid<br>vid<br>vid";
+document.body.appendChild(video);
+
+
+video = document.createElement('video');
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+
+video.onplaying=vplaying;
+
+
+video.src = url;
+video.play();
+
+video.style.display='none';
+return video;
+}
+
+
+const xshift=new Float32Array([0,0.5,0,0.5,0,-0.5])
+const yshift=new Float32Array([0,0.5,1,0.5,0.5,-0.5])
+
+var matrixT = new Float32Array([0.5,0.5,1.5,-0.5]);
+
+function adj2(xs=0,ys=0,xd=0,yd=0)
+{
+	matrixT[0]+=xs;
+	matrixT[1]+=ys;
+	matrixT[2]+=xd;
+	matrixT[3]+=yd;
+	gl.uniform4fv(textureMatrixLocation,  matrixT);
+}
+
+function adj_r(dx,dy,fsc=false)
+{
+	matrixT[0]=xshift[dx];
+	matrixT[1]=yshift[dy];
+	matrixT[2]=dx/2.0;
+	matrixT[3]=-dy/2.0;
+
+	if(fsc)
+	{
+		var zw=(daWi*dx)<<Dmulz;
+		var zh= (daHi*dy)<<Dmulz;
+		var rto=1700/zw;
+		if(rto > 1.0){ zw=1700, zh*=rto;}
+		canvas.width=zw;
+		canvas.height=zh;
+		
+	} else {
+	
+	canvas.width = (daWi*dx)<<Dmulz;
+	canvas.height = (daHi*dy)<<Dmulz;
+	}
+}
+
+function adj2gl()
+{
+	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+	gl.uniform4fv(textureMatrixLocation,  matrixT);
+}
+
+function adj(dx,dy)
+{
+	adj_r(dx,dy);
+	adj2gl();
+}
+
+
+
+
+const canvas = document.createElement('canvas');
+document.body.appendChild(canvas);
+const gl = canvas.getContext('webgl2');
+
+const level = 0;
+const internalFormat = gl.RGBA;
+const srcFormat = gl.RGBA;
+const srcType = gl.UNSIGNED_BYTE;
+
+
+
+var program = createProgramFromSources(gl, [vertexShaderSource, fragmentShaderSource]);
+
+var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+
+
+var textureLocation = gl.getUniformLocation(program, "u_texture");
+var textureMatrixLocation = gl.getUniformLocation(program, "zux");
+
+var vao = gl.createVertexArray();
+gl.bindVertexArray(vao);
+
+var positionBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+var positions = new Float32Array([
+    -1, -1,
+    -1, 1,
+    1, -1,
+    1, -1,
+    -1, 1,
+    1, 1]);
+gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+gl.enableVertexAttribArray(positionAttributeLocation);
+
+
+gTex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, gTex);
+gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
+                1, 1, 0, srcFormat, srcType,
+                new Uint8Array([0, 0, 255, 255]));
+
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+gl.useProgram(program);
+
+
+var textureUnit = 0;
+
+gl.uniform1i(textureLocation, textureUnit);
+gl.activeTexture(gl.TEXTURE0 + textureUnit);
+
+gl.uniform4fv(textureMatrixLocation,  matrixT);
+
+parseVurl();
+
+
+
+function draw() {
+
+
+gl.clearColor(0, 1, 0, 0);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+function render(time) {
+
+//gl.bindTexture(gl.TEXTURE_2D, gTex);
+gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,srcFormat, srcType, vio);
+
+draw();
+
+requestAnimationFrame(render);
+}
+
+var plbrate=1.0;
+function ratechange()
+{
+vio.playbackRate=plbrate;
+}
+
+document.onkeyup=function(e) {
+vio.muted=false;
+
+	switch (e.keyCode) {
+
+	case 27:
+	case 106:
+	case 112:
+		close();
+		return;
+
+
+	
+	
+
+	case 97:
+		vio.currentTime-=2;
+		return;
+	case 99:
+		vio.currentTime+=2;
+		return;
+	case 98:
+		plbrate-=0.1;
+		if(plbrate<0.2)
+		{plbrate=0.2;}
+		ratechange();
+		return;
+	case 100:
+		
+
+		canvassz(-1);
+			
+		return;
+
+	case 101:
+		adj_r(1,1,true);
+		adj2gl();
+		
+		return;
+	case 102:
+		
+		canvassz(1);
+		return;
+
+	
+	case 104:
+		plbrate+=0.1;
+		ratechange();
+		return;
+	case 96:
+		vio.volume-=0.2;
+		return;
+
+	case 110:
+		vio.volume+=0.1;
+		return;
+
+	}
+
+return;
+}
+
+</script></html>
