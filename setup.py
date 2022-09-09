@@ -66,6 +66,9 @@ class CMakeBuild(build_ext):
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE={}".format(extdir),
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
             "-DCMAKE_BUILD_TYPE={}".format(cfg),  # not used on MSVC, but no harm
+            "-DNCNN_OPENMP=OFF",
+            "-DNCNN_INSTALL_SDK=OFF",
+            "-DNCNN_VULKAN=ON",
             "-DNCNN_PYTHON=ON",
             "-DNCNN_BUILD_BENCHMARK=OFF",
             "-DNCNN_BUILD_EXAMPLES=OFF",
