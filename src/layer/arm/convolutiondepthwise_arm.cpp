@@ -111,7 +111,7 @@ int ConvolutionDepthWise_arm::create_pipeline(const Option& opt)
                 Mat weight_data_r2_packed;
                 convert_packing(weight_data_r2, weight_data_r2_packed, 8, opt);
 
-                ncnn::cast_float32_to_float16(weight_data_r2_packed, weight_data_fp16, opt);
+                ncnn::cast_float32_to_float16(weight_data_r2_packed, weight_data_tm, opt);
             }
 
             if (elempack == 4)
@@ -120,15 +120,20 @@ int ConvolutionDepthWise_arm::create_pipeline(const Option& opt)
                 Mat weight_data_r2_packed;
                 convert_packing(weight_data_r2, weight_data_r2_packed, 4, opt);
 
-                ncnn::cast_float32_to_float16(weight_data_r2_packed, weight_data_fp16, opt);
+                ncnn::cast_float32_to_float16(weight_data_r2_packed, weight_data_tm, opt);
             }
 
             if (elempack == 1)
             {
-                ncnn::cast_float32_to_float16(weight_data, weight_data_fp16, opt);
+                ncnn::cast_float32_to_float16(weight_data, weight_data_tm, opt);
             }
 
             ncnn::cast_float32_to_float16(bias_data, bias_data_fp16, opt);
+
+            if (opt.lightmode)
+            {
+                weight_data.release();
+            }
 
             return 0;
         }
@@ -141,15 +146,21 @@ int ConvolutionDepthWise_arm::create_pipeline(const Option& opt)
             if (elempack == 4)
             {
                 Mat weight_data_r2 = weight_data.reshape(maxk, group);
-                convert_packing(weight_data_r2, weight_data_pack4, 4, opt);
+                Mat weight_data_r2_packed;
+                convert_packing(weight_data_r2, weight_data_r2_packed, 4, opt);
 
-                ncnn::cast_float32_to_bfloat16(weight_data_pack4, weight_data_pack4_bf16, opt);
+                ncnn::cast_float32_to_bfloat16(weight_data_r2_packed, weight_data_tm, opt);
             }
 #endif // __ARM_NEON
 
             if (elempack == 1)
             {
-                ncnn::cast_float32_to_bfloat16(weight_data, weight_data_bf16, opt);
+                ncnn::cast_float32_to_bfloat16(weight_data, weight_data_tm, opt);
+            }
+
+            if (opt.lightmode)
+            {
+                weight_data.release();
             }
 
             return 0;
@@ -161,9 +172,7 @@ int ConvolutionDepthWise_arm::create_pipeline(const Option& opt)
         if (elempack == 4)
         {
             Mat weight_data_r2 = weight_data.reshape(maxk, group);
-            convert_packing(weight_data_r2, weight_data_pack4, 4, opt);
-
-            return 0;
+            convert_packing(weight_data_r2, weight_data_tm, 4, opt);
         }
 #endif // __ARM_NEON
 
@@ -171,25 +180,42 @@ int ConvolutionDepthWise_arm::create_pipeline(const Option& opt)
         {
             if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                return 0;
+                weight_data_tm = weight_data;
             }
-            if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
+            else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                return 0;
+                weight_data_tm = weight_data;
             }
-            if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
+            else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                return 0;
+                weight_data_tm = weight_data;
             }
-            if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
+            else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                return 0;
+                weight_data_tm = weight_data;
+            }
+            else
+            {
+                // group convolution
+                create_group_ops(opt);
             }
         }
+
+        if (opt.lightmode)
+        {
+            weight_data.release();
+        }
+
+        return 0;
     }
 
     // group convolution
     create_group_ops(opt);
+
+    if (opt.lightmode)
+    {
+        weight_data.release();
+    }
 
     return 0;
 }
@@ -212,7 +238,7 @@ int ConvolutionDepthWise_arm::create_group_ops(const Option& opt)
 
     for (int g = 0; g < group; g++)
     {
-        Mat weight_data_g = weight_data.range(maxk * channels_g * num_output_g * g, maxk * channels_g * num_output_g);
+        Mat weight_data_g = weight_data.range(maxk * channels_g * num_output_g * g, maxk * channels_g * num_output_g).clone();
         Mat bias_data_g;
         if (bias_term)
             bias_data_g = bias_data.range(num_output_g * g, num_output_g);
@@ -313,7 +339,7 @@ int ConvolutionDepthWise_arm::destroy_pipeline(const Option& opt)
 int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const
 {
 #if NCNN_INT8
-    if (opt.use_int8_inference && weight_data.elemsize == (size_t)1u)
+    if (opt.use_int8_inference && int8_scale_term)
     {
         return forward_int8_arm(bottom_blob, top_blob, opt);
     }
@@ -376,7 +402,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
         {
             if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw3x3s1_pack4_neon(bottom_blob_bordered, top_blob, weight_data_pack4, bias_data, opt);
+                convdw3x3s1_pack4_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -387,7 +413,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
             }
             else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw3x3s2_pack4_neon(bottom_blob_bordered, top_blob, weight_data_pack4, bias_data, opt);
+                convdw3x3s2_pack4_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -398,7 +424,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
             }
             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw5x5s1_pack4_neon(bottom_blob_bordered, top_blob, weight_data_pack4, bias_data, opt);
+                convdw5x5s1_pack4_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -409,7 +435,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
             }
             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw5x5s2_pack4_neon(bottom_blob_bordered, top_blob, weight_data_pack4, bias_data, opt);
+                convdw5x5s2_pack4_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -445,7 +471,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
                 for (int g = 0; g < channels; g++)
                 {
                     float* outptr = top_blob.channel(g);
-                    const float* kptr = (const float*)weight_data_pack4 + maxk * g * 4;
+                    const float* kptr = (const float*)weight_data_tm + maxk * g * 4;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -486,7 +512,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
         {
             if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw3x3s1_neon(bottom_blob_bordered, top_blob, weight_data, bias_data, opt);
+                convdw3x3s1_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -497,7 +523,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
             }
             else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw3x3s2_neon(bottom_blob_bordered, top_blob, weight_data, bias_data, opt);
+                convdw3x3s2_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -508,7 +534,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
             }
             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw5x5s1_neon(bottom_blob_bordered, top_blob, weight_data, bias_data, opt);
+                convdw5x5s1_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -519,7 +545,7 @@ int ConvolutionDepthWise_arm::forward(const Mat& bottom_blob, Mat& top_blob, con
             }
             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw5x5s2_neon(bottom_blob_bordered, top_blob, weight_data, bias_data, opt);
+                convdw5x5s2_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -762,7 +788,7 @@ int ConvolutionDepthWise_arm::forward_fp16s(const Mat& bottom_blob, Mat& top_blo
                 for (int g = 0; g < channels; g++)
                 {
                     __fp16* outptr = top_blob.channel(g);
-                    const __fp16* kptr = (const __fp16*)weight_data_fp16 + maxk * g * 4;
+                    const __fp16* kptr = (const __fp16*)weight_data_tm + maxk * g * 4;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -824,7 +850,7 @@ int ConvolutionDepthWise_arm::forward_fp16s(const Mat& bottom_blob, Mat& top_blo
                 for (int g = 0; g < group; g++)
                 {
                     __fp16* outptr = top_blob.channel(g);
-                    const __fp16* kptr = (const __fp16*)weight_data_fp16 + maxk * g;
+                    const __fp16* kptr = (const __fp16*)weight_data_tm + maxk * g;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -949,7 +975,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
         {
             if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw3x3s1_pack8_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_fp16, bias_data_fp16, opt);
+                convdw3x3s1_pack8_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data_fp16, opt);
 
                 if (activation)
                 {
@@ -958,7 +984,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
             }
             else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw3x3s2_pack8_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_fp16, bias_data_fp16, opt);
+                convdw3x3s2_pack8_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data_fp16, opt);
 
                 if (activation)
                 {
@@ -967,7 +993,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
             }
             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw5x5s1_pack8_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_fp16, bias_data_fp16, opt);
+                convdw5x5s1_pack8_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data_fp16, opt);
 
                 if (activation)
                 {
@@ -976,7 +1002,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
             }
             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw5x5s2_pack8_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_fp16, bias_data_fp16, opt);
+                convdw5x5s2_pack8_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data_fp16, opt);
 
                 if (activation)
                 {
@@ -1010,7 +1036,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
                 for (int g = 0; g < channels; g++)
                 {
                     __fp16* outptr = top_blob.channel(g);
-                    const __fp16* kptr = (const __fp16*)weight_data_fp16 + maxk * g * 8;
+                    const __fp16* kptr = (const __fp16*)weight_data_tm + maxk * g * 8;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -1072,7 +1098,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
                 for (int g = 0; g < channels; g++)
                 {
                     __fp16* outptr = top_blob.channel(g);
-                    const __fp16* kptr = (const __fp16*)weight_data_fp16 + maxk * g * 4;
+                    const __fp16* kptr = (const __fp16*)weight_data_tm + maxk * g * 4;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -1110,7 +1136,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
         {
             if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw3x3s1_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_fp16, bias_data_fp16, opt);
+                convdw3x3s1_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data_fp16, opt);
 
                 if (activation)
                 {
@@ -1119,7 +1145,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
             }
             else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw3x3s2_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_fp16, bias_data_fp16, opt);
+                convdw3x3s2_fp16sa_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data_fp16, opt);
 
                 if (activation)
                 {
@@ -1153,7 +1179,7 @@ int ConvolutionDepthWise_arm::forward_fp16sa(const Mat& bottom_blob, Mat& top_bl
                 for (int g = 0; g < group; g++)
                 {
                     __fp16* outptr = top_blob.channel(g);
-                    const __fp16* kptr = (const __fp16*)weight_data_fp16 + maxk * g;
+                    const __fp16* kptr = (const __fp16*)weight_data_tm + maxk * g;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -1288,7 +1314,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
         {
             if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw3x3s1_pack4_bf16s_neon(bottom_blob_bordered, top_blob, weight_data_pack4_bf16, bias_data, opt);
+                convdw3x3s1_pack4_bf16s_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -1297,7 +1323,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
             }
             else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw3x3s2_pack4_bf16s_neon(bottom_blob_bordered, top_blob, weight_data_pack4_bf16, bias_data, opt);
+                convdw3x3s2_pack4_bf16s_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -1306,7 +1332,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
             }
             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             {
-                convdw5x5s1_pack4_bf16s_neon(bottom_blob_bordered, top_blob, weight_data_pack4_bf16, bias_data, opt);
+                convdw5x5s1_pack4_bf16s_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -1315,7 +1341,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
             }
             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             {
-                convdw5x5s2_pack4_bf16s_neon(bottom_blob_bordered, top_blob, weight_data_pack4_bf16, bias_data, opt);
+                convdw5x5s2_pack4_bf16s_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
 
                 if (activation)
                 {
@@ -1349,7 +1375,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
                 for (int g = 0; g < channels; g++)
                 {
                     unsigned short* outptr = top_blob.channel(g);
-                    const unsigned short* kptr = (const unsigned short*)weight_data_pack4_bf16 + maxk * g * 4;
+                    const unsigned short* kptr = (const unsigned short*)weight_data_tm + maxk * g * 4;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -1390,7 +1416,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
         {
             //             if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             //             {
-            //                 convdw3x3s1_neon(bottom_blob_bordered, top_blob, weight_data_bf16, bias_data, opt);
+            //                 convdw3x3s1_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
             //
             //                 if (activation)
             //                 {
@@ -1401,7 +1427,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
             //             }
             //             else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             //             {
-            //                 convdw3x3s2_neon(bottom_blob_bordered, top_blob, weight_data_bf16, bias_data, opt);
+            //                 convdw3x3s2_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
             //
             //                 if (activation)
             //                 {
@@ -1412,7 +1438,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
             //             }
             //             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
             //             {
-            //                 convdw5x5s1_neon(bottom_blob_bordered, top_blob, weight_data_bf16, bias_data, opt);
+            //                 convdw5x5s1_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
             //
             //                 if (activation)
             //                 {
@@ -1423,7 +1449,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
             //             }
             //             else if (kernel_w == 5 && kernel_h == 5 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
             //             {
-            //                 convdw5x5s2_neon(bottom_blob_bordered, top_blob, weight_data_bf16, bias_data, opt);
+            //                 convdw5x5s2_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, opt);
             //
             //                 if (activation)
             //                 {
@@ -1459,7 +1485,7 @@ int ConvolutionDepthWise_arm::forward_bf16s(const Mat& bottom_blob, Mat& top_blo
                 for (int g = 0; g < group; g++)
                 {
                     unsigned short* outptr = top_blob.channel(g);
-                    const unsigned short* kptr = (const unsigned short*)weight_data_bf16 + maxk * g;
+                    const unsigned short* kptr = (const unsigned short*)weight_data_tm + maxk * g;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -1573,7 +1599,17 @@ int ConvolutionDepthWise_arm::create_pipeline_int8_arm(const Option& opt)
         if (elempack == 8)
         {
             Mat weight_data_r2 = weight_data.reshape(maxk, group);
-            convert_packing(weight_data_r2, weight_data_int8, 8, opt);
+            convert_packing(weight_data_r2, weight_data_tm, 8, opt);
+        }
+
+        if (elempack == 1)
+        {
+            weight_data_tm = weight_data;
+        }
+
+        if (opt.lightmode)
+        {
+            weight_data.release();
         }
 
         return 0;
@@ -1581,6 +1617,11 @@ int ConvolutionDepthWise_arm::create_pipeline_int8_arm(const Option& opt)
 
     // group convolution
     create_group_ops(opt);
+
+    if (opt.lightmode)
+    {
+        weight_data.release();
+    }
 
     return 0;
 }
@@ -1674,7 +1715,7 @@ int ConvolutionDepthWise_arm::forward_int8_arm(const Mat& bottom_blob, Mat& top_
                 if (top_blob_int32.empty())
                     return -100;
 
-                convdw3x3s1_pack8_int8_neon(bottom_blob_bordered, top_blob_int32, weight_data_int8, opt);
+                convdw3x3s1_pack8_int8_neon(bottom_blob_bordered, top_blob_int32, weight_data_tm, opt);
 
                 Mat scale_in_data(group);
                 for (int g = 0; g < group; g++)
@@ -1710,7 +1751,7 @@ int ConvolutionDepthWise_arm::forward_int8_arm(const Mat& bottom_blob, Mat& top_
                 if (top_blob_int32.empty())
                     return -100;
 
-                convdw3x3s2_pack8_int8_neon(bottom_blob_bordered, top_blob_int32, weight_data_int8, opt);
+                convdw3x3s2_pack8_int8_neon(bottom_blob_bordered, top_blob_int32, weight_data_tm, opt);
 
                 Mat scale_in_data(group);
                 for (int g = 0; g < group; g++)
@@ -1767,7 +1808,7 @@ int ConvolutionDepthWise_arm::forward_int8_arm(const Mat& bottom_blob, Mat& top_
                 {
                     signed char* outptr_s8 = top_blob.channel(g);
                     float* outptr_f32 = top_blob.channel(g);
-                    const signed char* kptr = (const signed char*)weight_data_int8 + maxk * g * 8;
+                    const signed char* kptr = (const signed char*)weight_data_tm + maxk * g * 8;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
@@ -1862,7 +1903,7 @@ int ConvolutionDepthWise_arm::forward_int8_arm(const Mat& bottom_blob, Mat& top_
                         requantize_scales.push_back(scale_out);
                     }
 
-                    convdw3x3s1_int8_requant_neon(bottom_blob_bordered, top_blob, weight_data, bias_data, requantize_scales, opt);
+                    convdw3x3s1_int8_requant_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, requantize_scales, opt);
                 }
                 else
                 {
@@ -1871,8 +1912,8 @@ int ConvolutionDepthWise_arm::forward_int8_arm(const Mat& bottom_blob, Mat& top_
                     if (top_blob_int32.empty())
                         return -100;
 
-                    convdw3x3s1_int8_neon(bottom_blob_bordered, top_blob_int32, weight_data, opt);
-                    //                 convdw3x3s1_int8_dequant_neon(bottom_blob_bordered, top_blob_int32, weight_data, bias_data, dequantize_scales, opt);
+                    convdw3x3s1_int8_neon(bottom_blob_bordered, top_blob_int32, weight_data_tm, opt);
+                    //                 convdw3x3s1_int8_dequant_neon(bottom_blob_bordered, top_blob_int32, weight_data_tm, bias_data, dequantize_scales, opt);
 
                     Mat scale_data(group);
                     for (int g = 0; g < group; g++)
@@ -1914,7 +1955,7 @@ int ConvolutionDepthWise_arm::forward_int8_arm(const Mat& bottom_blob, Mat& top_
                         requantize_scales.push_back(scale_out);
                     }
 
-                    convdw3x3s2_int8_requant_neon(bottom_blob_bordered, top_blob, weight_data, bias_data, requantize_scales, opt);
+                    convdw3x3s2_int8_requant_neon(bottom_blob_bordered, top_blob, weight_data_tm, bias_data, requantize_scales, opt);
                 }
                 else
                 {
@@ -1923,8 +1964,8 @@ int ConvolutionDepthWise_arm::forward_int8_arm(const Mat& bottom_blob, Mat& top_
                     if (top_blob_int32.empty())
                         return -100;
 
-                    convdw3x3s2_int8_neon(bottom_blob_bordered, top_blob_int32, weight_data, opt);
-                    //                 convdw3x3s2_int8_dequant_neon(bottom_blob_bordered, top_blob_int32, weight_data, bias_data, dequantize_scales, opt);
+                    convdw3x3s2_int8_neon(bottom_blob_bordered, top_blob_int32, weight_data_tm, opt);
+                    //                 convdw3x3s2_int8_dequant_neon(bottom_blob_bordered, top_blob_int32, weight_data_tm, bias_data, dequantize_scales, opt);
 
                     Mat scale_data(group);
                     for (int g = 0; g < group; g++)
@@ -1975,7 +2016,7 @@ int ConvolutionDepthWise_arm::forward_int8_arm(const Mat& bottom_blob, Mat& top_
                 {
                     signed char* outptr_s8 = top_blob.channel(g);
                     float* outptr_f32 = top_blob.channel(g);
-                    const signed char* kptr = (const signed char*)weight_data + maxk * g;
+                    const signed char* kptr = (const signed char*)weight_data_tm + maxk * g;
                     const Mat m = bottom_blob_bordered.channel(g);
 
                     for (int i = 0; i < outh; i++)
