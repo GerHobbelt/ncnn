@@ -1,6 +1,6 @@
 // Tencent is pleased to support the open source community by making ncnn available.
 //
-// Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
+// Copyright (C) 2022 THL A29 Limited, a Tencent company. All rights reserved.
 //
 // Licensed under the BSD 3-Clause License (the "License"); you may not use this file except
 // in compliance with the License. You may obtain a copy of the License at
@@ -12,33 +12,30 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#ifndef LAYER_MEMORYDATA_H
-#define LAYER_MEMORYDATA_H
+#ifndef LAYER_DEFORMABLECONV2D_X86_H
+#define LAYER_DEFORMABLECONV2D_X86_H
 
-#include "layer.h"
+#include "deformableconv2d.h"
 
 namespace ncnn {
 
-class MemoryData : public Layer
+class DeformableConv2D_x86 : virtual public DeformableConv2D
 {
 public:
-    MemoryData();
+    DeformableConv2D_x86();
 
-    virtual int load_param(const ParamDict& pd);
-
-    virtual int load_model(const ModelBin& mb);
+    virtual int create_pipeline(const Option& opt);
+    virtual int destroy_pipeline(const Option& opt);
 
     virtual int forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const;
 
 public:
-    int w;
-    int h;
-    int d;
-    int c;
+    Mat weight_data_t;
 
-    Mat data;
+    Layer* inner_product;
+    Layer* permute;
 };
 
 } // namespace ncnn
 
-#endif // LAYER_MEMORYDATA_H
+#endif // LAYER_DEFORMABLECONV2D_X86_H
