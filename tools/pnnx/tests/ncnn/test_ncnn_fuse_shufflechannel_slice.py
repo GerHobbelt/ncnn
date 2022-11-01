@@ -20,47 +20,44 @@ class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
 
-    def forward(self, x, y, z):
-        x0 = x[:3]
-        x1 = x[3:]
+        self.conv = nn.Conv2d(in_channels=14, out_channels=24, kernel_size=1)
 
-        z3 = z[:,:,7:]
-        z2 = z[:,:,4:7]
+    def channel_shuffle(self, x):
+        batchsize, num_channels, height, width = x.data.size()
+        assert (num_channels % 4 == 0)
+        x = x.reshape(batchsize * num_channels // 2, 2, height * width)
+        x = x.permute(1, 0, 2)
+        x = x.reshape(2, -1, num_channels // 2, height, width)
+        return x[0], x[1]
 
-        y0 = y[:2,:]
-        y1 = y[2:4,:]
-        y2 = y[4:,:]
-
-        z1 = z[:,:,2:4]
-        z0 = z[:,:,:2]
-
-        return x0, x1, y0, y1, y2, z0, z1, z2, z3
+    def forward(self, x):
+        x = self.conv(x)
+        x0, x1 = self.channel_shuffle(x)
+        return x0, x1
 
 def test():
-    net = Model()
+    net = Model().half().float()
     net.eval()
 
     torch.manual_seed(0)
-    x = torch.rand(8)
-    y = torch.rand(9, 10)
-    z = torch.rand(8, 9, 10)
+    x = torch.rand(1, 14, 5, 6)
 
-    a = net(x, y, z)
+    a = net(x)
 
     # export torchscript
-    mod = torch.jit.trace(net, (x, y, z))
-    mod.save("test_pnnx_fuse_slice_to_tensor_split.pt")
+    mod = torch.jit.trace(net, x)
+    mod.save("test_ncnn_fuse_shufflechannel_slice.pt")
 
     # torchscript to pnnx
     import os
-    os.system("../src/pnnx test_pnnx_fuse_slice_to_tensor_split.pt inputshape=[8],[9,10],[8,9,10]")
+    os.system("../../src/pnnx test_ncnn_fuse_shufflechannel_slice.pt inputshape=[1,14,5,6]")
 
-    # pnnx inference
-    import test_pnnx_fuse_slice_to_tensor_split_pnnx
-    b = test_pnnx_fuse_slice_to_tensor_split_pnnx.test_inference()
+    # ncnn inference
+    import test_ncnn_fuse_shufflechannel_slice_ncnn
+    b = test_ncnn_fuse_shufflechannel_slice_ncnn.test_inference()
 
     for a0, b0 in zip(a, b):
-        if not torch.equal(a0, b0):
+        if not torch.allclose(a0, b0, 1e-4, 1e-4):
             return False
     return True
 
