@@ -1,6 +1,6 @@
 # Tencent is pleased to support the open source community by making ncnn available.
 #
-# Copyright (C) 2021 THL A29 Limited, a Tencent company. All rights reserved.
+# Copyright (C) 2022 THL A29 Limited, a Tencent company. All rights reserved.
 #
 # Licensed under the BSD 3-Clause License (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
@@ -15,51 +15,42 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from packaging import version
 
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
 
-        self.attention_0_0 = nn.MultiheadAttention(embed_dim=64, num_heads=4)
-
-        if version.parse(torch.__version__) >= version.parse('1.9'):
-            self.attention_1_0 = nn.MultiheadAttention(embed_dim=40, num_heads=4, batch_first=True)
-
-    def forward(self, x, y):
-        x0, _ = self.attention_0_0(x, x, x)
-
-        if version.parse(torch.__version__) < version.parse('1.9'):
-            return x0
-
-        y0, _ = self.attention_1_0(y, y, y)
-
-        return x0, y0
+    def forward(self, x0, x1, y0, y1, z0, z1):
+        a = x0 + x1 * -1.5
+        b = y0 * 0.6 + y1 * 0.4
+        c = z0 * 3 + z1
+        return a, b, c
 
 def test():
-    net = Model().half().float()
+    net = Model()
     net.eval()
 
     torch.manual_seed(0)
-    x = torch.rand(1, 1, 64)
-    y = torch.rand(1, 15, 40)
+    x0 = torch.rand(14)
+    x1 = torch.rand(14)
+    y0 = torch.rand(23, 14)
+    y1 = torch.rand(23, 14)
+    z0 = torch.rand(20, 15, 9)
+    z1 = torch.rand(20, 15, 9)
 
-    a = net(x, y)
+    a = net(x0, x1, y0, y1, z0, z1)
 
     # export torchscript
-    if version.parse(torch.__version__) >= version.parse('1.12.0'):
-        mod = torch.jit.trace(net, (x, y), check_trace=False)
-    else:
-        mod = torch.jit.trace(net, (x, y))
-    mod.save("test_nn_MultiheadAttention.pt")
+    mod = torch.jit.trace(net, (x0, x1, y0, y1, z0, z1))
+    mod.save("test_ncnn_fuse_binaryop_eltwise.pt")
 
     # torchscript to pnnx
     import os
-    os.system("../../src/pnnx test_nn_MultiheadAttention.pt inputshape=[1,1,64],[1,15,40]")
+    os.system("../../src/pnnx test_ncnn_fuse_binaryop_eltwise.pt inputshape=[14],[14],[23,14],[23,14],[20,15,9],[20,15,9]")
 
     # ncnn inference
-    import test_nn_MultiheadAttention_ncnn
-    b = test_nn_MultiheadAttention_ncnn.test_inference()
+    import test_ncnn_fuse_binaryop_eltwise_ncnn
+    b = test_ncnn_fuse_binaryop_eltwise_ncnn.test_inference()
 
     for a0, b0 in zip(a, b):
         if not torch.allclose(a0, b0, 1e-4, 1e-4):
