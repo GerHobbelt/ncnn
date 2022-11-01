@@ -33,6 +33,7 @@
 namespace ncnn {
 
 #include "convolution_sgemm.h"
+#include "convolution_winograd_transform.h"
 #include "convolution_1x1.h"
 #include "convolution_3x3.h"
 #include "convolution_5x5.h"
@@ -52,6 +53,7 @@ namespace ncnn {
 #include "convolution_sgemm_pack4.h"
 #include "convolution_sgemm_pack1to4.h"
 #include "convolution_sgemm_pack4to1.h"
+#include "convolution_winograd_transform_pack4.h"
 #include "convolution_1x1_pack4.h"
 #include "convolution_1x1_pack1to4.h"
 #include "convolution_1x1_pack4to1.h"
@@ -87,6 +89,7 @@ namespace ncnn {
 #include "convolution_sgemm_pack1to8.h"
 #include "convolution_sgemm_pack8to4.h"
 #include "convolution_sgemm_pack8to1.h"
+#include "convolution_winograd_transform_pack8.h"
 #include "convolution_1x1_pack8.h"
 #include "convolution_1x1_pack4to8.h"
 #include "convolution_1x1_pack1to8.h"
@@ -108,15 +111,21 @@ namespace ncnn {
 
 #include "convolution_sgemm_pack16.h"
 #include "convolution_sgemm_pack8to16.h"
+#include "convolution_sgemm_pack4to16.h"
 #include "convolution_sgemm_pack1to16.h"
 #include "convolution_sgemm_pack16to8.h"
 #include "convolution_sgemm_pack16to4.h"
+#include "convolution_sgemm_pack16to1.h"
+#include "convolution_winograd_transform_pack16.h"
 #include "convolution_1x1_pack16.h"
 #include "convolution_1x1_pack8to16.h"
+#include "convolution_1x1_pack4to16.h"
 #include "convolution_1x1_pack1to16.h"
 #include "convolution_1x1_pack16to8.h"
 #include "convolution_1x1_pack16to4.h"
+#include "convolution_1x1_pack16to1.h"
 #include "convolution_3x3_pack16.h"
+#include "convolution_3x3_pack16to1.h"
 #endif // __AVX512F__
 #endif // __AVX__
 #endif // __SSE2__
@@ -322,6 +331,19 @@ int Convolution_x86::create_pipeline(const Option& opt)
 
     if (elempack == 4 && out_elempack == 16)
     {
+        if (kernel_w == 1 && kernel_h == 1 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
+        {
+            convolution_im2col_sgemm_transform_kernel_pack4to16_avx512(weight_data, weight_sgemm_data, num_input, num_output, kernel_w, kernel_h);
+        }
+        else if (kernel_w == 1 && kernel_h == 1 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
+        {
+            convolution_im2col_sgemm_transform_kernel_pack4to16_avx512(weight_data, weight_sgemm_data, num_input, num_output, kernel_w, kernel_h);
+        }
+        else if (opt.use_sgemm_convolution)
+        {
+            convolution_im2col_sgemm_transform_kernel_pack4to16_avx512(weight_data, weight_sgemm_data, num_input, num_output, kernel_w, kernel_h);
+        }
+        else
         {
             convolution_transform_kernel_packed_sse(weight_data, weight_data_packed, num_input, num_output, kernel_w, kernel_h, elempack, out_elempack);
         }
@@ -369,6 +391,30 @@ int Convolution_x86::create_pipeline(const Option& opt)
 
     if (elempack == 16 && out_elempack == 1)
     {
+        if (kernel_w == 1 && kernel_h == 1 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
+        {
+            convolution_im2col_sgemm_transform_kernel_pack16to1_avx512(weight_data, weight_sgemm_data, num_input, num_output, kernel_w, kernel_h);
+        }
+        else if (kernel_w == 1 && kernel_h == 1 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
+        {
+            convolution_im2col_sgemm_transform_kernel_pack16to1_avx512(weight_data, weight_sgemm_data, num_input, num_output, kernel_w, kernel_h);
+        }
+        else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
+        {
+            if (opt.use_winograd_convolution)
+            {
+                conv3x3s1_winograd64_transform_kernel_pack16to1_avx512(weight_data, weight_3x3_winograd64_data, num_input, num_output, opt);
+            }
+            else
+            {
+                convolution_transform_kernel_packed_sse(weight_data, weight_data_packed, num_input, num_output, kernel_w, kernel_h, elempack, out_elempack);
+            }
+        }
+        else if (opt.use_sgemm_convolution)
+        {
+            convolution_im2col_sgemm_transform_kernel_pack16to1_avx512(weight_data, weight_sgemm_data, num_input, num_output, kernel_w, kernel_h);
+        }
+        else
         {
             convolution_transform_kernel_packed_sse(weight_data, weight_data_packed, num_input, num_output, kernel_w, kernel_h, elempack, out_elempack);
         }
@@ -859,6 +905,34 @@ int Convolution_x86::forward(const Mat& bottom_blob, Mat& top_blob, const Option
 
     if (elempack == 4 && out_elempack == 16)
     {
+        if (kernel_w == 1 && kernel_h == 1 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
+        {
+            conv1x1s1_sgemm_pack4to16_avx512(bottom_blob_bordered, top_blob, weight_sgemm_data, bias_data, opt);
+
+            if (activation)
+            {
+                activation->forward_inplace(top_blob, opt);
+            }
+        }
+        else if (kernel_w == 1 && kernel_h == 1 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
+        {
+            conv1x1s2_sgemm_pack4to16_avx512(bottom_blob_bordered, top_blob, weight_sgemm_data, bias_data, opt);
+
+            if (activation)
+            {
+                activation->forward_inplace(top_blob, opt);
+            }
+        }
+        else if (opt.use_sgemm_convolution)
+        {
+            convolution_im2col_sgemm_pack4to16_avx512(bottom_blob_bordered, top_blob, weight_sgemm_data, bias_data, kernel_w, kernel_h, dilation_w, dilation_h, stride_w, stride_h, opt);
+
+            if (activation)
+            {
+                activation->forward_inplace(top_blob, opt);
+            }
+        }
+        else
         {
             convolution_pack4to16_avx512(bottom_blob_bordered, top_blob, weight_data_packed, bias_data, kernel_w, kernel_h, dilation_w, dilation_h, stride_w, stride_h, activation_type, activation_params, opt);
         }
@@ -936,6 +1010,51 @@ int Convolution_x86::forward(const Mat& bottom_blob, Mat& top_blob, const Option
 
     if (elempack == 16 && out_elempack == 1)
     {
+        if (kernel_w == 1 && kernel_h == 1 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
+        {
+            conv1x1s1_sgemm_pack16to1_avx512(bottom_blob_bordered, top_blob, weight_sgemm_data, bias_data, opt);
+
+            if (activation)
+            {
+                activation->forward_inplace(top_blob, opt);
+            }
+        }
+        else if (kernel_w == 1 && kernel_h == 1 && dilation_w == 1 && dilation_h == 1 && stride_w == 2 && stride_h == 2)
+        {
+            conv1x1s2_sgemm_pack16to1_avx512(bottom_blob_bordered, top_blob, weight_sgemm_data, bias_data, opt);
+
+            if (activation)
+            {
+                activation->forward_inplace(top_blob, opt);
+            }
+        }
+        else if (kernel_w == 3 && kernel_h == 3 && dilation_w == 1 && dilation_h == 1 && stride_w == 1 && stride_h == 1)
+        {
+            if (opt.use_winograd_convolution)
+            {
+                // TODO more proper condition
+                conv3x3s1_winograd64_pack16to1_avx512(bottom_blob_bordered, top_blob, weight_3x3_winograd64_data, bias_data, opt);
+            }
+            else
+            {
+                conv3x3s1_pack16to1_avx512(bottom_blob_bordered, top_blob, weight_data_packed, bias_data, opt);
+            }
+
+            if (activation)
+            {
+                activation->forward_inplace(top_blob, opt);
+            }
+        }
+        else if (opt.use_sgemm_convolution)
+        {
+            convolution_im2col_sgemm_pack16to1_avx512(bottom_blob_bordered, top_blob, weight_sgemm_data, bias_data, kernel_w, kernel_h, dilation_w, dilation_h, stride_w, stride_h, opt);
+
+            if (activation)
+            {
+                activation->forward_inplace(top_blob, opt);
+            }
+        }
+        else
         {
             convolution_pack16to1_avx512(bottom_blob_bordered, top_blob, weight_data_packed, bias_data, kernel_w, kernel_h, dilation_w, dilation_h, stride_w, stride_h, activation_type, activation_params, opt);
         }
