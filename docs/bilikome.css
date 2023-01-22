@@ -1,7 +1,18 @@
 H3 {	
+	font-weight: normal;
 	background-color: #ffd;
 }
 
 H4 {	
+	font-weight: normal;
 	background-color: #fdf;
+	display: flow-root;
+	margin-left: 5%;
+}
+
+H5 {	
+	font-weight: normal;
+	background-color: #dff;
+	display: flow-root;
+	margin-left: 5%;
 }
