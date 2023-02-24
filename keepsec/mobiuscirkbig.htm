@@ -1,0 +1,148 @@
+<html><body>
+<svg height='480' width='480'>
+<def>
+<g id='krox'>
+<image width='480' height='480' href='zirbigline.png'/>
+</g>
+
+
+
+</def>
+
+<g stroke='#0f0' stroke-width='0.5' fill='none'>
+<rect width='480' height='480'/>
+
+<use href='#krox'  transform='matrix(1 0.012 -0.012 1 2.963 -2.927)' />
+<use href='#krox'  transform='matrix(1 0.037 -0.037 1 8.996 -8.671)' />
+<use href='#krox'  transform='matrix(0.998 0.061 -0.061 0.998 15.169 -14.265)' />
+<use href='#krox'  transform='matrix(0.996 0.086 -0.086 0.996 21.476 -19.706)' />
+
+<circle cx='240' cy='240' r='236.643' />
+<circle cx='240' cy='240' r='233.238' />
+<circle cx='240' cy='240' r='229.783' />
+<circle cx='240' cy='240' r='226.274' />
+<circle cx='240' cy='240' r='222.711' />
+<circle cx='240' cy='240' r='219.089' />
+<circle cx='240' cy='240' r='215.407' />
+<circle cx='240' cy='240' r='211.660' fill='white'/>
+
+<use href='#krox'  transform='matrix(1 0.025 -0.025 1 5.962 -5.818)' />
+<use href='#krox'  transform='matrix(0.997 0.074 -0.074 0.997 18.306 -17.005)' />
+
+<circle cx='240' cy='240' r='207.846' />
+<circle cx='240' cy='240' r='203.961' />
+<circle cx='240' cy='240' r='200.000' />
+<circle cx='240' cy='240' r='195.959' />
+<circle cx='240' cy='240' r='191.833' />
+<circle cx='240' cy='240' r='187.617' />
+<circle cx='240' cy='240' r='183.303' fill='white'/>
+
+<use href='#krox'/>
+<use href='#krox'  transform='matrix(1 0.049 -0.049 1 12.065 -11.487)' />
+
+<circle cx='240' cy='240' r='178.885' />
+<circle cx='240' cy='240' r='174.356' />
+<circle cx='240' cy='240' r='169.706' />
+<circle cx='240' cy='240' r='164.924' />
+<circle cx='240' cy='240' r='160.000' />
+<circle cx='240' cy='240' r='154.919' fill='white'/>
+
+
+
+</g></svg>
+</body><script>
+var deg90=Math.PI/2;
+var fixedr=240;
+var fillcolor=[0,0xff,0];
+
+
+function alphproc()
+{
+	bsimgw=bsimg.naturalWidth;
+	bsimgh=bsimg.naturalHeight;
+	
+	
+	canv.width = bsimgw;
+	canv.height = bsimgh;
+
+	
+	var ctx = canv.getContext("2d");
+	ctx.drawImage(bsimg,0,0);
+
+	var imgd = ctx.getImageData(0, 0, bsimgw, bsimgh);
+	var b8=imgd.data;
+
+	var b8l=b8.length;
+	for(var i=0;i<b8l;i+=4)
+	{
+		b8[i+3]=255-b8[i];
+		b8[i]=fillcolor[0];
+		b8[i+1]=fillcolor[1];
+		b8[i+2]=fillcolor[2];
+	}
+	ctx.putImageData(imgd, 0, 0);
+}
+
+function alph(src='zirbigline.png')
+{
+	bsimg=document.createElement('img');
+	bsimg.onload=alphproc;
+	bsimg.src=src;
+	canv=document.createElement('canvas');
+	document.body.appendChild(canv);
+	document.body.appendChild(bsimg);
+}
+
+function rdus(v=40,rn=16)
+{
+	fixedr=(v*Math.sqrt(rn)).toFixed(0);
+	var tck="<circle cx='"+fixedr+"' cy='"+fixedr+"' r='";
+	var izr='';
+	for(var i=rn;i>0;i--)
+	{
+		izr+=tck+(v*Math.sqrt(i)).toFixed(3)+"' />\n";
+	}
+
+	return izr;
+}
+
+
+
+
+function mtx(dv2,dv)
+{
+	var dcc=Math.cos(deg90*dv/dv2);
+	var dcs=Math.sin(deg90*dv/dv2);
+
+	var dcc0=dcc.toFixed(3);
+	var dcs0=dcs.toFixed(3);
+	var yoff=(fixedr*(1-dcs-dcc)).toFixed(3);
+	var xoff1=fixedr*(dcs-dcc+1);
+	
+//c s -s c (s-c+1)x (1-s+c)x
+	return 'matrix('+dcc0+' '+dcs0+' '+(-dcs).toFixed(3)+' '+dcc0+' '+xoff1.toFixed(3)+' '+yoff+')';	//\nmatrix('+
+		//dcs0+' '+dcc0+' '+(-dcc).toFixed(3)+' '+dcs0+' '+(2*fixedr-xoff1).toFixed(3)+' '+yoff+')';
+
+}
+
+
+
+/*
+<g id='krox8'>
+<use href='#krox'/>
+<use href='#krox'  transform='matrix(0.707 0.707 -0.707 0.707 240 -99.411)' />
+</g>
+
+<use href='#krox8'  transform='matrix(0.924 0.383 -0.383 0.924 110.113 -73.575)' />
+
+<use href='#krox8'  transform='matrix(0.981 0.195 -0.195 0.981 51.433 -42.210)' />
+<use href='#krox8'  transform='matrix(0.831 0.556 -0.556 0.831 173.784 -92.890)' />
+
+<use href='#krox8'  transform='matrix(0.995 0.098 -0.098 0.995 24.680 -22.368)' />
+<use href='#krox8'  transform='matrix(0.957 0.290 -0.290 0.957 80.003 -59.334)' />
+<use href='#krox8'  transform='matrix(0.882 0.471 -0.471 0.882 141.474 -84.796)' />
+<use href='#krox8'  transform='matrix(0.773 0.634 -0.634 0.773 206.732 -97.777)' />
+
+*/
+
+</script></html>
