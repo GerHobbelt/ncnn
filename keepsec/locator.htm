@@ -1,0 +1,612 @@
+<html><body><style>
+.fixpos {
+	position:fixed;
+	top:0%;
+	left:0%;
+}
+
+.kalcu {
+	position:fixed;
+	top:20%;
+	right:5%;
+}
+
+b {
+width:44px;
+height:44px;
+display: inline-block;
+text-align:center;
+line-height: 3;
+border:2px #f00 solid;
+}
+
+</style>
+<canvas id='kanbase' class='fixpos' height='640' width='640'></canvas>
+<svg class='fixpos' height='640' width='640'><g stroke='#0ff' stroke-width='10' fill='none'>
+<line x1='320' y1='0' x2='320' y2='640' />
+<line id='hige' x1='320' y1='0' x2='320' y2='640' />
+</g></svg>
+<img src='hflv4shi.png' />
+<img src='ttt5.png' />
+<div id='calc' class='kalcu'></div>
+</body><script>
+var hflv=4;
+
+
+var fixedr=320;
+var graphid=0;
+
+
+var deg90=Math.PI/2;
+var fillcolor=[0,0xff,0];
+var graphcoord=[0, 0x10,1,0x11];
+var calcbuf=new Uint32Array(1);
+var currot=0;
+
+var shinames=new Array(8);
+shinames[4]=['0',  '1',  '活',  '2',  '活',  'き活',  'せ活',  '3',  '7',  'せ┎活',  'き┎活',  '┎活',  '6',  '┎活',  '5',  '4'];
+
+
+function getshi(v,x4=true)
+{
+	if(x4){v=v<<2;//rgba
+	}
+
+	if(hflv<5)
+	{
+		var shidata_low=hflv4shi[v];
+	} else {
+		
+		var shidata_low=(hflv4shi[v+2]<<16)+(hflv4shi[v+1]<<8)+hflv4shi[v]; //+(hflv4shi[ydx+3]<<24)
+	}
+	var shidata_high=shidata_low>>hflv;
+	shidata_low&=bmsk;
+	return shinames[4][shidata_high]+shidata_low;
+
+}
+
+function shistr0(ydx)
+{
+	return hflv4shi[ydx]+',';
+}
+
+function shistr1(ydx)
+{
+	return getshi(ydx,false)+',';
+}
+
+var shistr=shistr0;
+
+function printshi()
+{
+	var hflvp2=hflv+2;
+	var hfrgdiv4=1<<(hflv-2);
+	var ret=[];
+	for(var y0=0;y0<hfrgdiv4;y0++) {
+		var y0a=(y0<<2);
+		for(var y1=0;y1<4;y1++) {
+			var y1a=((y0a+y1)<<hflvp2);
+			for(var x0=0;x0<hfrgdiv4;x0++) {
+				var ydx=y1a+(x0<<4);
+				ret.push(shistr(ydx)+shistr(ydx+4)+shistr(ydx+8)+shistr(ydx+12)+'\t');
+			}
+		ret.push('\n');
+		}
+		ret.push('\n');
+
+	}
+	return ret.join('');
+	
+
+}
+
+function drawcanv()
+{
+	var gcoo=graphcoord[graphid];
+	var sy=gcoo>>4;
+	var sx=gcoo&0xf;
+	var r2x=fixedr<<1;
+	canv_ctx.drawImage(imgsrc[1], sx*fixedr, sy*fixedr, fixedr, fixedr, 0, 0, r2x, r2x);
+	//canv_ctx.globalCompositeOperation = 'copy';
+	canv_ctx.drawImage(imgsrc[0], 0, 0);
+	var imgd = canv_ctx.getImageData(0, 0, 16, 16);
+	hflv4shi=imgd.data;
+	bmsk=(1<<hflv)-1;
+	//canv_ctx.globalCompositeOperation ='source-over';
+}
+
+function rotsvg(ang)
+{
+	
+	if(ang==0)
+	{
+		svgbase.style.webkitTransform='';
+		return;
+	}
+
+	var rrt=rotang*ang;
+	var dcc=Math.cos(rrt);
+	var dcs=Math.sin(rrt);
+	var dcc0=dcc.toFixed(3);
+	var dcs0=dcs.toFixed(3);
+	//var yoff=(fixedr*(1-dcs-dcc)).toFixed(3);
+	//var xoff1=fixedr*(dcs-dcc+1);
+
+	svgbase.style.webkitTransform='matrix('+dcc0+','+dcs0+','+(-dcs).toFixed(3)+','+dcc0+',0,0)';
+	
+}
+
+function rotline()
+{
+	rotang=deg90/(1<<(hflv-1));
+	var ttan=Math.tan(rotang)
+	mline.setAttribute('x1', (1+ttan)*fixedr);
+	mline.setAttribute('x2', (1-ttan)*fixedr);
+
+}
+
+function setup2()
+{
+	imgsrc[1].onload=null;
+	rotline();
+	rotsvg(0);
+	drawcanv();
+	
+}
+
+function fillempty(ele){ele.innerHTML='<br>';}
+
+function yao_tonum()
+{
+	var vv=calcbuf[0];
+	varea0.nipt.value=vv;
+	var lv=hflv<<1;
+	var rev=0;
+	for(var i=0;i<lv;i++)
+	{
+		if ((vv>>i)&1 == 1){rev+=1<<(lv-1-i);}
+	}
+	varea1.nipt.value=rev;
+	
+    
+      
+}
+
+function yao_onoff(ele,turnon=false)
+{
+	var bkr='#fff';
+	if(turnon)
+	{
+		bkr='#000';
+		ele.v=true;
+	}
+	ele.style.backgroundColor=bkr;
+}
+
+function yao_calc(ele,is_up)
+{
+	var sft=ele.idx;
+	if(is_up){sft+=hflv;}
+	var bkr='#000';
+	if(ele.v)
+	{
+		ele.v=false;
+		bkr='#fff';
+		calcbuf[0]&=0xffffffff^(1<<sft);
+	} else {
+		ele.v=true;
+		calcbuf[0]|=(1<<sft);
+	}
+	ele.style.backgroundColor=bkr;
+	yao_tonum();
+
+}
+
+function showyao()
+{
+	calcbuf[0]=this.value;
+	var vv=calcbuf[0];
+	var lv=hflv<<1;
+	var rev=0
+	for(var i=0;i<lv;i++)
+	{
+		if ((vv>>i)&1 == 1){
+			rev+=1<<(lv-1-i);
+			yao_onoff(ykole[i],true);
+		} else {
+			yao_onoff(ykole[i],false);
+		}
+	}
+	varea0.nipt.value=vv;
+	varea1.nipt.value=rev;
+	
+	
+
+}
+
+function yao_up(){yao_calc(this,true);}
+
+function yao_down(){yao_calc(this,false);}
+
+function numinput(pa)
+{
+	var nipt=document.createElement('input');
+	nipt.type='number';
+	nipt.value=0;
+	nipt.onblur=showyao;
+	pa.nipt=nipt;
+	return nipt;
+
+}
+
+function appendbr(pa,ch)
+{
+	pa.appendChild(ch);
+	pa.appendChild(document.createElement('br'));
+
+}
+
+function mkcalc()
+{
+	calcbuf[0]=0;
+	calc.innerHTML='';
+	varea0=document.createElement('div');
+	calc.appendChild(varea0);
+	var myd=document.createElement('i');
+	myd.innerHTML='mid';
+	calc.appendChild(myd);
+	varea1=document.createElement('div');
+	calc.appendChild(varea1);
+
+	appendbr(varea0,numinput(varea0));
+	var hflvm1=hflv-1;
+	ykole=new Array(hflv<<1);
+	
+	for(var i=0;i<hflv;i++)
+	{
+		var yao=document.createElement('b');
+		yao.idx=hflvm1-i;
+		ykole[hflv+yao.idx]=yao;
+		yao.v=false;
+		fillempty(yao);
+		appendbr(varea0,yao);
+		yao.onclick=yao_up;
+		yao=document.createElement('b');
+		yao.idx=hflvm1-i;
+		ykole[yao.idx]=yao;
+		yao.v=false;
+		fillempty(yao);
+		appendbr(varea1,yao);
+		yao.onclick=yao_down;
+	}
+	appendbr(varea1,numinput(varea1));
+
+
+
+}
+
+function setup()
+{
+	calc=document.getElementById('calc');
+	mkcalc();
+	mline=document.getElementById('hige');
+	svgbase=mline.parentElement.parentElement;
+	canv=document.getElementById('kanbase');
+	canv_ctx= canv.getContext('2d');
+	imgsrc=document.getElementsByTagName('img');
+	imgsrc[1].onload=setup2;
+}
+
+setup();
+
+var hmap=new Array(32);
+
+var hmap1_odd=new Uint8Array([
+0,	5,
+4,	1]);
+
+hmap[1]=new Uint8Array([
+0,	4,
+5,	1]);
+
+
+hmap[2]=new Uint8Array([
+0,	4,	10,	12,
+5,	1,	13,	11,
+8,	14,	2,	6,
+15,	9,	7,	3]);	//材<<1,材<<1(T)
+
+var msk4=3;
+var invmsk4=~msk4;
+
+function innerget(inner,x,y,doinv,vn_2)
+{
+	if(doinv)
+	{
+		var v= inner[((3-y)<<2)+(3-x)];
+	} else { var v= inner[(y<<2)+x];}
+
+	return ((v&invmsk4)<<vn_2)+(v&msk4);
+	
+	
+}
+
+function isinv(hfxyout,x0,y0)
+{
+	var multest=1;
+	if(y0>hfxyout){multest=-1;}
+	if(x0>hfxyout){multest*=-1;}
+
+	if(multest>0){return false;}
+	return true;
+}
+
+function mkshi(vn)
+{
+	if(vn==2)
+	{
+		var inner=hmap[1];
+		var outer=hmap1_odd;
+		var ret=new Uint8Array(16);
+		for(var y0=0;y0<2;y0++)
+		{
+			var y0b=y0<<1;
+			for(var x0=0;x0<2;x0++)
+			{
+				var x0b=x0<<1;
+				var bsa=outer[y0b+x0];
+				var addon=((bsa&invmsk4)<<1)+((bsa&msk4)<<1)
+				for(var y1=0;y1<2;y1++)
+				{
+					var y1b=(y0b+y1)<<2;
+					var y1c=y1<<1;
+					for(var x1=0;x1<2;x1++)
+					{
+						ret[y1b+x0b+x1]=inner[y1c+x1]+addon;
+						
+					}
+				}
+			}
+		}
+		hmap[2]=ret;
+		return;	//fail
+	}
+	var inner=hmap[2];
+	var vn_2=vn-2;
+	var outer=hmap[vn_2];
+	var xyout=1<<(vn_2);
+	var hfxyout=xyout>>1;
+	var allrg=1<<(vn<<1);
+	var vnx2_2=vn+vn_2;
+	if(vn<5)
+	{
+		var ret=new Uint8Array(allrg);
+	} else if (vn<9) {
+		var ret=new Uint16Array(allrg);
+	} else {
+		var ret=new Uint32Array(allrg);
+	}
+
+
+	for(var y0=0;y0<xyout;y0++)
+	{
+		var y0b=y0<<vn_2;
+		for(var x0=0;x0<xyout;x0++)
+		{
+			var doinv=isinv(hfxyout,x0,y0);
+			var x0b=x0<<vn_2;
+			var bsa=outer[y0b+x0];
+			var addon=((bsa&invmsk4)<<vnx2_2)+((bsa&msk4)<<2)
+
+			for(var y1=0;y1<4;y1++)
+			{
+					var y1b=(y0b+y1)<<vn;
+					var y1c=y1<<2;
+					for(var x1=0;x1<4;x1++)
+					{
+						
+						ret[y1b+x0b+x1]=innerget(inner,x1,y1,doinv,vn_2)+addon;
+						
+					}
+			}
+
+		}
+	}
+	hmap[vn]=ret;
+	return ret;
+
+}
+
+
+function alphproc()
+{
+	bsimgw=bsimg.naturalWidth;
+	bsimgh=bsimg.naturalHeight;
+	
+	
+	canv.width = bsimgw;
+	canv.height = bsimgh;
+
+	
+	var ctx = canv.getContext("2d");
+	ctx.drawImage(bsimg,0,0);
+
+	var imgd = ctx.getImageData(0, 0, bsimgw, bsimgh);
+	var b8=imgd.data;
+
+	var b8l=b8.length;
+	for(var i=0;i<b8l;i+=4)
+	{
+		b8[i+3]=255-b8[i];
+		b8[i]=fillcolor[0];
+		b8[i+1]=fillcolor[1];
+		b8[i+2]=fillcolor[2];
+	}
+	ctx.putImageData(imgd, 0, 0);
+}
+
+function alph(src='zirbigline.png')
+{
+	bsimg=document.createElement('img');
+	bsimg.onload=alphproc;
+	bsimg.src=src;
+	canv=document.createElement('canvas');
+	document.body.appendChild(canv);
+	document.body.appendChild(bsimg);
+}
+
+function rdus(v=40,rn=16)
+{
+	fixedr=(v*Math.sqrt(rn)).toFixed(0);
+	var tck="<circle cx='"+fixedr+"' cy='"+fixedr+"' r='";
+	var izr='';
+	for(var i=rn;i>0;i--)
+	{
+		izr+=tck+(v*Math.sqrt(i)).toFixed(3)+"' />\n";
+	}
+
+	return izr;
+}
+
+
+
+
+function mtx(dv2,dv)
+{
+	var dcc=Math.cos(deg90*dv/dv2);
+	var dcs=Math.sin(deg90*dv/dv2);
+
+	var dcc0=dcc.toFixed(3);
+	var dcs0=dcs.toFixed(3);
+	var yoff=(fixedr*(1-dcs-dcc)).toFixed(3);
+	var xoff1=fixedr*(dcs-dcc+1);
+	
+//c s -s c (s-c+1)x (1-s+c)x
+	return 'matrix('+dcc0+' '+dcs0+' '+(-dcs).toFixed(3)+' '+dcc0+' '+xoff1.toFixed(3)+' '+yoff+')';	//\nmatrix('+
+		//dcs0+' '+dcc0+' '+(-dcc).toFixed(3)+' '+dcs0+' '+(2*fixedr-xoff1).toFixed(3)+' '+yoff+')';
+
+}
+
+var kycmd=function(e) {
+	var ekeyCode=e.keyCode;
+	switch (ekeyCode) {
+		case 39:
+		currot++;
+		rotsvg(currot);
+		return;
+		case 37:
+		currot--;
+		rotsvg(currot);
+		return;
+	}
+}
+document.onkeyup=kycmd;
+
+const d = {
+istile:false,
+set bg(name) {},
+set hflv(v){ if(v>1){hflv=v; rotline();mkcalc();}},
+set gid(v){ graphid=v; drawcanv();},
+};
+
+
+/*
+
+
+
+
+
+
+0,  16,  34,  48,	68,  85,  102,  112,	135,  150,  165,  180,	195,  210,  225, 240,
+-17,  1,  49,  35,	84,  69,  113,  103,	151,  134,  181,  164,	211,  194,  241,  224,
+32,  50,  2,  18,	100,  114,  70,  87,	167,  182,  133,  148,	227,  242,  193,  208,
+51,  33,  -19,  -3,	115,  101,  86,  71,	183,  166,  149,  132,	243,  226,  209,  192,
+
+64,  81,  98,  116,	4,  20,  38,  52,	199,  214,  229,  244,	131,  146,  161,  176,
+80,  65,  117,  99,	21,  5,  -53,  39,	215,  198,  245,  228,	147,  130,  177,  160,
+96,  118,  66,  -83,	36,  54,  6,  22,	231,  246,  197,  212,	163,  178,  129,  144,
+-119,  -97,  82,  -67,	55,  -37,  -23,  7,	247,  230,  213,  196,	179,  162,  145,  128,
+
+-143,  158,  -173,  188,	203,  218,  233,  248,	8,  24,  42,  56,	76,  93,  110,  120,
+159,  142,  189,  172,	219,  202,  249,  232,	25,  9,  57,  43,	92,  77,  121,  111,
+175,  190,  141,  156,	235,  250,  201,  216,	40,  58,  10,  26,	108, 122,  78,  95,
+191, 174,  -157,  140,	251, 234,  217,  200,	59, 41,  27,  11,	123, 109,  94,  79,
+
+207, 222,  237,  252,	139, 154,  169,  184,	72, 89,  106,  124,	12, 28,  46,  60,
+223, 206,  253,  236,	155,  138,  185,  168,	88,  73,  125,  107,	29,  13,  61,  47,
+239,  254,  205,  220,	171,  186,  137,  152,	104,  126,  74,  91,	44,  62,  14,  30,
+255,  238,  221,  204,	187,  170,  153,  136,	127,  105,  90,  75,	63,  45,  31,  15]);
+
+
+a	b	f_	h_
+c	d	e_	g_
+b_	d_	e	f
+a_l90	c_	g	h
+
+0	68	132	192,
+64	4	196	128,
+140	200	8	76
+204	136	72	12	//材<<2,材<<4
+
+var hflv4shi=[
+0,31,45,48,		68,90,105,112,		135,153,170,180,	195,221,238,240,	
+30,1,49,44,		91,69,113,104,		152,134,181,171,	220,194,241,239,	
+47,50,2,29,		107,114,70,88,		168,182,133,155,	236,242,193,223,	
+51,46,28,3,		115,106,89,71,		183,169,154,132,	243,237,222,192,	
+
+64,94,109,116,		4,27,41,52,		199,217,234,244,	131,157,174,176,	
+95,65,117,108,		26,5,53,40,		216,198,245,235,	156,130,177,175,	
+111,118,66,92,		43,54,6,25,		232,246,197,219,	172,178,129,159,	
+119,110,93,67,		55,42,24,7,		247,233,218,196,	179,173,158,128,	
+
+143,145,162,188,	203,213,230,248,	8,23,37,56,		76,82,97,120,	
+144,142,189,163,	212,202,249,231,	22,9,57,36,		83,77,121,96,	
+160,190,141,147,	228,250,201,215,	39,58,10,21,		99,122,78,80,	
+191,161,146,140,	251,229,214,200,	59,38,20,11,		123,98,81,79,	
+
+207,209,226,252,	139,149,166,184,	72,86,101,124,		12,19,33,60,	
+208,206,253,227,	148,138,185,167,	87,73,125,100,		18,13,61,32,	
+224,254,205,211,	164,186,137,151,	103,126,74,84,		35,62,14,17,	
+255,225,210,204,	187,165,150,136,	127,102,85,75,		63,34,16,15,	
+
+];
+
+var hflv4shi=[
+0,241,210,3,		68,165,150,7,		120,153,170,75,	60,221,238,15,	
+225,16,19,194,		181,84,23,134,		137,104,91,186,	205,44,31,254,	
+242,35,32,209,		182,39,100,133,	138,107,88,185,	206,47,28,253,	
+51,226,193,48,		55,166,149,116,	123,154,169,72,	63,222,237,12,	
+
+4,229,214,71,		64,177,146,67,		124,157,174,79,	56,217,234,11,	
+245,20,87,198,		161,80,83,130,		141,108,95,190,	201,40,27,250,	
+246,103,36,197,	178,99,96,145,		142,111,92,189,	202,43,24,249,	
+119,230,213,52,	115,162,129,112,	127,158,173,76,	59,218,233,8,	
+
+248,25,42,203,		188,93,110,143,	128,113,82,131,	196,37,22,135,	
+9,232,219,58,		77,172,159,126,	97,144,147,66,		53,212,151,6,	
+10,235,216,57,		78,175,156,125,	114,163,160,81,	54,167,228,5,	
+251,26,41,200,		191,94,109,140,	179,98,65,176,		183,38,21,244,	
+
+252,29,46,207,		184,89,106,139,	132,101,86,199,	192,49,18,195,	
+13,236,223,62,		73,168,155,122,	117,148,215,70,	33,208,211,2,	
+14,239,220,61,		74,171,152,121,	118,231,164,69,	50,227,224,17,	
+255,30,45,204,		187,90,105,136,	247,102,85,180,	243,34,1,240,	
+
+];
+
+*/
+
+var hflv3shi=new Uint8Array([
+0,8,18,24,	35,42,49,56,	
+9,1,25,19,	43,34,57,48,	
+16,26,2,10,	51,58,33,40,	
+27,17,11,3,	59,50,41,32,	
+
+39,46,53,60,	4,12,22,28,	
+47,38,61,52,	13,5,29,23,	
+55,62,37,44,	20,30,6,14,	
+63,54,45,36,	31,21,15,7]);	//材<<2,材<<3
+
+
+
+</script></html>
