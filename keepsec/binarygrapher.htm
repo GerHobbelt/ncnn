@@ -1,0 +1,448 @@
+<html><body></body><script>
+var sq=9;
+var sqw=8;
+
+var sqsz=1<<sq;
+var sqszw=1<<sqw;
+
+var canv=document.createElement('canvas');
+var ctx=canv.getContext('2d');
+document.body.appendChild(canv);
+
+
+function imgd_setup()
+{
+	canv.width = sqszw;
+	canv.height = sqsz;
+	ctx.clearRect(0, 0, sqszw, sqsz);
+	imgd = ctx.getImageData(0, 0,sqszw, sqsz);
+	imgd_data=imgd.data;
+}
+
+imgd_setup();
+
+function draw1(x,y)
+{
+	//ctx.fillRect(x, y, 1, 1);
+	imgd_data[(((y<<sqw)+x)<<2)+3]=0xff;
+}
+
+
+function draw2_co(x,y,k)
+{
+	var ybs=y<<1;	
+	var xbs=(y&1)+(x<<1);
+	var plt=k[0];
+	var pltbs=(k[1]*3)>>0;
+
+	
+	
+	for(var y0=0;y0<2;y0++)
+	{
+		var y0a=ybs+y0;
+		for(var x0=0;x0<2;x0++)
+		{
+			var bsoff=((y0a<<sqw)+(xbs+x0))<<2;
+			imgd_data[bsoff]=plt[pltbs];
+			imgd_data[bsoff+1]=plt[pltbs+1];
+			imgd_data[bsoff+2]=plt[pltbs+2];
+			imgd_data[bsoff+3]=0xff;
+		}
+	}
+	
+	
+	
+}
+
+function draw2(x,y)
+{
+	var ybs=y<<1;	
+	var xbs=(y&1)+(x<<1);
+
+	//ctx.fillRect(xbs, ybs, 2, 2);
+	
+	for(var y0=0;y0<2;y0++)
+	{
+		var y0a=ybs+y0;
+		for(var x0=0;x0<2;x0++)
+		{
+			imgd_data[(((y0a<<sqw)+(xbs+x0))<<2)+3]=0xff;
+		}
+	}
+	
+	
+	
+}
+var maxbith=0;
+var cur_y=sqsz-1;
+
+function divrmv(p_v,p_pool,po)
+{
+	var v=p_v[po];
+	var pool=p_pool[po];
+	var nyupool=[];
+	var plen=pool.length;
+	for(var i=0;i<plen;i++)
+	{
+		var cur=pool[i];
+		if((v%cur)==0)
+		{
+			v/=cur;
+		} else {
+			nyupool.push(cur);
+		}
+	}
+	p_v[po]=v;
+	p_pool[po]=nyupool;
+	return 
+}
+
+var yangh_cache = { 'bbb': 'aaa' };
+
+function yangh(v)
+{
+	if(v in yangh_cache){return yangh_cache[v];}
+	
+	var rg=(v+2)>>1;
+	var rgpad=(v+1)>>1;
+	v=BigInt(v);
+	var ret=new BigUint64Array(rg+rgpad).fill(1n);
+	var divpool=new Array(rg);
+
+	for(var i=1;i<rg;i++)
+	{
+		divpool[i]=new Array();
+		var i2=i+1;
+		for(var j=2n;j<i2;j++)
+		{
+			divpool[i].push(j);
+		}
+	}
+
+
+	for(var i=1;i<rg;i++)
+	{
+		var i2=v-BigInt(i-1);
+		
+		for(var j=i2;j<=v;j++)
+		{
+			ret[i]*=j;
+			divrmv(ret,divpool,i);
+		}
+		
+	}
+	
+	
+	maxbith=0;
+	var rgfillsta=rg+rgpad-2;
+	for(var i=1;i<rgpad;i++)
+	{
+		var rndd=ret[i];
+
+		ret[rgfillsta]=rndd;
+		rgfillsta--;
+	}
+
+	yangh_cache[v]=ret;
+	return ret;
+
+}
+
+
+
+function drawbits(x,x2,v)
+{
+	
+	for(var y=0;y<64;y++)
+	{
+		if(v==0){
+			if(y>maxbith){maxbith=y;}
+			break;
+		}
+		
+		if((v&1n)==1n)
+		{
+			var y00=cur_y-y;
+			draw1(x,y00);
+			draw1(x2-1,y00);
+		}
+		v>>=1n;
+	}
+}
+
+function drawbits0(x,v)
+{
+	for(var y=0;y<64;y++)
+	{
+		if(v==0){break;}
+		
+		if((v&1n)==1n)
+		{
+			draw1(x,cur_y-y);
+		}
+		v>>=1n;
+	}
+}
+
+var triangfunc=yangh;
+var drawp=draw2;
+function arrxor(arh,yoff,w0)
+{
+	var xoff=(yoff>>1);
+
+	var nyuarh=new Array(w0+1);
+
+	for(var x=0;x<w0;x++)
+	{
+		var cvv=arh[x];
+		if(cvv!=0)
+		{
+			drawp(xoff+x,yoff);
+		}
+		nyuarh[x]=cvv^arh[x+1];
+		
+	}
+	if(arh[w0]!=0)
+	{
+			drawp(xoff+w0,yoff);
+	}
+	nyuarh[w0]=0;
+	return nyuarh;
+}
+
+const platte=new Uint8Array([0xff,0xff,0xff,	0xff,0,0,	0,0xff,0,	0,0,0xff,
+	0xff,0,0xff,	0,0xff,0xff,	0,0xff,0xff,	0,0,0]);
+//[0x80,0x80,0x80],[0x80,0x20,0],[0x20,0x80,0],[0x20,0x20,0x80],[0x80,0x20,0x80],[0x20,0x80,0x80],[0x20,0x80,0x80],[0x20,0x20,0]];
+
+var plattexor_cache = { 'bbb': 'aaa' };
+
+function getpla(cvv)
+{
+	var sft=cvv>>3;
+	if(sft==0){return [platte,cvv];}
+	cvv=cvv&7;
+	if(sft in plattexor_cache){return [plattexor_cache[sft],cvv];}
+
+
+	var sftsig=sft;
+
+	var sft_high=(sft>>4)&0xf;
+	sft=((sft<<4)|sft_high)&0xff;
+	var nyucoarr=new Uint8Array(24);
+	for(var y=0;y<8;y++)
+	{
+		var cobs=y*3;
+		
+		for(var x=0;x<3;x++)
+		{
+			nyucoarr[cobs+x]=platte[cobs+x]^sft;
+		}
+	}
+	
+	plattexor_cache[sftsig]=nyucoarr;
+	return [nyucoarr,cvv];
+
+}
+
+
+function arrxor_co(arh,yoff,w0)
+{
+	var xoff=(yoff>>1);
+
+	var nyuarh=new Array(w0+1);
+	nyuarh[w0]=0;
+	w0--;
+	for(var x=0;x<w0;x++)
+	{
+		var cvv=arh[x];
+
+		draw2_co(xoff+x,yoff,getpla(cvv));
+	
+		nyuarh[x]=(cvv+arh[x+1])%gdv;
+		
+	}
+	nyuarh[w0]=(arh[w0]+arh[w0+1])%gdv;
+
+
+
+	
+	return nyuarh;
+}
+
+function xortriang(v)
+{
+	var arrch=[];
+	for(var y=0;y<64;y++)
+	{
+		if(v==0){
+			
+			break;
+		}
+		
+		if((v&1)==1)
+		{
+			arrch.push(-1);
+		} else {arrch.push(0);}
+		v>>=1;
+	}
+	var w0=arrch.length;
+	var w=(sqszw-((w0)<<1));
+	arrch.push(0);
+	var cur=arrch;
+
+	
+	for(var y=0;y<w;y++)
+	{
+		cur=arrxor(cur,y,w0);
+		
+	}
+	ctx.putImageData(imgd, 0, 0);
+
+}
+
+var gdv=10;
+
+function xortri2(v,ex32=[])
+{
+	ex32.unshift(v);
+	var bgdv=BigInt(gdv);
+	
+	var arrch=[];
+	var vll=ex32.length;
+	for(var vii=0;vii<vll;vii++)
+	{
+		var v0 = BigInt(ex32[vii]);
+		for(var y=0;y<64;y++)
+		{
+			if(v0==0){break;}
+
+			var moddv=v0%bgdv;
+			arrch.push(Number(moddv));
+			
+			v0=((v0-moddv)/bgdv)>>0n;
+		}
+	}
+	var w0=arrch.length;
+	var w=(sqszw-((w0)<<1));
+	arrch.push(0);
+	var cur=arrch;
+	var initsig=arrch.join('-');
+	draw2_co(w0-1,0,getpla(arrch[w0-1]));
+
+	console.log(initsig);
+	for(var y=0;y<w;y++)
+	{
+		cur=arrxor_co(cur,y,w0);
+		var cursig=cur.join('-');
+		console.log(cursig);
+		if(initsig==cursig)
+		{
+			
+			y++;
+			arrxor_co(cur,y,w0);
+			console.log(w0);
+			console.log(y);
+			break;
+		}
+	}
+	ctx.putImageData(imgd, 0, 0);
+
+}
+
+function binarytower(n)
+{
+	if(n>63){console.log('inaccur');}
+	var data=triangfunc(n);
+	var vl=data.length;
+
+	var hfvl=vl>>1;
+	for(var x=0;x<hfvl;x++)
+	{
+		drawbits(x,vl-x,data[x]);
+	}
+
+	if((vl&1)==1)
+	{
+		drawbits0(hfvl,data[hfvl]);
+	}
+	
+	ctx.putImageData(imgd, 0, 0);
+	cur_y-=maxbith+2;
+}
+
+function bt(n=64)
+{
+	for(var i=2;i<n;i++)
+	{
+		binarytower(i);
+	}
+}
+
+function tri_add(ar,prv_bs,mul_mae,mul_ado)
+{
+	var p0=ar[prv_bs];
+	if(mul_ado!=0){p0*=BigInt(mul_ado);}
+	var p1=ar[prv_bs-1];
+	if(mul_mae!=0){p1*=BigInt(mul_mae);}
+	
+	return p0+p1;
+}
+
+function tri_bs(idx)
+{
+	return ((idx+1)*idx)>>1;
+}
+
+function uint64buf(syz)
+{
+	var arl=(syz*(syz+1))>>1;
+	var buf=new BigUint64Array(arl);
+	
+	return buf;
+}
+
+function sitelin_tri(syz)
+{
+	var buf=uint64buf(syz);
+	buf.fill(1n,0,3);
+	for(var i=2;i<syz;i++)
+	{
+		var cur_bs=tri_bs(i);
+		var prv_bs=tri_bs(i-1);
+		buf[cur_bs]=1n;
+		for(var j=1;j<i;j++)
+		{
+			buf[cur_bs+j]=tri_add(buf,prv_bs+j,0,j+1);
+		}
+		buf[cur_bs+i]=1n;
+	}
+	return buf;
+}
+
+function facto_tri(syz)
+{
+	var buf=uint64buf(syz);
+	buf[1]=1n;
+	for(var i=2;i<syz;i++)
+	{
+		var cur_bs=tri_bs(i);
+		var prv_bs=tri_bs(i-1);
+		buf[cur_bs]=1n;
+		for(var j=1;j<i;j++)
+		{
+			buf[cur_bs+j]=tri_add(buf,prv_bs+j,i*i,0);
+		}
+		
+	}
+	return buf;
+}
+
+
+const d = {
+istile:false,
+set bg(name) {},
+set gdv(v){ if(v>1){gdv=v;} imgd_setup();},
+set xor2(v){xortri2(v);},
+};
+
+</script></html>

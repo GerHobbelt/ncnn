@@ -1,0 +1,533 @@
+<html><body>
+<style>
+canvas {
+margin:20px;
+-webkit-transform: matrix(1.2,0,0,1.2,0,0);
+}
+
+</style></body><script>
+var lv=8;
+var bitbuf = new Uint8Array(32);
+
+var hflv=lv>>1;
+
+
+var canv_alpha=document.createElement('canvas');
+var ctx_alpha=canv_alpha.getContext('2d');
+document.body.appendChild(canv_alpha);
+
+var canv=document.createElement('canvas');
+var ctx=canv.getContext('2d');
+document.body.appendChild(canv);
+
+
+
+
+canv.width = 20;
+var prvcvh=lv*20+20;
+canv.height = prvcvh;
+
+function getrev(v)
+{
+	var rev=0;
+	for(var i=0;i<lv;i++)
+	{
+		var rty=lv-1-i;
+		if((v>>i)&1 == 1)
+		{
+			rev+=1<<rty;
+			bitbuf[rty]=1;
+		} else {bitbuf[rty]=0;}
+	}
+	return rev
+}
+
+
+function mkbrush(na)
+{
+	var img=document.createElement('img');
+	img.src=na;
+	return img;
+}
+
+imggrd=mkbrush('bxbs0_8.png');
+imggrdb=mkbrush('bxbs0_8b.png');
+numbs=mkbrush('num2.png');
+yaobs=mkbrush('yao2.png');
+
+
+hflv4shi_notload=true;
+
+var cirkdata=[[1,93,103,59,  110,205,8,171,   137,076,239,42,  127,69,25,35],
+[2,157,70,191,174,206,140,138,  155,4,223,38,   55,87,21,19],
+[3,63,71,29,  46,139,12,207,  237, 72,169,106,   89,101,123,33],
+[5,95,39,27,   78,141,10,175,   235,40,201,108,  57,99,125,65]];
+
+
+var shinames=new Array(8);
+shinames[3]=['0', '1', '︾活', '2', '5', '︾活', '4', '3'];
+shinames[4]=[
+'',	'︾',	'活','',
+'活','き活','せ活','',
+'','せ┎活','き┎活','┎活',
+'せ',	'┎活','き',	''
+];
+
+function getshi(v,rawdata=false)
+{
+	var shidata_low=hflv4shi[v];
+	
+	var shidata_high=shidata_low>>c_hflv;
+	shidata_low&=c_bmsk;
+	if(rawdata){return [shidata_high,shidata_low];}
+	
+	return shinames[hflv][shidata_high]+shidata_low;
+
+}
+
+
+
+var fontrgb=[[0xff,0,0],[0xff,0,0xff],[0,0,0xff]];
+
+function dra3(v,yoff,xoff,wdiv)
+{
+	var fystr=v.toFixed(0);
+	var zhu=fystr.length;
+	var rw=wdiv/zhu;
+	for(var i=0;i<zhu;i++)
+	{
+			var rna=fystr.charCodeAt(i)-0x30;
+			ctx_alpha.drawImage(numbs, rna*9, 0, 9, 9, xoff+i*rw, yoff, rw, 12);
+	}
+
+}
+
+function dra2(v,yoff,firstshi)
+{
+	dra3(v,yoff,xoff,16);
+	dra3(v,yoff,xoff,27);
+}
+
+function clamp4bit(v)
+{
+	return (((v-1)>>2)+1)<<2;
+}
+
+function is111(v)
+{
+	for(var i=hflv;i>0;i--)
+	{
+		if(v==((1<<i)-1)){return true;}
+	}
+	return false;
+}
+
+
+function shistrxor(y,x)
+{
+	var shisig=y^x;
+	
+	var tal=x;
+	if(shisig<hfhflvrg){
+		
+		if(is111(shisig)){tal=y;}
+	} else {
+		var tal=(~tal)&bmsk;
+	}
+	return (shisig<<c_hflv)	+tal	;
+
+}
+
+function setupcbmsk()
+{
+	hfhflvrg=1<<(hflv-1);
+	bmsk=(1<<hflv)-1;
+	c_hflv=clamp4bit(hflv);
+	if( c_hflv == hflv )
+	{
+		c_bmsk=(1<<c_hflv)-1;
+	} else {
+		c_bmsk=bmsk;
+	}
+	
+}
+
+function uintsqarr()
+{
+	allrg=1<<(hflv<<1);
+	if(hflv<5){
+		return new Uint8Array(allrg);
+	} else if(hflv<9){
+		return new Uint16Array(allrg);
+	}
+	return new Uint32Array(allrg);
+	
+}
+
+function gen_shi()
+{
+	setupcbmsk();
+	
+	var hfrg=1<<hflv;
+	
+
+	var ret=uintsqarr();
+
+	for(var y0=0;y0<hfrg;y0++) {
+		var y0a=y0<<hflv;
+		for(var x0=0;x0<hfrg;x0++) {
+			ret[y0a+x0]=shistrxor(y0,x0);
+		}
+	}
+	return ret;
+
+}
+
+function setupshi1()
+{
+	if(hflv4shi_notload)
+	{
+		hflv4shi_notload=false;
+		hflv4shi=gen_shi();
+
+	
+	}
+
+}
+
+function drawcirk(kirkidx=0)
+{
+	var shimapw=16;
+
+	var ckdata=cirkdata[kirkidx];
+	var cirkl=ckdata.length;
+	var cvh=24*cirkl;
+	canv_alpha.width = 50;
+	canv_alpha.height = cvh;
+	ctx_alpha.clearRect(0, 0, 50, cvh);	//w40xh12
+	setupshi1();
+
+	canv.width = 320;
+	canv.height = 320;
+	ctx.clearRect(0, 0, 320, 320);
+
+	var firstshi=getshi(ckdata[0])[0];
+	//canv_ctx.globalCompositeOperation ='destination-in';
+	var revarr=new Array(cirkl);
+	var shinum=new Array(cirkl);
+	var imgd = canv_alpha.getImageData(0, 0, 50, cvh);
+	var bdata=imgd.data;
+	for(var cc=0;cc<cirkl;cc++)
+	{
+		var v=ckdata[cc];
+		dra2(v,cc*24,firstshi);
+		
+	
+	}
+	
+
+}
+
+function drawtxt(v,pos,xsft=1)
+{
+	var fystr=v.toFixed(0);
+	var zhu=fystr.length;
+	var rw=18/zhu;
+	if(pos == 0)
+	{
+		for(var i=0;i<zhu;i++)
+		{
+			var rna=fystr.charCodeAt(i)-0x30;
+			ctx.drawImage(numbs, rna*9, 0, 9, 9, xsft+i*rw, 0, rw, 9);
+		}
+	} else {
+		
+		var zhu2=zhu-1;
+		for(var i=0;i<zhu;i++)
+		{
+			var vdx=zhu2-i;
+			var rna=fystr.charCodeAt(vdx)-0x30;
+			ctx.drawImage(numbs, rna*9, 9, 9, 9, xsft+i*rw, pos, rw, 9);
+		}
+
+	}
+	return fystr;
+}
+
+function blobCallback(iconName) {
+  return (b) => {
+    const a = document.createElement('a');
+
+    document.body.appendChild(a);
+
+    a.download = iconName+'.png';
+	var uur = window.URL.createObjectURL(b);
+	a.href=uur;
+
+	var img=document.createElement('img');
+	img.src=uur;
+	a.appendChild(img);
+  }
+}
+
+var bsta=10;
+
+function draw(v)
+{
+	
+	
+	var cvh=lv*20+20;
+	if(cvh != prvcvh)
+	{
+		canv.width = 20;
+		canv.height = cvh;
+		prvcvh=cvh;
+	}
+
+
+	ctx.clearRect(0, 0, 20, cvh);
+	cvh-=bsta;
+
+	var rev=getrev(v);
+	for(var i=0;i<lv;i++)
+	{
+		ctx.drawImage(imggrd, 0, bsta+i*20, 20, 20);
+		if(bitbuf[i]==1){ ctx.drawImage(imggrdb, 1, 1+bsta+i*20, 18, 18);}
+		
+	}
+	var msna=drawtxt(v,0);
+	if (rev!=v){msna+='_'+drawtxt(rev,cvh+1);}
+	
+	canv.toBlob(blobCallback(msna),'image/png');
+
+}
+
+function setbrush(i)
+{
+	if(bitbuf[i]==1){ ctx.fillStyle = 'red';
+	return true;
+	} else { ctx.fillStyle = 'black';
+	return false;
+	}
+}
+
+function vline(sta,vert=true)
+{
+	if(vert){
+		for(var y=0;y<hflv;y++){sqarbuf[y*hflv+sta]+=1;}
+		return;
+	}
+	var yoff=sta*hflv;
+	for(var x=0;x<hflv;x++){sqarbuf[yoff+x]+=1;}
+	return;
+
+}
+
+function drawsqa(v)
+{
+	var cvh=hflv*10-8;
+	var cvhptitle=cvh+bsta*2;
+	if(cvh != prvcvh)
+	{
+		canv.width = cvhptitle;
+		canv.height = cvhptitle;
+		prvcvh=cvh;
+		topx=cvh+bsta-10;
+		botmy=cvh+bsta+1;
+		sqarbuf = new Uint8Array(hflv*hflv);
+	}
+	sqarbuf.fill(0);
+	ctx.clearRect(0, 0, cvhptitle, cvhptitle);
+
+	var rev=getrev(v);
+	var hflvm1=hflv-1;
+	for(var i=0;i<hflv;i++)
+	{
+		var ofst=bsta+10*i;
+		if(setbrush(i)){vline(i,true);}
+		ctx.fillRect(ofst, bsta, 2, cvh);	//vert
+		
+		if(setbrush(hflv+i)){vline(i,false);}
+		ctx.fillRect(bsta, ofst, cvh, 2);	//hori
+		
+	}
+	var msna=drawtxt(v,0,topx);
+	if (rev!=v){msna+='_'+drawtxt(rev,botmy);}
+	canv.toBlob(blobCallback(msna),'image/png');
+
+	var prt=new Array(hflv);
+	for(var y=0;y<hflv;y++)
+	{
+		var sta=hflv*y;
+		prt[y]=sqarbuf.subarray(sta,sta+hflv).join('-');
+	}
+	prt=prt.join('\n');
+	console.log(prt);
+
+}
+
+
+function mgsq()
+{
+	var retsq=uintsqarr();
+	var lztidx=allrg-1;
+	var hfallrg=allrg>>1;
+	for(var i=0;i<hfallrg;i++)
+	{
+		var tztchg=(i^(i>>hflv));
+		tztchg = (tztchg^(tztchg>>1))&1;
+		
+		var rvidx=lztidx-i;
+		if(tztchg == 1){
+			retsq[i]=rvidx;
+			retsq[rvidx]=i;
+		} else {
+			retsq[i]=i;
+			retsq[rvidx]=rvidx;
+		}
+	}
+	return retsq;
+}
+
+function hfbin0and1(v,yoff,xoff,spefunc)
+{
+	var spe=spefunc(v);
+	var spev=spe[0];
+	
+	for(var i=0;i<hflv;i++)
+	{
+		var src_y=0;
+		if(i==spev){src_y=12*spe[1];}
+		var cur_yoff=yoff+(hflv-1-i)*12;
+		if((v&1)==1){
+			bitbuf[i]=1;
+			ctx.drawImage(yaobs, 0,src_y,24,12, xoff, cur_yoff, 24, 12);
+		} else {
+			bitbuf[i]=0;
+			ctx.drawImage(yaobs, 24,src_y,24,12, xoff, cur_yoff, 24, 12);
+		}
+		v>>=1;
+	}
+
+}
+
+var spelogic=new Array(16);
+
+var hflv4logic_shi0map={
+0:2,
+221:2,
+102:2,
+187:2,
+
+136:2,
+51:1,
+170:2,
+17:1,
+
+238:2,
+85:1,
+204:2,
+119:1,
+
+34:1,
+153:1,
+68:1,
+255:1,
+};
+
+function hflv4spelogic(v)
+{
+	var sinfo=hflv4shi[v]>>4;
+	switch(sinfo)
+	{
+		case 0:
+		var g0=1;
+		if(v>128){g0=2;}
+		return  [g0,3];
+		//return [hflv4logic_shi0map[v],3];
+	
+		case 1:
+		return [1,1];
+		case 8:
+		return [2,1];
+
+		case 2:
+		return [0,1];
+		case 4:
+		return [3,1];
+
+		case 3:
+		return [3,1];
+		case 12:
+		return [0,1];
+
+	
+		case 5:
+		return [1,1];
+		case 10:
+		return [2,1];
+
+
+
+	}
+	
+
+	return [-1,-1];
+}
+
+spelogic[4]=hflv4spelogic;
+
+function map0and1()
+{
+	function drawcrox(ofst)
+	{
+		ctx.fillRect(ofst, 0, 1, canvwh);	//vert
+		ctx.fillRect(0, ofst, canvwh, 1);
+	}
+	var mgsqmap=mgsq();
+	setupshi1();
+	var hfrg=(1<<hflv);
+	var grpgap=1+hflv*12;
+	var canvwhg=hfrg*grpgap
+	var canvwh=canvwhg-1;
+	var bmsk=hfrg-1;
+	
+
+	canv.width = canvwhg;
+	canv.height = canvwhg;
+	ctx.clearRect(0, 0, canvwhg, canvwhg);
+	ctx.fillStyle = 'blue';
+	for(var i=1;i<hfrg;i++)
+	{
+		if((i&3)==0){ctx.fillStyle = 'red';}
+		drawcrox(grpgap*i-1);
+		ctx.fillStyle = 'blue';
+		
+	}
+	
+	var mydofst=(hflv-2)*6;
+	for(var y=0;y<hfrg;y++)
+	{
+		var y0a=y<<hflv;
+		var yoff=y*grpgap;
+		for(var x=0;x<hfrg;x++)
+		{
+			var xoff=mydofst+x*grpgap;
+			var ydx=y0a+x;
+			hfbin0and1(mgsqmap[ydx],yoff,xoff,spelogic[4]);
+		}
+
+	}
+
+}
+
+
+const d = {
+istile:false,
+set lv(v){lv=v;hflv=lv>>1;},
+set d(v){draw(v);},
+set sqa(v){drawsqa(v);},
+set shi(v){calcshi(v); calcshi(getrev(v));}
+};
+
+</script></html>
