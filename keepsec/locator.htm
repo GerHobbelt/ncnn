@@ -25,6 +25,9 @@ border:2px #f00 solid;
 <svg class='fixpos' height='640' width='640'><g stroke='#ff04' stroke-width='10' fill='none'>
 <line x1='320' y1='0' x2='320' y2='640' />
 <line id='hige' x1='320' y1='0' x2='320' y2='640' />
+</g>
+<g stroke='#f00' stroke-width='1' fill='none'>
+<circle cx='320' cy='320' r='233' /><circle cx='320' cy='320' r='203' /><circle cx='320' cy='320' r='170' />
 </g></svg>
 <img src='hflv4shi.png' />
 <img src='ttt5.png' />
@@ -34,7 +37,7 @@ var hflv=4;
 
 
 var fixedr=320;
-var graphid=0;
+var graphid=3;
 
 
 var deg90=Math.PI/2;
@@ -44,24 +47,27 @@ var calcbuf=new Uint32Array(1);
 var currot=0;
 
 var shinames=new Array(8);
-shinames[4]=['0ä¸–',  '1ä¸–',  'äºŒä»¤é­‚',  '2ä¸–',  'å››ä»¤é­‚',  'äº”ä»¤é­‚',  'å…­ä»¤é­‚',  '3ä¸–',  '7ä¸–',  'å…­åºœé­‚',  'äº”åºœé­‚',  'å››åºœé­‚',  '6ä¸–',  'äºŒåºœé­‚',  '5ä¸–',  '4ä¸–'];
+shinames[3]=['0¥@', '1¥@', '¦ç¥O»î', '2¥@', '5¥@', '¦ç¤C»î', '4¥@', '3¥@'];
+shinames[4]=['0¥@',  '1¥@',  '¤G¥O»î',  '2¥@',  '¥|¥O»î',  '¤­¥O»î',  '¤»¥O»î',  '3¥@',  '7¥@',  '¤»©²»î',  '¤­©²»î',  '¥|©²»î',  '6¥@',  '¤G©²»î',  '5¥@',  '4¥@'];
 
+/*
+<circle cx='320' cy='320' r='211.66' />
+<circle cx='320' cy='320' r='196' /><circle cx='320' cy='320' r='138.564' />
+*/
 
-function getshi(v,x4=true)
+function clamp4bit(v)
 {
-	if(x4){v=v<<2;//rgba
-	}
+	return (((v-1)>>2)+1)<<2;
 
-	if(hflv<5)
-	{
-		var shidata_low=hflv4shi[v];
-	} else {
-		
-		var shidata_low=(hflv4shi[v+2]<<16)+(hflv4shi[v+1]<<8)+hflv4shi[v]; //+(hflv4shi[ydx+3]<<24)
-	}
-	var shidata_high=shidata_low>>hflv;
+}
+
+function getshi(v)
+{
+	var shidata_low=hflv4shi[v];
+	
+	var shidata_high=shidata_low>>c_hflv;
 	shidata_low&=bmsk;
-	return shinames[4][shidata_high]+shidata_low;
+	return shinames[hflv][shidata_high]+shidata_low;
 
 }
 
@@ -79,16 +85,16 @@ var shistr=shistr0;
 
 function printshi()
 {
-	var hflvp2=hflv+2;
+
 	var hfrgdiv4=1<<(hflv-2);
 	var ret=[];
 	for(var y0=0;y0<hfrgdiv4;y0++) {
 		var y0a=(y0<<2);
 		for(var y1=0;y1<4;y1++) {
-			var y1a=((y0a+y1)<<hflvp2);
+			var y1a=((y0a+y1)<<hflv);
 			for(var x0=0;x0<hfrgdiv4;x0++) {
-				var ydx=y1a+(x0<<4);
-				ret.push(shistr(ydx)+shistr(ydx+4)+shistr(ydx+8)+shistr(ydx+12)+'\t');
+				var ydx=y1a+(x0<<2);
+				ret.push(shistr(ydx)+shistr(ydx+1)+shistr(ydx+2)+shistr(ydx+3)+'\t');
 			}
 		ret.push('\n');
 		}
@@ -100,6 +106,279 @@ function printshi()
 
 }
 
+function do_xor8(lv,arh)
+{
+	var bits=new Uint8Array(lv+1);
+	var vret=0;
+	for(var i=0;i<lv;i++)
+	{
+		bits[i]=arh[i]^arh[i+1];
+		if(bits[i]!=0)
+		{
+			vret+=(1<<i);
+		}
+	}
+
+	
+	return [bits,vret];
+
+}
+
+dedup=[];
+diklog={'zzz':'xxx'};
+diklog_v={'zzz':['xxx']};
+function sortvak(vak)
+{
+	var vl=vak.length;
+	var min_value=vak[0];
+	var min_idx=0;
+	for(var i=1;i<vl;i++)
+	{
+		var cvv=vak[i];
+		if(cvv<min_value)
+		{
+			min_value=cvv;
+			min_idx=i;
+		}
+	}
+
+	var nyuvak=[];
+	var nyuvak_txt=[];
+	for(var i=min_idx;i<vl;i++)
+	{
+		var cvv=vak[i];
+		nyuvak.push(cvv);
+		nyuvak_txt.push(getshi(cvv));
+	}
+
+	for(var i=0;i<min_idx;i++)
+	{
+		var cvv=vak[i];
+		nyuvak.push(cvv);
+		nyuvak_txt.push(getshi(cvv));
+	}
+	var ret=nyuvak_txt.join('\t');
+	var keyy=nyuvak.join('-');
+	diklog[keyy]=ret;
+	diklog_v[keyy]=nyuvak;
+	return ret
+
+}
+
+function xorwalk8(v)
+{
+	
+	//if(v in dedup){return '';}
+
+
+	var origv=v;
+	var lv=hflv<<1;
+	var bits=new Uint8Array(lv+1);
+	for(var i=0;i<lv;i++)
+	{
+		if((v&1)==1){bits[i]=1;}
+		v>>=1;
+	}
+	var curbits=bits;
+	var lvs1=lv-1;
+	var ret=[];
+	
+
+
+	for(var i=0;i<32;i++)
+	{
+		rz=do_xor8(lv,curbits);
+		var vak=rz[1];
+		dedup.push(vak);
+
+		ret.push(vak);
+		if(vak==origv){break;}
+		
+		
+		curbits=rz[0];
+	}
+	return sortvak(ret);
+	
+
+}
+
+function oddrev(v)
+{
+	var rz=0;
+	var sftmul=1;
+	for(var i=0;i<32;i++)
+	{
+		if(v==0){break;}
+		if((v&1)==1)
+		{
+			rz+=1/(2<<i);
+		}
+		sftmul=sftmul<<1;
+		v=v>>1;
+
+	}
+	return (rz*sftmul).toFixed(0);
+
+}
+
+function oddrevkeyz(ar)
+{
+	var ll=ar.length;
+	for(var i=0;i<ll;i++)
+	{
+		ar[i]=oddrev(ar[i]);
+	}
+	
+	return ar.join('-');
+}
+
+function xor8all()
+{
+	dedup=[];
+	var lv=hflv<<1;
+	var allrg=1<<lv;
+	var ret=[];
+	for(var i=0;i<allrg;i++)
+	{
+		ret.push(xorwalk8(i));
+	}
+	for (var k in diklog_v){
+		diklog[k]=oddrevkeyz(diklog_v[k])+'\t'+diklog[k]
+	}
+	return ret.join('\n');
+}
+
+
+function is111(v)
+{
+	for(var i=hflv;i>0;i--)
+	{
+		if(v==((1<<i)-1)){return true;}
+	}
+	return false;
+}
+
+
+function shistrxor(y,x)
+{
+	var shisig=y^x;
+	
+	var tal=x;
+	if(shisig<hfhflvrg){
+		
+		if(is111(shisig)){tal=y;}
+	} else {
+		var tal=(~tal)&bmsk;
+	}
+	//return ((shisig<<c_hflv)	+tal	)+',';
+	return (shisig<<c_hflv)	+tal	;
+
+}
+
+function setupcbmsk()
+{
+	hfhflvrg=1<<(hflv-1);
+	bmsk=(1<<hflv)-1;
+	c_hflv=clamp4bit(hflv);
+	if( c_hflv == hflv )
+	{
+		c_bmsk=(1<<c_hflv)-1;
+	} else {
+		c_bmsk=bmsk;
+	}
+	
+}
+
+function gen_shi()
+{
+	setupcbmsk();
+	
+	var hfrg=1<<hflv;
+	var allrg=1<<(hflv<<1);
+
+	if(hflv<5){
+		var ret=new Uint8Array(allrg);
+	} else if(hflv<9){
+		var ret=new Uint16Array(allrg);
+	} else {
+		var ret=new Uint32Array(allrg);
+	}
+
+	for(var y0=0;y0<hfrg;y0++) {
+		var y0a=y0<<hflv;
+		for(var x0=0;x0<hfrg;x0++) {
+			ret[y0a+x0]=shistrxor(y0,x0);
+		}
+	}
+	return ret;
+
+}
+
+/*
+function printshi2()
+{
+	hfhflvrg=1<<(hflv-1);
+	bmsk=(1<<hflv)-1;
+	var hflvp2=hflv+2;
+	var hfrgdiv4=1<<(hflv-2);
+	var ret=[];
+	for(var y0=0;y0<hfrgdiv4;y0++) {
+		var y0a=(y0<<2);
+		for(var y1=0;y1<4;y1++) {
+			var y1a=(y0a+y1);
+			for(var x0=0;x0<hfrgdiv4;x0++) {
+				var x0a=(x0<<2);
+				ret.push(shistrxor(y1a,x0a)+shistrxor(y1a,x0a+1)+shistrxor(y1a,x0a+2)+shistrxor(y1a,x0a+3)+'\t');
+			}
+		ret.push('\n');
+		}
+		ret.push('\n');
+
+	}
+	return ret.join('');
+	
+
+}
+
+function estimm(y,x)
+{
+	var vv_low = hflv4shi[((y<<hflv)+x)<<2];
+	var vv_high=(vv_low>>4)&0xf;
+	vv_low&=0xf;
+	if(vv_high>7)
+	{
+		vv_high=(((~vv_high)&0xf)<<4)|0xf;
+	} else {
+		if(vv_high!=1&&vv_high!=3&&vv_high!=7){
+		vv_high=vv_high<<4;}
+	}
+	return (((vv_low*17)^vv_high)&0xff)+',';
+}
+
+function printshi3()
+{
+	var hflvp2=hflv+2;
+	var hfrgdiv4=1<<(hflv-2);
+	var ret=[];
+	for(var y0=0;y0<hfrgdiv4;y0++) {
+		var y0a=(y0<<2);
+		for(var y1=0;y1<4;y1++) {
+			var y1a=(y0a+y1);
+			for(var x0=0;x0<hfrgdiv4;x0++) {
+				var x0a=(x0<<2);
+				ret.push(estimm(y1a,x0a)+estimm(y1a,x0a+1)+estimm(y1a,x0a+2)+estimm(y1a,x0a+3)+'\t');
+			}
+		ret.push('\n');
+		}
+		ret.push('\n');
+
+	}
+	return ret.join('');
+	
+
+}
+*/
+
 function drawcanv()
 {
 	var gcoo=graphcoord[graphid];
@@ -108,10 +387,10 @@ function drawcanv()
 	var r2x=fixedr<<1;
 	canv_ctx.drawImage(imgsrc[1], sx*fixedr, sy*fixedr, fixedr, fixedr, 0, 0, r2x, r2x);
 	//canv_ctx.globalCompositeOperation = 'copy';
-	canv_ctx.drawImage(imgsrc[0], 0, 0);
-	var imgd = canv_ctx.getImageData(0, 0, 16, 16);
-	hflv4shi=imgd.data;
-	bmsk=(1<<hflv)-1;
+
+	hflv4shi=gen_shi();
+	c_hflv=clamp4bit(hflv);
+	bmsk=(1<<c_hflv)-1;
 	//canv_ctx.globalCompositeOperation ='source-over';
 }
 
@@ -299,123 +578,10 @@ function setup()
 
 setup();
 
-var hmap=new Array(32);
-
-var hmap1_odd=new Uint8Array([
-0,	5,
-4,	1]);
-
-hmap[1]=new Uint8Array([
-0,	4,
-5,	1]);
 
 
-hmap[2]=new Uint8Array([
-0,	4,	10,	12,
-5,	1,	13,	11,
-8,	14,	2,	6,
-15,	9,	7,	3]);	//ç¬¬ä¸€ä½<<1,ç¬¬äºŒä½<<1(Tå­—)
-
-var msk4=3;
-var invmsk4=~msk4;
-
-function innerget(inner,x,y,doinv,vn_2)
-{
-	if(doinv)
-	{
-		var v= inner[((3-y)<<2)+(3-x)];
-	} else { var v= inner[(y<<2)+x];}
-
-	return ((v&invmsk4)<<vn_2)+(v&msk4);
-	
-	
-}
-
-function isinv(hfxyout,x0,y0)
-{
-	var multest=1;
-	if(y0>hfxyout){multest=-1;}
-	if(x0>hfxyout){multest*=-1;}
-
-	if(multest>0){return false;}
-	return true;
-}
-
-function mkshi(vn)
-{
-	if(vn==2)
-	{
-		var inner=hmap[1];
-		var outer=hmap1_odd;
-		var ret=new Uint8Array(16);
-		for(var y0=0;y0<2;y0++)
-		{
-			var y0b=y0<<1;
-			for(var x0=0;x0<2;x0++)
-			{
-				var x0b=x0<<1;
-				var bsa=outer[y0b+x0];
-				var addon=((bsa&invmsk4)<<1)+((bsa&msk4)<<1)
-				for(var y1=0;y1<2;y1++)
-				{
-					var y1b=(y0b+y1)<<2;
-					var y1c=y1<<1;
-					for(var x1=0;x1<2;x1++)
-					{
-						ret[y1b+x0b+x1]=inner[y1c+x1]+addon;
-						
-					}
-				}
-			}
-		}
-		hmap[2]=ret;
-		return;	//fail
-	}
-	var inner=hmap[2];
-	var vn_2=vn-2;
-	var outer=hmap[vn_2];
-	var xyout=1<<(vn_2);
-	var hfxyout=xyout>>1;
-	var allrg=1<<(vn<<1);
-	var vnx2_2=vn+vn_2;
-	if(vn<5)
-	{
-		var ret=new Uint8Array(allrg);
-	} else if (vn<9) {
-		var ret=new Uint16Array(allrg);
-	} else {
-		var ret=new Uint32Array(allrg);
-	}
 
 
-	for(var y0=0;y0<xyout;y0++)
-	{
-		var y0b=y0<<vn_2;
-		for(var x0=0;x0<xyout;x0++)
-		{
-			var doinv=isinv(hfxyout,x0,y0);
-			var x0b=x0<<vn_2;
-			var bsa=outer[y0b+x0];
-			var addon=((bsa&invmsk4)<<vnx2_2)+((bsa&msk4)<<2)
-
-			for(var y1=0;y1<4;y1++)
-			{
-					var y1b=(y0b+y1)<<vn;
-					var y1c=y1<<2;
-					for(var x1=0;x1<4;x1++)
-					{
-						
-						ret[y1b+x0b+x1]=innerget(inner,x1,y1,doinv,vn_2)+addon;
-						
-					}
-			}
-
-		}
-	}
-	hmap[vn]=ret;
-	return ret;
-
-}
 
 
 function alphproc()
@@ -510,102 +676,7 @@ set gid(v){ graphid=v; drawcanv();},
 };
 
 
-/*
 
-
-
-
-
-
-0,  16,  34,  48,	68,  85,  102,  112,	135,  150,  165,  180,	195,  210,  225, 240,
--17,  1,  49,  35,	84,  69,  113,  103,	151,  134,  181,  164,	211,  194,  241,  224,
-32,  50,  2,  18,	100,  114,  70,  87,	167,  182,  133,  148,	227,  242,  193,  208,
-51,  33,  -19,  -3,	115,  101,  86,  71,	183,  166,  149,  132,	243,  226,  209,  192,
-
-64,  81,  98,  116,	4,  20,  38,  52,	199,  214,  229,  244,	131,  146,  161,  176,
-80,  65,  117,  99,	21,  5,  -53,  39,	215,  198,  245,  228,	147,  130,  177,  160,
-96,  118,  66,  -83,	36,  54,  6,  22,	231,  246,  197,  212,	163,  178,  129,  144,
--119,  -97,  82,  -67,	55,  -37,  -23,  7,	247,  230,  213,  196,	179,  162,  145,  128,
-
--143,  158,  -173,  188,	203,  218,  233,  248,	8,  24,  42,  56,	76,  93,  110,  120,
-159,  142,  189,  172,	219,  202,  249,  232,	25,  9,  57,  43,	92,  77,  121,  111,
-175,  190,  141,  156,	235,  250,  201,  216,	40,  58,  10,  26,	108, 122,  78,  95,
-191, 174,  -157,  140,	251, 234,  217,  200,	59, 41,  27,  11,	123, 109,  94,  79,
-
-207, 222,  237,  252,	139, 154,  169,  184,	72, 89,  106,  124,	12, 28,  46,  60,
-223, 206,  253,  236,	155,  138,  185,  168,	88,  73,  125,  107,	29,  13,  61,  47,
-239,  254,  205,  220,	171,  186,  137,  152,	104,  126,  74,  91,	44,  62,  14,  30,
-255,  238,  221,  204,	187,  170,  153,  136,	127,  105,  90,  75,	63,  45,  31,  15]);
-
-
-a	b	f_	h_
-c	d	e_	g_
-b_	d_	e	f
-a_l90	c_	g	h
-
-0	68	132	192,
-64	4	196	128,
-140	200	8	76
-204	136	72	12	//ç¬¬ä¸€ä½<<2,ç¬¬äºŒä½<<4
-
-var hflv4shi=[
-0,31,45,48,		68,90,105,112,		135,153,170,180,	195,221,238,240,	
-30,1,49,44,		91,69,113,104,		152,134,181,171,	220,194,241,239,	
-47,50,2,29,		107,114,70,88,		168,182,133,155,	236,242,193,223,	
-51,46,28,3,		115,106,89,71,		183,169,154,132,	243,237,222,192,	
-
-64,94,109,116,		4,27,41,52,		199,217,234,244,	131,157,174,176,	
-95,65,117,108,		26,5,53,40,		216,198,245,235,	156,130,177,175,	
-111,118,66,92,		43,54,6,25,		232,246,197,219,	172,178,129,159,	
-119,110,93,67,		55,42,24,7,		247,233,218,196,	179,173,158,128,	
-
-143,145,162,188,	203,213,230,248,	8,23,37,56,		76,82,97,120,	
-144,142,189,163,	212,202,249,231,	22,9,57,36,		83,77,121,96,	
-160,190,141,147,	228,250,201,215,	39,58,10,21,		99,122,78,80,	
-191,161,146,140,	251,229,214,200,	59,38,20,11,		123,98,81,79,	
-
-207,209,226,252,	139,149,166,184,	72,86,101,124,		12,19,33,60,	
-208,206,253,227,	148,138,185,167,	87,73,125,100,		18,13,61,32,	
-224,254,205,211,	164,186,137,151,	103,126,74,84,		35,62,14,17,	
-255,225,210,204,	187,165,150,136,	127,102,85,75,		63,34,16,15,	
-
-];
-
-var hflv4shi=[
-0,241,210,3,		68,165,150,7,		120,153,170,75,	60,221,238,15,	
-225,16,19,194,		181,84,23,134,		137,104,91,186,	205,44,31,254,	
-242,35,32,209,		182,39,100,133,	138,107,88,185,	206,47,28,253,	
-51,226,193,48,		55,166,149,116,	123,154,169,72,	63,222,237,12,	
-
-4,229,214,71,		64,177,146,67,		124,157,174,79,	56,217,234,11,	
-245,20,87,198,		161,80,83,130,		141,108,95,190,	201,40,27,250,	
-246,103,36,197,	178,99,96,145,		142,111,92,189,	202,43,24,249,	
-119,230,213,52,	115,162,129,112,	127,158,173,76,	59,218,233,8,	
-
-248,25,42,203,		188,93,110,143,	128,113,82,131,	196,37,22,135,	
-9,232,219,58,		77,172,159,126,	97,144,147,66,		53,212,151,6,	
-10,235,216,57,		78,175,156,125,	114,163,160,81,	54,167,228,5,	
-251,26,41,200,		191,94,109,140,	179,98,65,176,		183,38,21,244,	
-
-252,29,46,207,		184,89,106,139,	132,101,86,199,	192,49,18,195,	
-13,236,223,62,		73,168,155,122,	117,148,215,70,	33,208,211,2,	
-14,239,220,61,		74,171,152,121,	118,231,164,69,	50,227,224,17,	
-255,30,45,204,		187,90,105,136,	247,102,85,180,	243,34,1,240,	
-
-];
-
-*/
-
-var hflv3shi=new Uint8Array([
-0,8,18,24,	35,42,49,56,	
-9,1,25,19,	43,34,57,48,	
-16,26,2,10,	51,58,33,40,	
-27,17,11,3,	59,50,41,32,	
-
-39,46,53,60,	4,12,22,28,	
-47,38,61,52,	13,5,29,23,	
-55,62,37,44,	20,30,6,14,	
-63,54,45,36,	31,21,15,7]);	//ç¬¬ä¸€ä½<<2,ç¬¬äºŒä½<<3
 
 
 
