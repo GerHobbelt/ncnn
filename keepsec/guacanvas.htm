@@ -367,7 +367,7 @@ function drawsqa(v)
 }
 
 
-function mgsq()
+function mkmgsq()
 {
 	var retsq=uintsqarr();
 	var lztidx=allrg-1;
@@ -389,11 +389,14 @@ function mgsq()
 	return retsq;
 }
 
-function hfbin0and1(v,yoff,xoff,spefunc)
+function hfbin0and1(v,yoff,xoff,mydofst,spefunc)
 {
 	var spe=spefunc(v);
 	var spev=spe[0];
 	
+	for(var uuu=0;uuu<2;uuu++)
+	{
+	var hf_xoff=xoff+mydofst;
 	for(var i=0;i<hflv;i++)
 	{
 		var src_y=0;
@@ -401,12 +404,17 @@ function hfbin0and1(v,yoff,xoff,spefunc)
 		var cur_yoff=yoff+(hflv-1-i)*12;
 		if((v&1)==1){
 			bitbuf[i]=1;
-			ctx.drawImage(yaobs, 0,src_y,24,12, xoff, cur_yoff, 24, 12);
+			ctx.drawImage(yaobs, 24,src_y,24,12, hf_xoff, cur_yoff, 24, 12);
 		} else {
 			bitbuf[i]=0;
-			ctx.drawImage(yaobs, 24,src_y,24,12, xoff, cur_yoff, 24, 12);
+			ctx.drawImage(yaobs, 0,src_y,24,12, hf_xoff, cur_yoff, 24, 12);
 		}
 		v>>=1;
+	}
+	if(yoff==xoff){return;}
+	var tmp=yoff;
+	yoff=xoff;
+	xoff=tmp;
 	}
 
 }
@@ -435,6 +443,89 @@ var hflv4logic_shi0map={
 255:1,
 };
 
+var hflv4logic_shi11map={
+79:0,
+11:0,
+94:0,
+26:0,
+
+41:0,
+109:0,
+56:0,
+124:0,
+}
+
+var hflv4logic_shi13map={
+242:3,
+208:3,
+133:3,
+167:3,
+
+148:3,
+182:3,
+227:3,
+193:3,
+}
+
+var hflv4logic_shi7map={
+7:3,
+143:3,
+173:3,
+37:3,
+
+158:3,
+22:3,
+52:3,
+188:3,
+}
+
+var hflv4logic_shi14map={
+224:0,
+241:0,
+181:0,
+164:0,
+
+134:0,
+151:0,
+211:0,
+194:0,
+}
+
+var hflv4logic_shi9map={
+246:2,
+178:2,
+144:2,
+212:2,
+231:2,
+163:2,
+129:2,
+197:2,
+}
+
+var hflv4logic_shi15map={
+15:1,
+45:1,
+75:1,
+105:1,
+
+90:1,
+60:1,
+30:1,
+120:1,	//???
+}
+
+var hflv4logic_shi6map={
+219:2,	//11,3,10,2
+83:1,	//???
+202:2,
+66:2,
+
+232:1,	//8,0,9,14
+96:1,
+249:1,
+113:1,
+}
+
 function hflv4spelogic(v)
 {
 	var sinfo=hflv4shi[v]>>4;
@@ -445,6 +536,11 @@ function hflv4spelogic(v)
 		if(v>128){g0=2;}
 		return  [g0,3];
 		//return [hflv4logic_shi0map[v],3];
+
+		case 6:	//六令
+		var g0=1;
+		if(v>128){g0=2;}
+		return [g0,3];
 	
 		case 1:
 		return [1,1];
@@ -467,15 +563,64 @@ function hflv4spelogic(v)
 		case 10:
 		return [2,1];
 
+		case 7:
+		return [3,2];
+		case 14:
+		return [0,2];
+
+		case 9:	//六府>128
+		return  [2,2];
+
+		case 15:	//四世<128
+		return  [1,2];
+
+		case 11:
+		//var g0=0;	//<128
+		//if(v>128){g0=3;}
+		return  [0,2];
+
+		case 13:
+		//var g0=0;	//>128
+		//if(v>128){g0=3;}
+		return  [3,2];
+
 
 
 	}
 	
 
-	return [-1,-1];
+	return [-1,1];
 }
 
+function hflv3spelogic(v)
+{
+	var sinfo=hflv4shi[v]>>4;
+	switch(sinfo)
+	{
+		
+		case 1:
+		case 4:
+		return [1,1];
+
+		case 0:
+		case 2:
+		return [1,3];
+
+		case 5:
+		case 7:
+		return [1,2];
+	}
+	return [-1,1];
+}
+
+function dummylogic(v)
+{
+	return [-1,1];
+}
+
+spelogic[3]=hflv3spelogic;
 spelogic[4]=hflv4spelogic;
+spelogic[5]=dummylogic;
 
 function map0and1()
 {
@@ -484,7 +629,7 @@ function map0and1()
 		ctx.fillRect(ofst, 0, 1, canvwh);	//vert
 		ctx.fillRect(0, ofst, canvwh, 1);
 	}
-	var mgsqmap=mgsq();
+	mgsq=mkmgsq();
 	setupshi1();
 	var hfrg=(1<<hflv);
 	var grpgap=1+hflv*12;
@@ -510,11 +655,11 @@ function map0and1()
 	{
 		var y0a=y<<hflv;
 		var yoff=y*grpgap;
-		for(var x=0;x<hfrg;x++)
+		for(var x=y;x<hfrg;x++)
 		{
-			var xoff=mydofst+x*grpgap;
+			var xoff=x*grpgap;
 			var ydx=y0a+x;
-			hfbin0and1(mgsqmap[ydx],yoff,xoff,spelogic[4]);
+			hfbin0and1(mgsq[ydx],yoff,xoff,mydofst,spelogic[hflv]);
 		}
 
 	}
