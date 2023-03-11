@@ -272,6 +272,23 @@ function blobCallback(iconName) {
 
 var bsta=10;
 
+function ismgsqUpper(v)
+{
+	var x=mgsq[v];
+	var y=x>>hflv;
+	x=x&bmsk;
+	if(x>=y){return true;}
+	return false;
+}
+
+function drawmgsqUpper(y,v)
+{
+	if(ismgsqUpper(v))
+	{
+		ctx.drawImage(numbs, 0, 18, 5, 5, 8,y, 5, 5);
+	}
+}
+
 function draw(v)
 {
 	
@@ -295,8 +312,13 @@ function draw(v)
 		if(bitbuf[i]==1){ ctx.drawImage(imggrdb, 1, 1+bsta+i*20, 18, 18);}
 		
 	}
+	
 	var msna=drawtxt(v,0);
-	if (rev!=v){msna+='_'+drawtxt(rev,cvh+1);}
+	drawmgsqUpper(bsta+7,v);
+	if (rev!=v){
+		msna+='_'+drawtxt(rev,cvh+1);
+		drawmgsqUpper(cvh-12,rev);
+	}
 	
 	canv.toBlob(blobCallback(msna),'image/png');
 
@@ -526,19 +548,6 @@ var hflv4logic_shi6map={
 113:1,
 }
 
-var hflv3logic_shi3map={
-3:0,
-15:2,
-10:0,
-46:0,
-}
-
-var hflv3logic_shi6map={
-48:0,
-57:2,
-43:2,
-34:2,
-}
 
 function hflv4spelogic(v)
 {
@@ -551,7 +560,7 @@ function hflv4spelogic(v)
 		return  [g0,3];
 		//return [hflv4logic_shi0map[v],3];
 
-		case 6:	//¤»¥O
+		case 6:	//¤»¥O, ¤º°¼=2
 		return [hflv4logic_shi6map[v],3];
 	
 		case 1:
@@ -604,6 +613,21 @@ function hflv4spelogic(v)
 	return [-1,1];
 }
 
+
+var hflv3logic_shi3map={
+3:0,
+24:0,
+10:0,
+46:0,
+}
+
+var hflv3logic_shi6map={
+48:2,
+57:2,
+43:2,
+34:2,
+}
+
 function hflv3spelogic(v)
 {
 	var sinfo=hflv4shi[v]>>4;
@@ -630,11 +654,13 @@ function hflv3spelogic(v)
 	return [-1,1];
 }
 
+
 function dummylogic(v)
 {
 	return [-1,1];
 }
 
+spelogic[2]=dummylogic;
 spelogic[3]=hflv3spelogic;
 spelogic[4]=hflv4spelogic;
 spelogic[5]=dummylogic;
@@ -684,6 +710,7 @@ function fillgd012(gd,v,yoff,xoff,spefunc)
 
 	var ybs=yoff+hflv-1;
 	var ngspev=hflv-1-spev;
+	var fixedv=(xoff+ngspev)*4;
 	for(var i=0;i<hflv;i++)
 	{
 		var y0a=(ybs-i)*grpgap;
@@ -692,18 +719,15 @@ function fillgd012(gd,v,yoff,xoff,spefunc)
 		{
 			for(var x=0;x<hflv;x++)
 			{
-				var ydx=y0a+(xoff+x)*4;
-				gd[ydx]=brush;
+				gd[ydx=y0a+(xoff+x)*4]=brush;
 			}
-		} else { 
-			var ydx=y0a+(xoff+ngspev)*4;
-			gd[ydx]=brush;
-		}
+		} else { gd[y0a+fixedv]=brush;}
 		v>>=1;
 	}
 
 
 	var xbs=xoff+hflv-1;
+	fixedv=grpgap*(yoff+ngspev);
 	for(var i=0;i<hflv;i++)
 	{
 		var x0a=(xbs-i)*4;
@@ -712,13 +736,9 @@ function fillgd012(gd,v,yoff,xoff,spefunc)
 		{
 			for(var y=0;y<hflv;y++)
 			{
-				var ydx=grpgap*(yoff+y)+x0a;
-				gd[ydx]+=brush;
+				gd[grpgap*(yoff+y)+x0a]+=brush;
 			}
-		} else { 
-			var ydx=grpgap*(yoff+ngspev)+x0a;
-			gd[ydx]+=brush;
-		}
+		} else { gd[fixedv+x0a]+=brush;}
 		v>>=1;
 	}
 
@@ -753,7 +773,7 @@ function map012()
 
 }
 
-function map0and1()
+function map01()
 {
 	function drawcrox(ofst)
 	{
@@ -764,9 +784,10 @@ function map0and1()
 	setupshi1();
 	var hfrg=(1<<hflv);
 	grpgap=1+hflv*12;
+	if(grpgap<37){grpgap=37;}
 	var canvwhg=hfrg*grpgap
 	var canvwh=canvwhg-1;
-	var bmsk=hfrg-1;
+
 	
 
 	canv.width = canvwhg;
@@ -791,20 +812,42 @@ function map0and1()
 		{
 			var xoff=x*grpgap;
 			var ydx=y0a+x;
-			hfbin0and1(mgsq[ydx],yoff,xoff,spelogic[hflv]);
+			hfbin0and1(mgsq[ydx],xoff,yoff,spelogic[hflv]);	//yoff,xoff
 		}
 
 	}
 
 }
 
+function afterhflv()
+{
+	mgsq=mkmgsq();
+	bmsk=(1<<hflv)-1;
+}
+
+var mgsq=mkmgsq();
+var bmsk=(1<<hflv)-1;
 
 const d = {
 istile:false,
-set lv(v){lv=v;hflv=lv>>1;},
+set lv(v){
+	lv=v;
+	hflv=lv>>1;
+	afterhflv();},
+set hflv(v){
+	lv=v<<1;
+	hflv=v;
+	afterhflv();},
 set d(v){draw(v);},
 set sqa(v){drawsqa(v);},
-set shi(v){calcshi(v); calcshi(getrev(v));}
+set shi(v){calcshi(v); calcshi(getrev(v));},
+set sqtxt(v){mgsqtext();},
+set map(v){
+
+if(v>1){map012();
+} else {map01();}
+
+},
 };
 
 </script></html>
