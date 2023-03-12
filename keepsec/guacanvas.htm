@@ -73,15 +73,47 @@ shinames[4]=[
 '六世',	'二府魂','五世',	'四世'
 ];
 
+function odd2upmiddown()
+{
+
+}
+
+function even2upmiddown()
+{
+
+}
+
+function even2updown()
+{
+
+}
+
+var shidatatype=1;
+
 function getshi(v,rawdata=false)
 {
 	var shidata_low=hflv4shi[v];
 	
 	var shidata_high=shidata_low>>c_hflv;
 	shidata_low&=c_bmsk;
-	if(rawdata){return [shidata_high,shidata_low];}
+	switch(shidatatype)
+	{
+		case 0:
+		return shinames[hflv][shidata_high]+shidata_low;
+		
+		case 1:
+		return [shidata_high,shidata_low];
+
+		case 2:
+		var splitaa=even2updown(shidata_low);
+		return [shidata_high,splitaa];
+		
+		
+	}
 	
-	return shinames[hflv][shidata_high]+shidata_low;
+	
+	
+	
 
 }
 
@@ -161,6 +193,19 @@ function uintsqarr()
 		return new Uint16Array(allrg);
 	}
 	return new Uint32Array(allrg);
+	
+}
+
+function uintsqarr_withp(level)
+{
+	allrg=1<<(level);
+	sqrg=1<<(level-1);
+	if(level<9){
+		return new Uint8Array(sqrg);
+	} else if(level<17){
+		return new Uint16Array(sqrg);
+	}
+	return new Uint32Array(sqrg);
 	
 }
 
@@ -304,8 +349,10 @@ function draw(v)
 
 	ctx.clearRect(0, 0, 20, cvh);
 	cvh-=bsta;
-
+	
+	if(v<0){v=getrev(-v);}
 	var rev=getrev(v);
+	
 	for(var i=0;i<lv;i++)
 	{
 		ctx.drawImage(imggrd, 0, bsta+i*20, 20, 20);
@@ -389,7 +436,7 @@ function drawsqa(v)
 }
 
 
-function mkmgsq()
+function mkmgsq_even()
 {
 	var retsq=uintsqarr();
 	var lztidx=allrg-1;
@@ -410,6 +457,104 @@ function mkmgsq()
 	}
 	return retsq;
 }
+
+function mkmgsq_odd(level)
+{
+	
+	var retsq0=uintsqarr_withp(level);
+	var retsq1=uintsqarr_withp(level);
+
+	var lztidx=allrg-1;
+	var hfallrg=allrg>>2;
+	var odd_hf=level>>1;
+	var i=0;
+	
+	for(var tk0=0;tk0<2;tk0++)
+	{
+		for(var tk1=0;tk1<hfallrg;tk1++){
+			var tztchg=(i^(i>>odd_hf));
+			tztchg = (tztchg^(tztchg>>1))&1;
+			var rvidx=lztidx-i;
+			if(tztchg == 1){
+				retsq0[i]=rvidx;
+				retsq0[rvidx-sqrg]=i;
+			} else {
+				retsq0[i]=i;
+				retsq0[rvidx-sqrg]=rvidx;
+			}
+			i++;}
+		var tmp=retsq0;
+		retsq0=retsq1;
+		retsq1=tmp;
+	}
+	
+	
+	return [retsq0,retsq1];
+
+}
+
+function mkmgsq(level)
+{
+	if((level&1)==1){return mkmgsq_odd(level);}
+	hflv=(level>>1);
+	return mkmgsq_even();
+
+}
+
+function intsqrt2(v)
+{
+	for(var i=0;i<32;i++)
+	{
+		if((v&1)==1){return i>>1;}
+		v>>=1;
+	}
+	return 0;
+}
+
+function oddsq_sum(level)
+{
+	return ((1<<level)-1)<<((level-2)-(level>>1));
+}
+
+function printmgsq_by4(src)
+{
+	var srg=src.length;
+	if(srg<16)
+	{
+		var ret=new Array(srg);
+		for(var i=0;i<srg;i++)
+		{
+			ret[i]=printmgsq_by4(src[i]);
+		}
+		return ret.join('----------\n');
+	} else {
+		var bsft=intsqrt2(srg);
+		var grpby4=1<<(bsft-2);
+		var ret=[]
+		for(var y0=0;y0<grpby4;y0++)
+		{
+			var y0a=y0<<2;
+			for(var y1=0;y1<4;y1++)
+			{
+				var y1a=(y0a+y1)<<bsft;
+				ret1=[];
+				for(var x=0;x<grpby4;x++){
+					var ydx=y1a+(x<<2);
+					ret1.push(src[ydx]+' '+src[ydx+1]+' '+src[ydx+2]+' '+src[ydx+3]);
+
+				}
+				ret.push(ret1.join('\t'));
+			}
+			ret.push('\n');
+		}
+		return ret.join('\n');
+
+	}
+	
+
+
+}
+
 
 function hfbin0and1(v,yoff,xoff,spefunc)
 {
@@ -548,7 +693,12 @@ var hflv4logic_shi6map={
 113:1,
 }
 
+/*
+0-3型:
+[24,3c]=every4,
+[bd(d+-),7e]=every6
 
+*/
 function hflv4spelogic(v)
 {
 	var sinfo=hflv4shi[v]>>4;
@@ -558,7 +708,6 @@ function hflv4spelogic(v)
 		var g0=1;
 		if(v>128){g0=2;}
 		return  [g0,3];
-		//return [hflv4logic_shi0map[v],3];
 
 		case 6:	//六令, 內側=2
 		return [hflv4logic_shi6map[v],3];
@@ -638,18 +787,21 @@ function hflv3spelogic(v)
 		case 4:
 		return [1,1];
 
-		case 0:
-		case 2:
-		return [1,3];
-
-		case 5:
-		case 7:
-		return [1,2];
-
 		case 3:
 		return [0,1];
 		case 6:
 		return [2,1];
+
+		case 0:
+		case 2:
+		return [1,3];
+
+		case 5:	//possible0-2
+		return [1,2];	//[0,2];
+		case 7:
+		return [1,2];	//[2,2];
+
+
 	}
 	return [-1,1];
 }
@@ -746,7 +898,7 @@ function fillgd012(gd,v,yoff,xoff,spefunc)
 
 function map012()
 {
-	mgsq=mkmgsq();
+	mgsq=mkmgsq_even();
 	setupshi1();
 
 	var hfrg=(1<<hflv);
@@ -780,7 +932,7 @@ function map01()
 		ctx.fillRect(ofst, 0, 1, canvwh);	//vert
 		ctx.fillRect(0, ofst, canvwh, 1);
 	}
-	mgsq=mkmgsq();
+	mgsq=mkmgsq_even();
 	setupshi1();
 	var hfrg=(1<<hflv);
 	grpgap=1+hflv*12;
@@ -821,11 +973,11 @@ function map01()
 
 function afterhflv()
 {
-	mgsq=mkmgsq();
+	mgsq=mkmgsq_even();
 	bmsk=(1<<hflv)-1;
 }
 
-var mgsq=mkmgsq();
+var mgsq=mkmgsq_even();
 var bmsk=(1<<hflv)-1;
 
 const d = {
@@ -841,7 +993,7 @@ set hflv(v){
 set d(v){draw(v);},
 set sqa(v){drawsqa(v);},
 set shi(v){calcshi(v); calcshi(getrev(v));},
-set sqtxt(v){mgsqtext();},
+set txtsq(v){mgsqtext();},
 set map(v){
 
 if(v>1){map012();
