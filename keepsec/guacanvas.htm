@@ -516,11 +516,131 @@ function oddsq_sum(level)
 	return ((1<<level)-1)<<((level-2)-(level>>1));
 }
 
+function setupdeg45(wh,cot=1)
+{
+	ybs=wh-1;
+	xmul=wh<<1;
+	r45syd=xmul-1;
+	ymul=r45syd-1;
+	var ret=new Array(r45syd*r45syd*cot);
+	ret.fill(-1);
+	return ret;
+	
+}
+
+function arr_deg45(wh,src,buf,sta_row=0)
+{
+	var ybs0=ybs;
+	if(sta_row!=0){ybs0+=r45syd*sta_row;}
+
+	for(var y=0;y<wh;y++)
+	{
+		var y0a=y*wh;
+		for(var x=0;x<wh;x++)
+		{
+			buf[ybs0+y*ymul+x*xmul]=src[y0a+x];
+		}
+
+	}
+	return buf;
+
+}
+
+function txt_deg45arr(src,cot)
+{
+	var yh=r45syd*cot;
+	var rows=new Array(yh);
+	for(var y=0;y<yh;y++)
+	{
+		var y0a=y*r45syd;
+		var cols=new Array(r45syd);
+		for(var x=0;x<r45syd;x++)
+		{
+			var v=src[y0a+x];
+			if(v<0){cols[x]=' -';
+			} else { cols[x]=' '+v; }
+		}
+		rows[y]=cols.join(' ');
+	}
+	return rows.join('\n');
+
+}
+
+var deg45gridsft=5; //=32px
+
+function img_deg45arr(src,cot)
+{
+	var gridwh=1<<(deg45gridsft-1);
+	var xsftmid=gridwh>>1;
+	var canvw=r45syd<<deg45gridsft;
+	var canvh=canvw*cot;
+	canv.width = canvw;
+	canv.height = canvh;
+	ctx.clearRect(0, 0, canvw, canvh);
+	var yh=r45syd*cot;
+	for(var y=0;y<yh;y++)
+	{
+		var y0a=y*r45syd;
+		for(var x=0;x<r45syd;x++)
+		{
+			var v=src[y0a+x];
+			if(v>=0){
+				var fystr=v.toFixed(0);
+				var zhu=fystr.length;
+				var rw=gridwh/zhu;
+				var xsft=(x<<deg45gridsft)+xsftmid;
+				var ysft=(y<<deg45gridsft)+10;
+				for(var i=0;i<zhu;i++)
+				{
+					var rna=fystr.charCodeAt(i)-0x30;
+					ctx.drawImage(numbs, rna*9, 0, 9, 9, xsft+i*rw, ysft, rw, 9);
+				}
+			}
+		}
+	}
+
+
+
+}
+
+function printmgsq_deg45(src,print_type=1)
+{
+	var srg=src.length;
+
+	if(srg<16) {
+		var bsft=intsqrt2(src[0].length);
+		var wh=1<<bsft;
+		var rotdeg45 = setupdeg45(wh,cot=srg);
+		for(var kk =0;kk<srg;kk++)
+		{
+			arr_deg45(wh,src[kk],rotdeg45,sta_row=kk*r45syd);
+		}
+
+	} else {
+		var bsft=intsqrt2(srg);
+		var wh=1<<bsft;
+		var rotdeg45=arr_deg45(wh,src,setupdeg45(wh));
+		srg=1;
+		
+	}
+	
+	switch(print_type)
+	{
+			case 0:
+			return rotdeg45;
+			case 1:
+			return txt_deg45arr(rotdeg45,srg);
+			case 2:
+			img_deg45arr(rotdeg45,srg);
+			return;
+	}
+
+}
+
 function printmgsq_by4(src)
 {
 	var srg=src.length;
-	if(srg<16)
-	{
+	if(srg<16) {
 		var ret=new Array(srg);
 		for(var i=0;i<srg;i++)
 		{
