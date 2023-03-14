@@ -88,6 +88,26 @@ function even2updown()
 
 }
 
+class Gualink {
+bsv;
+bsv_masa;
+idx;
+img;
+child;
+
+constructor(bv,ydx) {
+	this.bsv = bv;
+	this.bsv_masa = bv;
+	this.idx=ydx;
+	this.child=new Object();
+}
+
+setidx(v) {
+	this.idx=v;
+}
+
+}
+
 var shidatatype=1;
 
 function getshi(v,rawdata=false)
@@ -322,14 +342,25 @@ function drawtxt(v,pos,xsft=1)
 	return fystr;
 }
 
-function sepimg(parr,uur)
+function sepimg0(parr,uur,sig=0)
 {
 	var img=document.createElement('img');
 	img.src=uur;
 	parr.appendChild(img);
 }
 
-function blobCallback(iconName) {
+function sepimg_log(parr,uur,sig=0)
+{
+	var img=document.createElement('img');
+	img.src=uur;
+	parr.appendChild(img);
+	Gualink_pool[sig].img=parr;
+}
+
+var sepimg=sepimg0;
+
+
+function blobCallback(iconName,sig=0) {
   return (b) => {
     const a = document.createElement('a');
 
@@ -338,7 +369,7 @@ function blobCallback(iconName) {
     a.download = iconName+'.png';
 	var uur = window.URL.createObjectURL(b);
 	a.href=uur;
-	sepimg(a,uur);
+	sepimg(a,uur,sig);
   }
 }
 
@@ -375,20 +406,48 @@ function mv0to1(v,idx)
 	return v|(1<<idx);
 }
 
-lnk_kole=new Set();
-lnk_kole_done=new Set();
-txtinfo=[];
-function addtolog(neg,v,cuobs,idxbs)
+var lnk_kole=new Set();
+var lnk_kole_done=new Set();
+var Gualink_pool = new Object();
+var txtinfo=[];
+
+function addtolog0(neg,v,cuobs,idxbs){return;}
+
+function addtolog_log(neg,v,cuobs,idxbs)
 {
-	lnk_kole.add(neg*v);
-	idxbs++;
+	var loggedv=neg*v;
+	lnk_kole.add(loggedv);
+	var subGualnk=mkGualink(loggedv);
+	
 	var isneg=false;
 	var srcneg='';
 	var dstneg='-';
 	if(neg>0){
 		srcneg='-';
 		dstneg='';
-	isneg=true;}
+		var gmv=negGualink_mv[idxbs];
+		var gmvmsk=negGualink_mvmsk[idxbs];
+	isneg=true;} else {
+		var gmv=Gualink_mv[idxbs];
+		var gmvmsk=Gualink_mvmsk[idxbs];
+	}
+
+
+	if(subGualnk.idx<0)
+	{
+		var gmvbs=cur_Gualink.idx;
+		if(gmv!=0xffff)
+		{
+			if((gmvbs&gmvmsk)==0)
+			{
+				subGualnk.setidx(gmvbs+gmv);
+			}
+		}
+	}
+	cur_Gualink.child[idxbs]=subGualnk;
+
+	idxbs++;
+	
 	var hyd='(('+srcneg+(lvmax-cuobs)+'))_';
 	var dsthyd='(('+dstneg+v+'))_';
 	
@@ -405,6 +464,8 @@ function addtolog(neg,v,cuobs,idxbs)
 
 	txtinfo.push(kyar);
 }
+
+var addtolog= addtolog0;
 
 function yao_move(cuo,yao_idx,isblak,neg)
 {
@@ -428,11 +489,25 @@ function yao_move(cuo,yao_idx,isblak,neg)
 
 }
 
+function mkGualink(v,ydx=-1)
+{
+	if(v in Gualink_pool)
+	{
+		var nyy=Gualink_pool[v];
+	}  else  {
+		var nyy=new Gualink(v,ydx);
+		Gualink_pool[v]=nyy;
+	}
+	return nyy;
+}
+
 function draw(v)
 {
-	
+	var orig_v=v;
 	lnk_kole.add(v);
 	lnk_kole_done.add(v);
+	cur_Gualink=mkGualink(v,0);
+	
 	var cvh=lv*20+20;
 	if(cvh != prvcvh)
 	{
@@ -464,6 +539,7 @@ function draw(v)
 			yao_move(cuo,i,is1,1);
 			cur_v>>=1;
 		}
+		cur_Gualink.bsv_masa=v;
 		
 	} else {
 		var cur_v=v;
@@ -491,22 +567,123 @@ function draw(v)
 		drawmgsqUpper(cvh-12,rev);
 	}
 	
-	canv.toBlob(blobCallback(msna),'image/png');
+	canv.toBlob(blobCallback(msna,orig_v),'image/png');
+
+}
+
+var Gualink_mv=[];
+var Gualink_mvmsk=[];
+var negGualink_mv=[];
+var negGualink_mvmsk=[];
+
+function mkgmvmsk(idx,dyst,prepmsk=-1)
+{
+	Gualink_mv[idx]=dyst;
+	negGualink_mv[hflv-idx-1]=dyst;
+	var pmsk=prepmsk;
+	
+	if(pmsk<0){
+		pmsk=dyst-1;
+		if(pmsk<1){pmsk=1;}
+	};
+	
+	Gualink_mvmsk[idx]=pmsk;
+	negGualink_mvmsk[hflv-idx-1]=pmsk;
+}
+
+function Gualink_walk()
+{
+	Gualink_mv=new Uint16Array(lv<<1);
+	Gualink_mv.fill(0xffff);
+	Gualink_mvmsk=Gualink_mv.subarray(hflv, lv);
+	negGualink_mv=Gualink_mv.subarray(lv, lv+hflv);
+	negGualink_mvmsk=Gualink_mv.subarray(lv+hflv, lv<<1);
+	Gualink_mv=Gualink_mv.subarray(0, hflv);
+	
+	var qv=hflv>>1;
+	
+
+	if((hflv&1)==1)
+	{
+		mkgmvmsk(qv,1);
+		qv++;
+		var dyst=2;
+		
+		
+	} else {
+		mkgmvmsk(qv,1,0);
+		qv++;
+		var dyst=4;
+	}
+	mkgmvmsk(qv,dyst);
+	dyst<<=2;
+	qv++;
+	
+	for(var i=qv;i<hflv;i++)
+	{
+		mkgmvmsk(i,dyst);
+		dyst<<=1;
+	}
+	return;
+
+}
+
+function draw_linked_af1()
+{
+	var sqrg=1<<hflv;
+	if(Gualink_ordered.length==0)
+	{
+		Gualink_ordered=new Array(sqrg);
+		for (const [key, value] of Object.entries(Gualink_pool)) {
+			Gualink_ordered[value.idx]=value;
+		}
+	}
+	sqrg>>=2;
+	for(var y=0;y<4;y++)
+	{
+		var y0a=y*sqrg;
+		for(var x=0;x<sqrg;x++)
+		{
+			
+			var vv=Gualink_ordered[y0a+x];
+			if(vv!== undefined){
+			document.body.appendChild(vv.img);
+			}
+		}
+		sepimg0(document.body,'bxbs0_8b.png');
+	}
+	
+}
+
+function draw_linked_glob()
+{
+	lnk_kole=new Set();
+	lnk_kole_done=new Set();
+	txtinfo=[];
+	Gualink_pool = new Object();
+	addtolog = addtolog_log;
+	sepimg = sepimg_log;
+	Gualink_walk();
+	Gualink_ordered=[];
 
 }
 
 function draw_linked(v)
 {
-	lnk_kole=new Set();
-	lnk_kole_done=new Set();
-	txtinfo=[];
+
+	draw_linked_glob();
+
+
 	draw(v);
 	var itr=0;
 	while(lnk_kole.size!=lnk_kole_done.size)
 	{
 		
 		lnk_kole.forEach(k => {
-		if(!lnk_kole_done.has(k)){draw(k);}
+		if(!lnk_kole_done.has(k)){
+		if(Gualink_pool[k].idx>0){draw(k);}
+		
+		}
 		itr++;
 		})
 		console.log('loop'+itr);
@@ -523,7 +700,7 @@ function draw_linked(v)
 		}
 		
 	})
-	setTimeout(function(){sepimg(document.body,'bxbs0.png');}, 1000);
+	setTimeout(draw_linked_af1, 1000);
 	
 	return reptout.join('\n');
 	
