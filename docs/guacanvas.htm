@@ -6,7 +6,7 @@ margin:20px;
 }
 
 </style></body><script>
-var lv=8;
+var lv=6;
 var bitbuf = new Uint8Array(32);
 
 var hflv=lv>>1;
@@ -20,8 +20,13 @@ var canv=document.createElement('canvas');
 var ctx=canv.getContext('2d');
 document.body.appendChild(canv);
 
-var imgpool=document.createElement('div');
-document.body.appendChild(imgpool);
+function mkimgpool()
+{
+	imgpool=document.createElement('div');
+	document.body.appendChild(imgpool);
+}
+
+mkimgpool();
 
 
 
@@ -95,6 +100,7 @@ bsv;
 bsv_masa;
 child;
 idx;
+idx_my;
 img;
 
 
@@ -156,7 +162,7 @@ getkey(v,disable=false) {
 
 var shidatatype=1;
 
-function getshi(v,rawdata=false)
+function getshi(v)
 {
 	var shidata_low=hflv4shi[v];
 	
@@ -176,12 +182,9 @@ function getshi(v,rawdata=false)
 		
 		
 	}
-	
-	
-	
-	
-
 }
+
+
 
 
 
@@ -213,10 +216,7 @@ function clamp4bit(v)
 
 function is111(v)
 {
-	for(var i=hflv;i>0;i--)
-	{
-		if(v==((1<<i)-1)){return true;}
-	}
+	if(((v+1)&v)==0){return true;}
 	return false;
 }
 
@@ -400,7 +400,10 @@ function sepimg_log(parr,uur,sig=0)
 	var img=document.createElement('img');
 	img.src=uur;
 	parr.appendChild(img);
-	Gualink_pool[sig].img=parr;
+	parr.sig=sig;
+	var krr=Gualink_pool[sig];
+	krr.img=parr;
+	Gualink_pool[krr.bsv_masa]=krr;
 }
 
 var sepimg=sepimg0;
@@ -425,7 +428,7 @@ var bsta=10;
 
 function ismgsqUpper(v)
 {
-	var x=mgsq[v];
+	var x=mgsq_lut[v];
 	var y=x>>hflv;
 	x=x&bmsk;
 	if(x>=y){return true;}
@@ -647,24 +650,37 @@ function draw_linked_sepline()
 }
 
 
-const fixmtx=[
-0,1,0,1,
-1,0,1,0,
-0,1,0,1,
-1,0,1,0];
+
 
 function refine()
 {
 var tlen=1<<((hflv&0xfe)-2);
 var gapsft=2;
 if(is_hflvodd){gapsft=3;}
+
+if(tlen>linked_count){tlen=linked_count;}
+
 for(var rx=0;rx<tlen;rx++)
 {
-	if(fixmtx[rx]!=0){
+	if((((rx)^(rx>>2))&1)!=0){
 		refine_swap(rx<<gapsft);
 	}
 }
 arlnk();
+}
+
+function refine2(seq)
+{
+	var sqrg=1<<hflv;
+	Gualink_ordered=new Array(sqrg);
+	var sql=seq.length;
+	for(var i=0;i<sql;i++)
+	{
+		var krr=Gualink_pool[seq[i]];
+		krr.idx_my=i;
+		Gualink_ordered[i]=krr;
+	}
+	arlnk();
 }
 
 function refine_swap(fixidx)
@@ -693,6 +709,12 @@ function refine_swap(fixidx)
 }
 
 /*
+
+const fixmtx=[
+0,1,0,1,
+1,0,1,0,
+0,1,0,1,
+1,0,1,0];
 const fixmr45=[[1],[3]];	//w=16
 const fixmr67=[[0,1],[0,3],	[1,0],[1,2],	[2,1],[2,3],	[3,0],[3,2]];
 
@@ -726,21 +748,21 @@ function refine_bak(fixmr=fixmr67)
 function arlnk()
 {
 	var origpool=imgpool;
-	imgpool=document.createElement('div');
-	document.body.appendChild(imgpool);
-	draw_linked_sepline();
+	mkimgpool();
+	
 	var sqrg=1<<(hflv-2);
 	for(var y=0;y<4;y++)
 	{
+		draw_linked_sepline();
 		var y0a=y*sqrg;
 		for(var x=0;x<sqrg;x++)
 		{
 			var vv=Gualink_ordered[y0a+x];
 			if(vv!== undefined){imgpool.appendChild(vv.img);}
 		}
-		draw_linked_sepline();
+		
 	}
-
+	draw_linked_sepline();
 	origpool.remove();
 
 }
@@ -753,6 +775,7 @@ function draw_linked_af1()
 	Gualink_pool[	Gualink_mvidx[2]	].setidx(0);
 	draw_linked_sepline();
 	sqrg>>=2;
+	linked_count=0;
 	for(var y=0;y<4;y++)
 	{
 		var y0a=y*sqrg;
@@ -771,7 +794,9 @@ function draw_linked_af1()
 					txtinfo.push(vv.getkey(txtp)+'\t'+dst.getkey(txtp,true));
 				}
 			}
-
+			vv.idx=linked_count;
+			Gualink_ordered[linked_count]=vv;
+			linked_count++;
 
 			}
 		}
@@ -814,7 +839,7 @@ function draw_linked(v)
 		if(itr>lvmax){break;}
 	}
 
-	setTimeout(draw_linked_af1, 1000);
+	setTimeout(draw_linked_af1, 8<<hflv);
 	
 	return;
 	
@@ -897,7 +922,7 @@ function mkmgsq_even()
 		tztchg = (tztchg^(tztchg>>1))&1;
 		
 		var rvidx=lztidx-i;
-		if(tztchg == 1){
+		if(tztchg != 0){
 			retsq[i]=rvidx;
 			retsq[rvidx]=i;
 		} else {
@@ -905,8 +930,76 @@ function mkmgsq_even()
 			retsq[rvidx]=rvidx;
 		}
 	}
+	mgsq_lut=retsq;
 	return retsq;
 }
+
+function hfrev(v)
+{
+	//return v;
+	var rev=0;
+	var hflvsub1=hflv-1;
+	for(var i=0;i<hflv;i++)
+	{
+		if((v>>i)&1 != 0)
+		{
+			rev+=1<<(hflvsub1-i);
+		} 
+	}
+	return rev
+}
+
+function mkmgsq_even_alt()
+{
+	mgsq=uintsqarr();
+	mgsq_lut=uintsqarr();
+	var sqrg=1<<hflv;
+	var colz=new Array(sqrg);
+	var ylen=sqrg>>1;
+	var lztidx=sqrg-1;
+
+	for(var vv=0;vv<ylen;vv++)
+	{
+		var rvidx=lztidx-vv;
+		if(((vv^(vv>>1))&1) != 0){
+			colz[vv]=hfrev(rvidx);
+			colz[rvidx]=hfrev(vv);
+		} else {
+			colz[vv]=hfrev(vv);
+			colz[rvidx]=hfrev(rvidx);
+		}
+		
+	}
+	for(var y=0;y<sqrg;y++)
+	{
+		var y0a=y<<hflv;
+		var gtidx=y;
+		var x_rev=false;
+		if(((y^(y>>1))&1) != 0){x_rev=true;};
+
+		var upr=colz[gtidx];
+		for(var x=y;x<sqrg;x++)
+		{
+			var cur_upr=upr;
+			if(((x^(x>>1))&1)!=0){cur_upr=lztidx-upr;}
+			gtidx=x;
+			if(x_rev) {gtidx=lztidx-x;}
+			var subr=colz[gtidx];
+			var ydx=y0a+x;
+			var ydv=(cur_upr<<hflv)+subr;
+			mgsq[ydx]=ydv
+			mgsq_lut[ydv]=ydx;
+
+			ydx=(x<<hflv)+y;
+			ydv=(subr<<hflv)+cur_upr;
+
+			mgsq[ydx]=ydv
+			mgsq_lut[ydv]=ydx;
+		}
+	}
+	
+}
+
 
 function mkmgsq_odd(level)
 {
@@ -1018,7 +1111,7 @@ function txt_deg45arr(src,cot)
 
 var deg45gridsft=5; //=32px
 
-function img_deg45arr(src,cot)
+function img_deg45arr(src,cot=1)
 {
 	var gridwh=1<<(deg45gridsft-1);
 	var xsftmid=gridwh>>1;
@@ -1051,6 +1144,25 @@ function img_deg45arr(src,cot)
 
 
 
+}
+
+function printsq_deg45(src,print_type=1)
+{
+	var srg=src.length;
+	var wh=Math.sqrt(srg)>>0;
+	var rotdeg45=arr_deg45(wh,src,setupdeg45(wh));
+	srg=1;
+
+	switch(print_type)
+	{
+			case 0:
+			return rotdeg45;
+			case 1:
+			return txt_deg45arr(rotdeg45,srg);
+			case 2:
+			img_deg45arr(rotdeg45,srg);
+			return;
+	}
 }
 
 function printmgsq_deg45(src,print_type=1)
@@ -1087,6 +1199,90 @@ function printmgsq_deg45(src,print_type=1)
 
 }
 
+function fracstar(arcc=7,bssz=500)
+{
+	function cirk(rr,x,y)
+	{
+		ctx.beginPath();
+		ctx.arc(x,y, rr, 0, 2 * Math.PI);
+		ctx.stroke();
+	}
+	var angg=Math.PI/arcc;
+	var rto=Math.sin(angg)/Math.sin(2*angg);
+	prvcvh=(bssz+bssz*(1/(1-rto)))>>1;
+	var wh=prvcvh<<1;
+	canv.width = wh;
+	canv.height = wh;
+	var rad=bssz>>1;
+	cirk(rad,prvcvh,prvcvh);
+	var muv=(Math.cos(2*angg)*rto)+Math.cos(angg);
+	var cur_rad=rad;
+	var cur_zntry=prvcvh;
+	for(var dd=0;dd<arcc;dd++)
+	{
+		cur_zntry+=muv*cur_rad;
+		cur_rad*=rto;
+		cirk(cur_rad,prvcvh,cur_zntry);
+	}
+	
+	return 
+	
+}
+
+var zep0='.';
+var zep1='+';
+
+function mgspbit(bitloc)
+{
+	zep0='0';
+	zep1='1';
+
+	var ssq=mgsq;
+	var bbmsk=1<<bitloc;
+	var srg=ssq.length;
+	var rz=new Array(srg);
+	rz.fill(zep0);
+	for(var i=0;i<srg;i++)
+	{
+		if((ssq[i]&bbmsk)!=0){rz[i]=zep1;}
+
+	}
+	strliz=strliz_none;
+	return rz.join('');
+	//return printmgsq_by4(rz);
+
+}
+
+function strliz0(v)
+{
+	return v.toString(10);
+}
+
+
+function strliz1(v)
+{
+	return v.toString(16);
+}
+
+function strliz2(v)
+{
+	return ((v>>hflv)&bmsk).toString(16)+'.'+(v&bmsk).toString(16);
+}
+
+function strliz2f(v)
+{
+	return ((v/allrg)>>0).toString(16)+'.'+(v%allrg).toString(16);
+}
+
+var bqa='地雷水澤山火風天';
+function strliz3(v)
+{
+	return bqa.charAt(v);
+}
+
+function strliz_none(v){return v;}
+
+var strliz=strliz1;
 function printmgsq_by4(src)
 {
 	var srg=src.length;
@@ -1110,12 +1306,12 @@ function printmgsq_by4(src)
 				ret1=[];
 				for(var x=0;x<grpby4;x++){
 					var ydx=y1a+(x<<2);
-					ret1.push(src[ydx]+' '+src[ydx+1]+' '+src[ydx+2]+' '+src[ydx+3]);
+					ret1.push(strliz(src[ydx])+' '+strliz(src[ydx+1])+' '+strliz(src[ydx+2])+' '+strliz(src[ydx+3]));
 
 				}
 				ret.push(ret1.join('\t'));
 			}
-			ret.push('\n');
+			ret.push('');
 		}
 		return ret.join('\n');
 
@@ -1153,6 +1349,99 @@ function hfbin0and1(v,yoff,xoff,spefunc)
 	yoff=xoff;
 	xoff=tmp;
 	}
+
+}
+
+
+
+
+
+function odd_xorchart(oddn)
+{
+	function odd_clamp4bit(v)
+	{
+	if(v<16){return [4,new Uint8Array(allrg<<1)];}
+	else if(v<256){return [8,new Uint16Array(allrg<<1)];}
+	return [16,new Uint32Array(allrg<<1)];
+	}
+	var allrg=oddn*oddn;
+	var ret=odd_clamp4bit(oddn);
+	dgtsft=ret[0];
+	bmsk=(1<<dgtsft)-1;
+	ret=ret[1];
+	cur_xormap=ret.subarray(0,allrg);
+	ret=ret.subarray(allrg,allrg<<1);
+	var lztmod=oddn-1;
+	for(var d=0;d<oddn;d++)
+	{
+		cur_xormap[d]=d;
+		cur_xormap[d*oddn]=d;
+		cur_xormap[(d+1)*lztmod]=lztmod;
+	}
+	var slb=oddn-3;
+	var ksta=3;
+	var revksta=slb;
+	var rvallrg=allrg-1;
+	cur_xormap[rvallrg]=1;
+	for(var dkr=1;dkr<slb;dkr++)
+	{
+		
+		var dy=oddn;
+		for(var dx=dkr;dx>=1;dx--)
+		{
+			var ydx=dy+dx;
+			cur_xormap[ydx]=ksta;
+			cur_xormap[rvallrg-ydx]=revksta;
+			dy+=oddn;
+		}
+		ksta++;
+		revksta--;
+	}
+	
+	slb=oddn+2*lztmod;
+	rvallrg=oddn+lztmod;
+	ksta=lztmod*oddn-1;
+	for(var d=2;d<lztmod;d++)
+	{
+		cur_xormap[slb]=1;
+		cur_xormap[rvallrg]=d;
+		cur_xormap[ksta+d]=d;
+		slb+=lztmod;
+		rvallrg+=oddn;
+	}
+
+	
+	ret[0]=0;
+	slb=oddn>>1;
+	ret[slb]=(lztmod<<dgtsft)|(slb-1);
+	slb-=1;
+	rvallrg=slb;
+	ksta=2;
+	revksta=3;
+	var nxidx=slb+(oddn>>1);
+	var nxvv=oddn-3;
+	var ydridx=oddn*slb+lztmod-1;
+	ret[lztmod]=(1<<dgtsft)|(nxvv+1);
+	for(var d=0;d<slb;d++)
+	{
+		ret[rvallrg]=ksta<<dgtsft|cur_xormap[ydridx];
+		ret[nxidx]=(revksta<<dgtsft)|nxvv;
+		rvallrg--;
+		nxidx--;
+		nxvv--;
+		ksta+=2;
+		revksta+=2;
+		ydridx-=oddn;
+	}
+	
+
+	
+
+//	00 24 41 32 13
+//	00 46 21 62 53 34 15
+
+
+	return ret;
 
 }
 
@@ -1468,7 +1757,7 @@ function fillgd012(gd,v,yoff,xoff,spefunc)
 
 function map012()
 {
-	mgsq=mkmgsq_even();
+	//mgsq=mkmgsq_even();
 	setupshi1();
 
 	var hfrg=(1<<hflv);
@@ -1502,7 +1791,7 @@ function map01()
 		ctx.fillRect(ofst, 0, 1, canvwh);	//vert
 		ctx.fillRect(0, ofst, canvwh, 1);
 	}
-	mgsq=mkmgsq_even();
+	//mgsq=mkmgsq_even();
 	setupshi1();
 	var hfrg=(1<<hflv);
 	grpgap=1+hflv*12;
@@ -1562,8 +1851,16 @@ set hflv(v){
 	hflv=v;
 	afterhflv();},
 set d(v){draw(v);},
+set dl(v){draw_linked(v);},
+set rfn(v){refine();},
+set rf2(v){refine2(v);},
 set sqa(v){drawsqa(v);},
-set shi(v){calcshi(v); calcshi(getrev(v));},
+set shi(v){
+	setupshi1();
+	console.log(getshi(v));
+	console.log(getshi(getrev(v)));
+},
+set sqalt(v){mkmgsq_even_alt();},
 set txtsq(v){mgsqtext();},
 set map(v){
 
