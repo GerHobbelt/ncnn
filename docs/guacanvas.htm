@@ -1353,35 +1353,79 @@ function hfbin0and1(v,yoff,xoff,spefunc)
 }
 
 
+var xcha=[];
 
 
 
-function odd_xorchart(oddn)
+function odd_clamp4bit(allrg)
 {
-	function odd_clamp4bit(v)
-	{
-	if(v<16){return [4,new Uint8Array(allrg<<1)];}
-	else if(v<256){return [8,new Uint16Array(allrg<<1)];}
+	if(allrg<257){return [4,new Uint8Array(allrg<<1)];}
+	else if(allrg<65537){return [8,new Uint16Array(allrg<<1)];}
 	return [16,new Uint32Array(allrg<<1)];
+}
+
+function cbnxcha(v1,v2)
+{
+	var rzwh=v1*v2;
+	var rz=odd_clamp4bit(rzwh*rzwh);
+	var xc1=xcha[v1];
+	var xc2=xcha[v2];
+	for(var y0=0;y0<v1;y0++)
+	{
+		var y0a=y0*v1;
+		var y0abg=y0*v2;
+		for(var x0=y0;x0<v1;x0++)
+		{
+			var x0abg=x0*v2;
+			var jidi=xc1[y0a+x0]*v2;
+			for(var y1=0;y1<v2;y1++)
+			{
+				var y1a=y1*v2;
+				for(var x1=y1;x1<v2;x1++)
+				{
+					var cvv=xc2[y1a+x1]+jidi;
+					rz[(y0abg+y1)*rzwh+(x0abg+x1)]=cvv;
+					rz[(x0abg+x1)*rzwh+(y0abg+y1)]=cvv;
+					rz[(y0abg+x1)*rzwh+(x0abg+y1)]=cvv;
+					rz[(x0abg+y1)*rzwh+(y0abg+x1)]=cvv;
+				}
+			}
+		}
 	}
+	xcha[rzwh]=rz;
+	return rz;
+
+}
+
+function odd_xorchart(oddn,xortyp=-1)
+{
+
+	print_moddiv=oddn;
 	var allrg=oddn*oddn;
-	var ret=odd_clamp4bit(oddn);
+	if(xortyp>0){oddn=xortyp;}
+	cur_moddiv=oddn;
+	var ret=odd_clamp4bit(allrg);
 	dgtsft=ret[0];
 	bmsk=(1<<dgtsft)-1;
 	ret=ret[1];
+	var slb=oddn-3;
+	var ksta=3;
+	var revksta=slb;
+	var rvallrg=allrg-1;
+	var lztmod=oddn-1;
+
+
+	if(!xcha[oddn]){
 	cur_xormap=ret.subarray(0,allrg);
 	ret=ret.subarray(allrg,allrg<<1);
-	var lztmod=oddn-1;
+	
 	for(var d=0;d<oddn;d++)
 	{
 		cur_xormap[d]=d;
 		cur_xormap[d*oddn]=d;
 		cur_xormap[(d+1)*lztmod]=lztmod;
 	}
-	var slb=oddn-3;
-	var ksta=3;
-	var revksta=slb;
-	var rvallrg=allrg-1;
+	
 	cur_xormap[rvallrg]=1;
 	for(var dkr=1;dkr<slb;dkr++)
 	{
@@ -1409,7 +1453,10 @@ function odd_xorchart(oddn)
 		slb+=lztmod;
 		rvallrg+=oddn;
 	}
-
+		xcha[oddn]=cur_xormap;
+	} else {
+		cur_xormap=xcha[oddn];
+		ret=ret.subarray(allrg,allrg<<1);}
 	
 	ret[0]=0;
 	slb=oddn>>1;
@@ -1444,6 +1491,151 @@ function odd_xorchart(oddn)
 	return ret;
 
 }
+
+function MyXor_odd(v1,v2)
+{
+	var v1upr=(v1>>dgtsft)&bmsk;
+	var v1dwn=v1&bmsk;
+	var v2upr=(v2>>dgtsft)&bmsk;
+	var v2dwn=v2&bmsk;
+	var rzupr=0;
+	var rzdwn=0;
+	var gzz=1;
+	for(var i=0;i<32;i++)
+	{
+		if((v1upr+v1dwn+v2upr+v2dwn)==0){break;}
+
+		var v1uprVu=v1upr%cur_moddiv;
+		var v1dwnVu=v1dwn%cur_moddiv;
+		var v2uprVu=v2upr%cur_moddiv;
+		var v2dwnVu=v2dwn%cur_moddiv;
+
+		rzupr+=cur_xormap[(v1uprVu*cur_moddiv)+v2uprVu]*gzz;
+		rzdwn+=cur_xormap[(v1dwnVu*cur_moddiv)+v2dwnVu]*gzz;
+
+
+		v1upr=((v1upr-v1uprVu)/cur_moddiv)>>0;
+		v1dwn=((v1dwn-v1dwnVu)/cur_moddiv)>>0;
+		v2upr=((v2upr-v2uprVu)/cur_moddiv)>>0;
+		v2dwn=((v2dwn-v2dwnVu)/cur_moddiv)>>0;
+		gzz*=cur_moddiv;
+	}
+	return (rzupr<<dgtsft)|rzdwn;
+}
+
+function strliz_odd2dgt0(cvv)
+{
+	return ((cvv>>dgtsft)&bmsk)*print_moddiv+(cvv&bmsk);
+}
+
+
+
+var strliz_odd2dgt=strliz_odd2dgt0;
+function printmgsq_odd2dgt(src)
+{
+	var ret=new Array(print_moddiv);
+	for(var y=0;y<print_moddiv;y++)
+	{
+		var y0a=y*print_moddiv;
+		var rowz=new Array(print_moddiv);
+		for(var x=0;x<print_moddiv;x++)
+		{
+			rowz[x]=strliz_odd2dgt(src[y0a+x])
+		}
+		ret[y]=rowz.join(' ');
+	}
+	return ret.join('\n');
+}
+
+function gf_odd_mad(ysle,xsle)
+{
+	var sql=ysle.length;
+	var ret=ysle[0]&xsle[0];
+	for(var d=1;d<sql;d++)
+	{
+		ret=MyXor_odd(ret,ysle[d]&xsle[d]);
+	}
+	return ret;
+
+}
+
+function matmul_odd(v1,v2,n,xortyp=-1)
+{
+	var retsq = odd_xorchart(n,xortyp);
+}
+
+function mkmgsq_sigl(n,xortyp=-1,prebs=null)
+{
+	var ret = odd_xorchart(n,xortyp);
+	if(prebs){ret=prebs;}
+	for(var d=0;d<n;d++)
+	{
+		var xorbs=ret[d];
+		if(xorbs!=0)
+		{
+			xorbs=((xorbs&bmsk)<<dgtsft)+((xorbs>>dgtsft)&bmsk);
+			var mvbs=d*n;
+			ret[mvbs]=xorbs;
+			mvbs++;
+			for(var x=1;x<n;x++)
+			{
+				ret[mvbs]=MyXor_odd(xorbs,ret[x]);
+				mvbs++;
+			}
+		}
+
+	}
+	return printmgsq_odd2dgt(ret);
+
+}
+function mycbntst1()
+{
+	pbs=odd_xorchart(25);
+	odd_xorchart(5);
+	cbnxcha(5,5);
+	strliz_odd2dgt=strliz1;
+	return mkmgsq_sigl(25,-1,pbs);
+}
+
+function gf2mad(ysle,xsle)
+{
+	var sql=ysle.length;
+	var ret=ysle[0]&xsle[0];
+	for(var d=1;d<sql;d++)
+	{
+		ret^=(ysle[d]&xsle[d]);
+	}
+	return ret;
+
+}
+
+function matmul(v1,v2,n=8)
+{
+	var kw=(v1.length/n)>>0;
+	var ret =new Array(n*n);
+	for(var y=0;y<n;y++)
+	{
+		var ysle=new Array(kw);
+		for(var d=0;d<kw;d++)
+		{
+			ysle[d]=v1[d*n+y];
+		}
+		for(var x=0;x<n;x++)
+		{
+			var xsle=new Array(kw);
+			for(var d=0;d<kw;d++)
+			{
+				xsle[d]=v2[d*n+x];
+			}
+			ret[y*n+x]=gf2mad(ysle,xsle)
+		}
+	}
+	strliz=strliz0;
+	return ret;
+	//return printmgsq_by4(ret);
+
+}
+
 
 var spelogic=new Array(16);
 
