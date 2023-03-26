@@ -1352,6 +1352,39 @@ function hfbin0and1(v,yoff,xoff,spefunc)
 
 }
 
+function int_sqrtf1(x)
+{
+	var res=0;
+	var addo= 0x8000;   
+	for(var i=0;i<16;i++)
+	{
+		var temp=res | addo;
+		var g2=temp*temp;      
+		if (x>=g2){res=temp;}
+		addo>>=1;
+	}
+	return res;
+
+}
+
+function int_sqrtf0(n)
+{
+	var sqrt = 0;
+	var shift = 15;
+	var sqrt2=0;
+	while (shift >= 0)
+	{
+		sqrt2 = ((sqrt << 1) + (1 << shift)) << shift;
+	if (sqrt2 <= n){
+		sqrt += (1 << shift);
+		n -= sqrt2;
+	}
+		shift--;
+	}
+	return sqrt;
+
+}
+
 
 var xcha=[];
 
@@ -1360,28 +1393,38 @@ xcha[3]=new Uint8Array([
 1,2,0,
 2,0,1]);
 
-var LUXmap=[]
 
+var LUXmap=new Uint8Array([
+0x1b,0xb1,0xb1,	0x9c,		0x4e,0x4e,0x1b,
+0xd8,	0x1b,0xb1,	0x9c,		0x4e,0x1b,	0x27,
+0xd8,	0xd8,	0x1b,0x8d,0xb1,	0x72,	0x72,
+0xe1,	0xe1,	0x63,0xe4,0xc6,	0xb4,	0xb4,
+]);
 
+const LUXmap_height=(1+Math.sqrt(1+(LUXmap.length<<3)))>>2;	//10x+y=3	14x+y=4	18x+y=5; x=1/4; y=1/2
+const LUXmap_width=(LUXmap_height<<1)-1;
+/*
+0x,0x,0x,0x,
 
-var LUXele=new Uint8Array([3,2,1,0,	0,2,3,1,	0,3,2,1,
-		0,1,2,3,	3,2,1,0,	1,0,2,3,	//zentr
-	1,0,2,3,	//north	2
-	0,1,3,2,	//south	3
-	3,0,2,1,	//west	4
-	0,3,2,1,	//NW=SW=NW-n	5
-	3,2,1,0,	//NW-w=SW-s		6
-	0,1,2,3]);	//SW-w	7
+var LUXele=new Uint8Array([0,1,2,3,	2,0,3,1,	2,3,0,1,
+		0,3,1,2,	3,2,1,0,	1,2,3,0,	//zentr
+	0,1,3,2,	//north	2
+	1,0,2,3,	//south	3
+	0,3,1,2,	//west	4
+	3,2,1,0,	//NW=SW=NW-w	5
+	2,0,3,1,	//NW-n		6
+	0,1,2,3,	//SW-w	7
+	0,2,1,3]);	//SW-s	8
 
 function buildLUXele()
 {
-	var kole=new Array(8);
+	var kole=new Array(9);
 	kole[0]=LUXele.subarray(0, 12);
 	kole[1]=LUXele.subarray(12, 24);
 
 	var kx=2;
 	var ydx=24;
-	for(var i=0;i<6;i++)
+	for(var i=0;i<7;i++)
 	{
 		kole[kx]=LUXele.subarray(ydx, ydx+4);
 		kx++;
@@ -1391,7 +1434,7 @@ function buildLUXele()
 
 }
 buildLUXele();
-
+*/
 
 /*
 LUXmap[10]=[
@@ -1431,10 +1474,10 @@ function buildlx(n)
 			for(var kk=0;kk<fill_len;kk++)
 			{
 				var kk1d=kk+1+d;
-				ret.set(LUXele[5],(kk1d*oddn+d)*4);	//NW-n
-				ret.set(LUXele[6],(d*oddn+kk1d)*4);	//NW-w
+				ret.set(LUXele[6],(kk1d*oddn+d)*4);	//NW-n
+				ret.set(LUXele[5],(d*oddn+kk1d)*4);	//NW-w
 				ret.set(LUXele[7],(d*oddn+staidx+2+kk)*4);	//SW-w
-				ret.set(LUXele[6],(kk1d*oddn+oddn-1-d)*4);//SW-s
+				ret.set(LUXele[8],(kk1d*oddn+oddn-1-d)*4);//SW-s
 			}
 			
 
@@ -1447,8 +1490,26 @@ function buildlx(n)
 	return ret;
 }
 
+function testlx()
+{
+	var ret=[];
+	for(var y=0;y<LUXmap_width;y++)
+	{
+		var tuoline=[new Array(LUXmap_height),new Array(LUXmap_height)];
+		for(var x=0;x<LUXmap_height;x++)
+		{
+			var v=LUXmap[x*LUXmap_width+y];
+			tuoline[0][x]=((v>>6)&3)+' '+((v>>4)&3);
+			tuoline[1][x]=((v>>2)&3)+' '+(v&3);
+		}
+		ret.push(tuoline[0].join(ztab)+'\n'+tuoline[1].join(ztab));
+		ret.push('');
+	}
+	return ret.join('\n');
+}
 
-function testlx(n)
+/*
+function testlx_bad(n)
 {
 	var oddn=n>>1;
 	var nx2=n<<1;
@@ -1472,6 +1533,7 @@ function testlx(n)
 	return ret.join('\n');
 
 }
+*/
 
 function odd_clamp4bit(allrg,sft=1)
 {
@@ -1925,31 +1987,30 @@ function mkmgsq_4Np2(n)
 	mulp>>=2;
 	var oddhfhfn=(oddhfn>>1);
 
-	var lx=buildlx(n);
+	var lxstp=LUXmap_height-oddhfhfn-1;
 	var n0x2=n<<1;
 
 	for(var y=0;y<oddhfn;y++)
 	{
 		var y0a=y<<1;
-		var y0x4=y<<2;
 		for(var x=0;x<oddhfhfn;x++)
 		{
 			var ady=oddhf[y*oddhfn+x];
-			var lxsta=y0x4+x*n0x2;
 			var x0a=x<<1;
+			var lxv=LUXmap[(x+lxstp)*LUXmap_width+y+lxstp];
 			for(var y1=0;y1<2;y1++) { for(var x1=0;x1<2;x1++) {
 				var cur_y=y0a+y1;
 				var cur_x=x0a+x1;
-				var vlu=ady+(lx[lxsta+(y1*2)+x1]*mulp);
+				var vlu=ady+ ((lxv>>((3-y1*2-x1)<<1))&3) *mulp;
 				ret[cur_y*n+cur_x]=vlu;
 				ret[(lztn-cur_y)*n+(lztn-cur_x)]=lztm-vlu;
 			}}
 		}
 		var ady=oddhf[y*oddhfn+oddhfhfn];
-		var lxsta=y0x4+oddhfhfn*n0x2;
+		var lxv=LUXmap[(oddhfhfn+lxstp)*LUXmap_width+y+lxstp];
 		var x0a=oddhfhfn<<1;
 		for(var y1=0;y1<2;y1++) { for(var x1=0;x1<2;x1++) {
-			ret[(y*2+y1)*n+(x0a+x1)]=ady+lx[lxsta+(y1*2)+x1]*mulp;
+			ret[(y0a+y1)*n+(x0a+x1)]=ady+((lxv>>((3-y1*2-x1)<<1))&3)*mulp;
 		}}
 	}
 
