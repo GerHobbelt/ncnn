@@ -1044,6 +1044,62 @@ function mkmgsq(level)
 
 }
 
+function uintsqarr_wh(wh)
+{
+	allrg=wh*wh;
+	if(wh<17){
+		return new Uint8Array(allrg);
+	} else if(wh<257){
+		return new Uint16Array(allrg);
+	}
+	return new Uint32Array(allrg);
+	
+}
+
+function mkmgsq_4x(wh)
+{
+	var retsq=uintsqarr_wh(wh);
+	var lztidx=allrg-1;
+	for(var y=0;y<wh;y++)
+	{
+		var y0a=y*wh;
+		for(var x=0;x<wh;x++){
+		var i=y0a+x;
+		var tztchg=(i^y);
+		tztchg = (tztchg^(tztchg>>1))&1;
+		
+		var rvidx=lztidx-i;
+		if(tztchg != 0){
+			retsq[i]=rvidx;
+			retsq[rvidx]=i;
+		} else {
+			retsq[i]=i;
+			retsq[rvidx]=rvidx;
+		}}
+	}
+	
+	
+	return retsq;
+}
+
+function is2n(v)
+{
+	var hasdigi=false;
+	for(var i=0;i<32;i++)
+	{
+		if(v==0){return i-1;}
+		if((v&1)==1)
+		{
+			if(hasdigi){return -1;
+			} else {hasdigi=true;}
+		
+		}
+		v>>=1;
+	}
+	return -2;
+
+}
+
 function intsqrt2(v)
 {
 	for(var i=0;i<32;i++)
@@ -1258,6 +1314,11 @@ function strliz0(v)
 	return v.toString(10);
 }
 
+function strliz0b(v)
+{
+	return (v+1).toString(10);
+}
+
 
 function strliz1(v)
 {
@@ -1294,7 +1355,9 @@ function printmgsq_by4(src)
 		}
 		return ret.join('----------\n');
 	} else {
-		var bsft=intsqrt2(srg);
+		var bsft=is2n(srg);
+		if(bsft<0){return printmgsq_by4f(src);}
+		bsft>>=1;
 		var grpby4=1<<(bsft-2);
 		var ret=[]
 		for(var y0=0;y0<grpby4;y0++)
@@ -1320,6 +1383,44 @@ function printmgsq_by4(src)
 
 
 }
+
+function printmgsq_by4f(src)
+{
+	var srg=src.length;
+	if(srg<16) {
+		var ret=new Array(srg);
+		for(var i=0;i<srg;i++)
+		{
+			ret[i]=printmgsq_by4f(src[i]);
+		}
+		return ret.join('----------\n');
+	} else {
+		var wh=Math.sqrt(srg)>>0;
+		var grpby4=wh>>2;
+		var ret=[]
+		for(var y0=0;y0<grpby4;y0++)
+		{
+			var y0a=y0<<2;
+			for(var y1=0;y1<4;y1++)
+			{
+				var y1a=(y0a+y1)*wh;
+				ret1=[];
+				for(var x=0;x<grpby4;x++){
+					var ydx=y1a+(x<<2);
+					ret1.push(strliz(src[ydx])+' '+strliz(src[ydx+1])+' '+strliz(src[ydx+2])+' '+strliz(src[ydx+3]));
+
+				}
+				ret.push(ret1.join(ztab));
+			}
+			ret.push('');
+		}
+		//if(septxt){return ret;}
+		return ret.join('\n');
+
+	}
+	
+}
+
 
 
 function hfbin0and1(v,yoff,xoff,spefunc)
@@ -1412,15 +1513,7 @@ new Uint8Array([
 const LUXmap_height=(1+Math.sqrt(1+(LUXmap.length<<3)))>>2;
 const LUXmap_width=(LUXmap_height<<1)-1;
 
-var LUXele=new Uint8Array([0,1,2,3,	2,0,3,1,	2,3,0,1,
-		0,3,1,2,	3,2,1,0,	1,2,3,0,	//zentr
-	0,1,3,2,	//north	2
-	1,0,2,3,	//south	3
-	0,3,1,2,	//west	4
-	3,2,1,0,	//NW=SW=NW-w	5
-	2,0,3,1,	//NW-n		6
-	0,1,2,3,	//SW-w	7
-	0,2,1,3]);	//SW-s	8
+
 
 function buildLUXele()
 {
@@ -1442,18 +1535,13 @@ function buildLUXele()
 buildLUXele();
 */
 
-/*
-LUXmap[10]=[
-1,2,3,0,	0,1,2,3,	0,3,1,2,	3,2,1,0,	1,2,3,0,
-0,1,2,3,	0,1,2,3,	0,2,3,1,	1,2,3,0,	1,2,3,0,
-3,2,0,1,	3,2,1,0,	2,3,0,1,	2,3,1,0,	2,3,1,0];
-*/
 const ztab='\t';
 
 
 
 function testlx(height=-1)
 {
+	if(cur_lx_size==0){return;}
 	if(height<0){height=LUXmap_height;}
 
 	var ret=[];
@@ -1495,15 +1583,17 @@ function buildlx(n)
 		lyn0-=staidx;
 		var toSouth=3+staidx;
 		var wm1=LUXmap_width-1;
+		var wp1=LUXmap_width+1;
 		var gibidx=LUXmap_width+wm1;
+		
 		for(var d=0;d<staidx;d++)
 		{
 			LUXmap[d*LUXmap_width+qoddn]=0x9c;	//west
 			var fynlin=lyn0+d;
 			LUXmap[fynlin]=0xe1;		//north
 			LUXmap[fynlin+toSouth]=0xb4;	//south
-			LUXmap[d*(LUXmap_width+1)]=0x1b;		//NW
-			LUXmap[(d+1)*(LUXmap_width-1)]=0x1b;	//SW
+			LUXmap[d*wp1]=0x1b;	//NW
+			LUXmap[(d+1)*wm1]=0x1b;	//SW
 			var fill_len=staidx-d;
 			for(var kk=0;kk<fill_len;kk++)
 			{
@@ -1650,10 +1740,8 @@ function odd_xorchart(oddn,xortyp=-1)
 	var allrg=oddn*oddn;
 	if(xortyp>0){oddn=xortyp;}
 	cur_moddiv=oddn;
-	var ret=odd_clamp4bit(allrg);
-	dgtsft=ret[0];
-	bmsk=(1<<dgtsft)-1;
-	ret=ret[1];
+	var ret=setupdgtsft(odd_clamp4bit(allrg));
+
 	var slb=oddn-3;
 	var ksta=3;
 	var revksta=slb;
@@ -1781,7 +1869,7 @@ function printencmgsq()
 			var rowz=new Array(wh);
 			for(var x=0;x<wh;x++)
 			{
-				rowz[x]=mgsq_encoded[ydx].toString(16);
+				rowz[x]=mgsq_encoded[y0a+x].toString(16);
 			}
 			ret[y]=rowz.join(' ');
 		}
@@ -1845,9 +1933,10 @@ function printmgsq_odd2dgt(src)
 	return ret.join('\n');
 }
 
-function diagsum(src=null)
+function diagsum(src=null,v=-1)
 {
-	var v= print_moddiv;
+	
+	if(v<0){v= print_moddiv;};
 	var allrg=v*v;
 	var laztm=allrg-1;
 	var diaglazt=laztm;
@@ -1879,9 +1968,9 @@ function diagsum(src=null)
 	mgsq_tested[2]=diag;
 	mgsq_tested[3]=rvdiag;
 	var gooddiag=diag[0];
-	var diag_good=0;
-	var rvdiag_good=0;
-	for(var i=0;i<v;i++)
+	var diag_good=1;
+	var rvdiag_good=1;
+	for(var i=1;i<v;i++)
 	{
 		if(diag[i]==gooddiag){diag_good++;}
 		if(rvdiag[i]==gooddiag){rvdiag_good++;}
@@ -1978,6 +2067,51 @@ switch(x3use) {
 
 }
 
+function mgsq3xFirstRow(n,buf)
+{
+	var qn=n>>2;
+	var lztn=n-1;
+	var lyn0=n*lztn;
+	var midn=(n-1)>>1;	//9:	(n-1)>>1;	15:	n-((n-1)>>1);
+	var lztq=n-1-qn;
+	var upr3=[cur_xormap[lyn0+midn]<<dgtsft,cur_xormap[lyn0+qn]<<dgtsft,cur_xormap[lyn0+lztq]<<dgtsft];
+	var skp3=(n/3)>>0;
+	for(var i=0;i<skp3;i++)
+	{
+		buf[i*3]=upr3[0];
+		buf[i*3+1]=upr3[1];
+		buf[i*3+2]=upr3[2];
+	}
+	var lowrn=[0]*skp3;
+	upr3=[midn,lztq,qn];
+	var ydxpa=new Array(skp3);
+	ydxpa[0]=lztn;
+	var wlklen=((n-1)/(skp3-1))>>0;
+	var wlkcur=0;
+	for(var d=1;d<skp3;d++)
+	{
+		ydxpa[d]=wlkcur;
+		wlkcur+=wlklen;
+	}
+
+	for(var y=0;y<3;y++)
+	{
+		var xmov=upr3[y];
+		for(var x=0;x<skp3;x++)
+		{
+			buf[y*skp3+x]|=cur_xormap[xmov+ydxpa[x]*n];
+		}
+	}
+
+}
+
+function setupdgtsft(ret)
+{
+	dgtsft=ret[0];
+	bmsk=(1<<dgtsft)-1;
+	return ret[1];
+}
+
 function mkmgsq3x(n)
 {
 	var cot3=1;
@@ -1990,7 +2124,30 @@ function mkmgsq3x(n)
 	}
 	cur_xormap = x3_xorchat(cot3,tstn);
 	var allrg=n*n;
-	var ret=odd_clamp4bit(allrg,0);
+	var ret=setupdgtsft(odd_clamp4bit(allrg,0));
+	mgsq3xFirstRow(n,ret);
+	print_moddiv=n;
+	cur_moddiv=n;
+	for(var d=0;d<n;d++)
+	{
+		var xorbs=ret[d];
+		if(xorbs!=0)
+		{
+			xorbs=((xorbs&bmsk)<<dgtsft)+((xorbs>>dgtsft)&bmsk);
+			var mvbs=d*n;
+			ret[mvbs]=xorbs;
+			mvbs++;
+			for(var x=1;x<n;x++)
+			{
+				ret[mvbs]=MyXor_odd(xorbs,ret[x]);
+				mvbs++;
+			}
+		}
+
+	}
+
+	mgsq_encoded=ret;
+	return printmgsq_odd2dgt(ret);
 
 }
 
@@ -2022,6 +2179,7 @@ function mkmgsq_sigl(n,xortyp=-1,prebs=null)
 		}
 
 	}
+	mgsq_encoded=ret;
 	switch(extype)
 	{
 		case 1:
@@ -2090,6 +2248,8 @@ function mkmgsq_4Np2(n)
 	var oddhfn=n>>1;
 	buildlx(n);
 	mkmgsq_sigl(oddhfn);
+	oddbase=[mgsq_decoded,mgsq_encoded];
+	
 	var oddhf=mgsq_decoded;
 	var mulp=n*n;
 	var lztm=mulp-1;
@@ -2098,9 +2258,7 @@ function mkmgsq_4Np2(n)
 	mgsq_encoded=odd_clamp4bit(mulp,0);
 	mgsq_encoded=mgsq_encoded[1];
 
-	dgtsft=ret[0];
-	bmsk=(1<<dgtsft)-1;
-	ret=ret[1];
+	ret=setupdgtsft(ret);
 	print_moddiv=n;
 
 	mulp>>=2;
@@ -2197,8 +2355,14 @@ function matmul(v1,v2,n=8)
 		}
 	}
 	strliz=strliz0;
+	switch(extype)
+	{
+		case 1:
+		return printmgsq_by4(ret);
+	}
+
 	return ret;
-	//return printmgsq_by4(ret);
+
 
 }
 
@@ -2598,10 +2762,47 @@ function afterhflv()
 
 afterhflv();
 
-const Mgsq = {
+const mgsQ = {
 	get test(){return mgsq_tested;},
 	get enc() {return printencmgsq();},
 	get dec() {return mgsq_decoded;},
+	get lx() {return testlx();},
+	get oddbs(){return oddbase;},
+	set st(v){
+		switch(v)
+		{
+			case 0:
+			strliz=strliz0b;
+			return;
+			case 1:
+			strliz=strliz0;
+			return;
+			case 2:
+			strliz=strliz1;
+			return;
+		}
+	},
+	draw: function(n) {
+		switch(n&3)
+		{
+			case 0:
+			var level=is2n(n);
+			if(level<0){var ret= mkmgsq_4x(n);
+			} else{var ret= mkmgsq(level);n=int_sqrtf1(n);}
+			switch(extype)
+			{
+				case 1:
+				mgsq_tested=[];
+				diagsum(ret,n);
+				return printmgsq_by4(ret);
+			}
+			return ret;
+			case 2:
+			return mkmgsq_4Np2(n);
+			
+		}
+		return mkmgsq_sigl(n);
+	return;}
 }
 const d = {
 istile:false,
