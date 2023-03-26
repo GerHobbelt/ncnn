@@ -1924,13 +1924,32 @@ function printmgsq_odd2dgt(src)
 			cols_calc[x]+=cvv;
 			rows_calc[y]+=cvv;
 			mgsq_decoded[ydx]=cvv;
-			rowz[x]=cvv;
+			rowz[x]=strliz(cvv);
 		}
 		ret[y]=rowz.join(' ');
 	}
 	mgsq_tested=[cols_calc,rows_calc];
 	diagsum();
 	return ret.join('\n');
+}
+
+function colrowsum(src,v)
+{
+	var cols_calc=new Array(v);
+	var rows_calc=new Array(v);
+	cols_calc.fill(0);
+	rows_calc.fill(0);
+	for(var y=0;y<v;y++)
+	{
+		var y0a=y*v;
+		for(var x=0;x<v;x++)
+		{
+			var cvv=src[y0a+x];
+			cols_calc[x]+=cvv;
+			rows_calc[y]+=cvv;
+		}
+	}
+	mgsq_tested=[cols_calc,rows_calc];
 }
 
 function diagsum(src=null,v=-1)
@@ -2210,7 +2229,7 @@ function printmgsq_4Np2(src)
 		cols_calc[x0b+xpp]+=vv;
 		rows_calc[y0n]+=vv;
 		mgsq_encoded[yydx]=enc2dgt(vv);
-		return vv.toFixed(0);
+		return strliz(vv);
 	}
 
 	
@@ -2354,10 +2373,11 @@ function matmul(v1,v2,n=8)
 			ret[y*n+x]=gf2mad(ysle,xsle);
 		}
 	}
-	strliz=strliz0;
 	switch(extype)
 	{
 		case 1:
+		colrowsum(ret,n);
+		diagsum(ret,n);
 		return printmgsq_by4(ret);
 	}
 
@@ -2792,7 +2812,7 @@ const mgsQ = {
 			switch(extype)
 			{
 				case 1:
-				mgsq_tested=[];
+				colrowsum(ret,n);
 				diagsum(ret,n);
 				return printmgsq_by4(ret);
 			}
