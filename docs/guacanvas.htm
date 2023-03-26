@@ -1394,17 +1394,23 @@ xcha[3]=new Uint8Array([
 2,0,1]);
 
 
-var LUXmap=new Uint8Array([
-0x1b,0xb1,0xb1,	0x9c,		0x4e,0x4e,0x1b,
-0xd8,	0x1b,0xb1,	0x9c,		0x4e,0x1b,	0x27,
-0xd8,	0xd8,	0x1b,0x8d,0xb1,	0x72,	0x72,
-0xe1,	0xe1,	0x63,0xe4,0xc6,	0xb4,	0xb4,
-]);
+var LUXmap=null;
 
-const LUXmap_height=(1+Math.sqrt(1+(LUXmap.length<<3)))>>2;	//10x+y=3	14x+y=4	18x+y=5; x=1/4; y=1/2
-const LUXmap_width=(LUXmap_height<<1)-1;
+
 /*
 0x,0x,0x,0x,
+
+new Uint8Array([
+0x1b,0xb1,0xb1,0xb1,0xb1,			0x9c,			0x4e,0x4e,0x4e,0x4e,0x1b,	
+0xd8,	0x1b,0xb1,0xb1,0xb1,		0x9c,			0x4e,0x4e,0x4e,0x1b,	0x72,
+0xd8,	0xd8,	0x1b,0xb1,0xb1,	0x9c,		0x4e,0x4e,0x1b,	0x72,	0x27,
+0xd8,	0xd8,	0xd8,	0x1b,0xb1,	0x9c,		0x4e,0x1b,	0x72,	0x27,	0x27,
+0xd8,	0xd8,	0xd8,	0xd8,	0x1b,0x2d,0x6c,	0x72,	0x27,	0x27,	0x27,
+0xe1,	0xe1,	0xe1,	0xe1,	0xe1,0xb1,0xe4,	0xb4,	0xb4,	0xb4,	0xb4,
+]);
+
+const LUXmap_height=(1+Math.sqrt(1+(LUXmap.length<<3)))>>2;
+const LUXmap_width=(LUXmap_height<<1)-1;
 
 var LUXele=new Uint8Array([0,1,2,3,	2,0,3,1,	2,3,0,1,
 		0,3,1,2,	3,2,1,0,	1,2,3,0,	//zentr
@@ -1444,7 +1450,82 @@ LUXmap[10]=[
 */
 const ztab='\t';
 
+
+
+function testlx(height=-1)
+{
+	if(height<0){height=LUXmap_height;}
+
+	var ret=[];
+	for(var y=0;y<LUXmap_width;y++)
+	{
+		var tuoline=[new Array(height),new Array(height)];
+		for(var x=0;x<height;x++)
+		{
+			var v=LUXmap[x*LUXmap_width+y];
+			tuoline[0][x]=((v>>6)&3)+' '+((v>>4)&3);
+			tuoline[1][x]=((v>>2)&3)+' '+(v&3);
+		}
+		ret.push(tuoline[0].join(ztab)+'\n'+tuoline[1].join(ztab));
+		ret.push('');
+	}
+	return ret.join('\n');
+}
+
+var cur_lx_size=0;
+var LUXele=[
+	[0x1b,0x2d,0x6c],
+	[0xe1,0xb1,0xe4]
+];
 function buildlx(n)
+{
+	
+	if(n<=cur_lx_size){return;}
+	LUXmap_width=n>>1;
+	var qoddn=LUXmap_width>>1;
+	LUXmap_height=qoddn+1;
+	LUXmap = new Uint8Array(LUXmap_width*LUXmap_height);
+	var staidx=qoddn-1;
+	var lyn0=staidx*(LUXmap_width+1);
+	LUXmap.set(LUXele[0], lyn0);
+	lyn0+=LUXmap_width;
+	LUXmap.set(LUXele[1], lyn0);
+	if(staidx>0)
+	{
+		lyn0-=staidx;
+		var toSouth=3+staidx;
+		var wm1=LUXmap_width-1;
+		var gibidx=LUXmap_width+wm1;
+		for(var d=0;d<staidx;d++)
+		{
+			LUXmap[d*LUXmap_width+qoddn]=0x9c;	//west
+			var fynlin=lyn0+d;
+			LUXmap[fynlin]=0xe1;		//north
+			LUXmap[fynlin+toSouth]=0xb4;	//south
+			LUXmap[d*(LUXmap_width+1)]=0x1b;		//NW
+			LUXmap[(d+1)*(LUXmap_width-1)]=0x1b;	//SW
+			var fill_len=staidx-d;
+			for(var kk=0;kk<fill_len;kk++)
+			{
+				var kk1d=kk+1+d;
+				LUXmap[kk1d*LUXmap_width+d]=0xd8;	//NW-n
+				LUXmap[d*LUXmap_width+kk1d]=0xb1;	//NW-w
+				LUXmap[d*LUXmap_width+staidx+2+kk]=0x4e;	//SW-w
+				LUXmap[kk1d*LUXmap_width+wm1-d]=0x27;	//SW-s
+			}
+			LUXmap[gibidx]=0x72;
+			gibidx+=wm1;
+		}
+		
+		
+	}
+
+	cur_lx_size=n;
+}
+
+/*
+
+function buildlx_bad(n)
 {
 	if(LUXmap[n]){return LUXmap[n];}
 	var qoddn=n>>2;
@@ -1490,25 +1571,6 @@ function buildlx(n)
 	return ret;
 }
 
-function testlx()
-{
-	var ret=[];
-	for(var y=0;y<LUXmap_width;y++)
-	{
-		var tuoline=[new Array(LUXmap_height),new Array(LUXmap_height)];
-		for(var x=0;x<LUXmap_height;x++)
-		{
-			var v=LUXmap[x*LUXmap_width+y];
-			tuoline[0][x]=((v>>6)&3)+' '+((v>>4)&3);
-			tuoline[1][x]=((v>>2)&3)+' '+(v&3);
-		}
-		ret.push(tuoline[0].join(ztab)+'\n'+tuoline[1].join(ztab));
-		ret.push('');
-	}
-	return ret.join('\n');
-}
-
-/*
 function testlx_bad(n)
 {
 	var oddn=n>>1;
@@ -1547,10 +1609,13 @@ function odd_clamp4bit(allrg,sft=1)
 
 function cbnxcha(v1,v2)
 {
-	var rzwh=v1*v2;
-	var rz=odd_clamp4bit(rzwh*rzwh);
 	var xc1=xcha[v1];
 	var xc2=xcha[v2];
+	if(v1==1){return xc2;}
+	else if(v2==1){return xc1;}
+	var rzwh=v1*v2;
+	var rz=odd_clamp4bit(rzwh*rzwh);
+	
 	for(var y0=0;y0<v1;y0++)
 	{
 		var y0a=y0*v1;
@@ -1813,6 +1878,16 @@ function diagsum(src=null)
 	}
 	mgsq_tested[2]=diag;
 	mgsq_tested[3]=rvdiag;
+	var gooddiag=diag[0];
+	var diag_good=0;
+	var rvdiag_good=0;
+	for(var i=0;i<v;i++)
+	{
+		if(diag[i]==gooddiag){diag_good++;}
+		if(rvdiag[i]==gooddiag){rvdiag_good++;}
+	}
+	mgsq_tested[4]=diag_good;
+	mgsq_tested[5]=rvdiag_good;
 }
 
 
@@ -1870,18 +1945,62 @@ function extractfirstcolrow(src)
 }
 
 var extype=1;
+var x3use=0;
+
+function x3_xorchat(cot3,rz)
+{
+switch(x3use) {
+	case 0:
+		if(rz==1){rz=3; cot3--;}
+		else{odd_xorchart(rz,-1);}
+		cot3--;
+		var bz3=3;
+		for(var i=0;i<cot3;i++)
+		{
+			cbnxcha(bz3,3);
+			bz3*=3;
+		}
+	return cbnxcha(bz3,rz);
 
 
+	case 1:
+		if(rz!=1){odd_xorchart(rz,-1);}
+		var bz3=rz;
+		var lzt=0;
+		for(var i=0;i<cot3;i++)
+		{
+			lzt=cbnxcha(bz3,3);
+			bz3*=3;
+		}
+	return lzt;
+}
+
+
+}
+
+function mkmgsq3x(n)
+{
+	var cot3=1;
+	var tstn=n/3;
+	for(var i=0;i<32;i++)
+	{
+		if(tstn%3!=0){break;}
+		cot3++;
+		tstn/=3;
+	}
+	cur_xormap = x3_xorchat(cot3,tstn);
+	var allrg=n*n;
+	var ret=odd_clamp4bit(allrg,0);
+
+}
 
 function mkmgsq_sigl(n,xortyp=-1,prebs=null)
 {
-	if(n==3)
+	if((n%3)==0)
 	{
-		mgsq_decoded=[7,0,5,	2,4,6,	3,8,1];
-		return;
-	} else if((n%3)==0)
-	{
-		return;
+		if(n==3){mgsq_decoded=[7,0,5,	2,4,6,	3,8,1]; return;}
+
+		return mkmgsq3x(n);
 	}
 
 	var ret = odd_xorchart(n,xortyp);
@@ -1969,7 +2088,7 @@ function printmgsq_4Np2(src)
 function mkmgsq_4Np2(n)
 {
 	var oddhfn=n>>1;
-	
+	buildlx(n);
 	mkmgsq_sigl(oddhfn);
 	var oddhf=mgsq_decoded;
 	var mulp=n*n;
@@ -2479,6 +2598,11 @@ function afterhflv()
 
 afterhflv();
 
+const Mgsq = {
+	get test(){return mgsq_tested;},
+	get enc() {return printencmgsq();},
+	get dec() {return mgsq_decoded;},
+}
 const d = {
 istile:false,
 set lv(v){
