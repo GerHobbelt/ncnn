@@ -1,16 +1,23 @@
-<html><body>
-<style>
+<html><body><style>
 canvas {
 margin:20px;
 -webkit-transform: matrix(1.2,0,0,1.2,0,0);
 }
-
 </style></body><script>
 var lv=6;
+
+
+
+const LUXele=[
+	[0x1b,0x2d,0x6c],
+	[0xe1,0xb1,0xe4]
+];
+const ztab='\t';
+const zlc='\n';
+var cur_lx_size=0;
+
 var bitbuf = new Uint8Array(32);
-
 var hflv=lv>>1;
-
 
 var canv_alpha=document.createElement('canvas');
 var ctx_alpha=canv_alpha.getContext('2d');
@@ -802,7 +809,7 @@ function draw_linked_af1()
 		}
 		draw_linked_sepline();
 	}
-	txtinfo=txtinfo.join('\n');
+	txtinfo=txtinfo.join(zlc);
 	
 }
 
@@ -905,7 +912,7 @@ function drawsqa(v)
 		var sta=hflv*y;
 		prt[y]=sqarbuf.subarray(sta,sta+hflv).join('-');
 	}
-	prt=prt.join('\n');
+	prt=prt.join(zlc);
 	console.log(prt);
 
 }
@@ -1161,7 +1168,7 @@ function txt_deg45arr(src,cot)
 		}
 		rows[y]=cols.join(' ');
 	}
-	return rows.join('\n');
+	return rows.join(zlc);
 
 }
 
@@ -1314,6 +1321,18 @@ function strliz0(v)
 	return v.toString(10);
 }
 
+var strliz0cmul=1;
+var strliz0cadd=1;
+
+function strliz0ccalc0(v){return v*strliz0cmul+strliz0cadd;}
+function strliz0ccalc1(v){return v*v;}
+strliz0ccalc=strliz0ccalc0;
+
+function strliz0c(v)
+{
+	return strliz0ccalc(v).toString(10);
+}
+
 function strliz0b(v)
 {
 	return (v+1).toString(10);
@@ -1376,7 +1395,7 @@ function printmgsq_by4(src)
 			}
 			ret.push('');
 		}
-		return ret.join('\n');
+		return ret.join(zlc);
 
 	}
 	
@@ -1415,7 +1434,7 @@ function printmgsq_by4f(src)
 			ret.push('');
 		}
 		//if(septxt){return ret;}
-		return ret.join('\n');
+		return ret.join(zlc);
 
 	}
 	
@@ -1535,7 +1554,6 @@ function buildLUXele()
 buildLUXele();
 */
 
-const ztab='\t';
 
 
 
@@ -1557,14 +1575,10 @@ function testlx(height=-1)
 		ret.push(tuoline[0].join(ztab)+'\n'+tuoline[1].join(ztab));
 		ret.push('');
 	}
-	return ret.join('\n');
+	return ret.join(zlc);
 }
 
-var cur_lx_size=0;
-var LUXele=[
-	[0x1b,0x2d,0x6c],
-	[0xe1,0xb1,0xe4]
-];
+
 function buildlx(n)
 {
 	
@@ -1613,79 +1627,6 @@ function buildlx(n)
 	cur_lx_size=n;
 }
 
-/*
-
-function buildlx_bad(n)
-{
-	if(LUXmap[n]){return LUXmap[n];}
-	var qoddn=n>>2;
-	var oddn=n>>1;
-	var nx2=n<<1;
-	var ret=new Uint8Array(nx2*(1+qoddn));
-	var staidx=qoddn-1;
-	var lyn0=staidx*(oddn+1)*4;
-	ret.set(LUXele[0], lyn0);
-	lyn0+=nx2;
-	ret.set(LUXele[1], lyn0);
-	lyn0-=staidx*4;
-	var toSouth=12+staidx*4;
-	if(staidx>0)
-	{
-
-		for(var d=0;d<staidx;d++)
-		{
-			ret.set(LUXele[4],(d*oddn+qoddn)<<2);	//west
-			var fynlin=lyn0+(d<<2);
-			ret.set(LUXele[2],fynlin);	//north
-			
-			ret.set(LUXele[3],fynlin+toSouth);	//south
-			ret.set(LUXele[5],d*4*(oddn+1));	//NW
-			ret.set(LUXele[5],(d+1)*(oddn-1)*4);	//SW
-			var fill_len=staidx-d;
-			for(var kk=0;kk<fill_len;kk++)
-			{
-				var kk1d=kk+1+d;
-				ret.set(LUXele[6],(kk1d*oddn+d)*4);	//NW-n
-				ret.set(LUXele[5],(d*oddn+kk1d)*4);	//NW-w
-				ret.set(LUXele[7],(d*oddn+staidx+2+kk)*4);	//SW-w
-				ret.set(LUXele[8],(kk1d*oddn+oddn-1-d)*4);//SW-s
-			}
-			
-
-		}
-
-	}
-	
-
-	LUXmap[n]=ret;
-	return ret;
-}
-
-function testlx_bad(n)
-{
-	var oddn=n>>1;
-	var nx2=n<<1;
-	var qoddnp1=(n>>2)+1;
-	var src=LUXmap[n];
-
-	var ret=[];
-	for(var y=0;y<oddn;y++)
-	{
-		var y0a=y<<2;
-		var tuoline=[new Array(qoddnp1),new Array(qoddnp1)];
-		for(var x=0;x<qoddnp1;x++)
-		{
-			var staidx=x*nx2+y0a;
-			tuoline[0][x]=src[staidx]+' '+src[staidx+1];
-			tuoline[1][x]=src[staidx+2]+' '+src[staidx+3];
-		}
-		ret.push(tuoline[0].join(ztab)+'\n'+tuoline[1].join(ztab));
-		ret.push('');
-	}
-	return ret.join('\n');
-
-}
-*/
 
 function odd_clamp4bit(allrg,sft=1)
 {
@@ -1873,7 +1814,7 @@ function printencmgsq()
 			}
 			ret[y]=rowz.join(' ');
 		}
-		return ret.join('\n');
+		return ret.join(zlc);
 	} else if ((wh&3)==2) {
 		var ret=[];
 		var divby2=wh>>1;
@@ -1895,7 +1836,7 @@ function printencmgsq()
 			}
 			ret.push('');
 		}
-		return ret.join('\n');
+		return ret.join(zlc);
 	} 
 
 
@@ -1930,7 +1871,7 @@ function printmgsq_odd2dgt(src)
 	}
 	mgsq_tested=[cols_calc,rows_calc];
 	diagsum();
-	return ret.join('\n');
+	return ret.join(zlc);
 }
 
 function colrowsum(src,v)
@@ -2088,13 +2029,16 @@ switch(x3use) {
 
 function mgsq3xFirstRow(n,buf)
 {
-	var qn=n>>2;
+	
 	var lztn=n-1;
 	var lyn0=n*lztn;
-	var midn=(n-1)>>1;	//9:	(n-1)>>1;	15:	n-((n-1)>>1);
-	var lztq=n-1-qn;
-	var upr3=[cur_xormap[lyn0+midn]<<dgtsft,cur_xormap[lyn0+qn]<<dgtsft,cur_xormap[lyn0+lztq]<<dgtsft];
 	var skp3=(n/3)>>0;
+	var qn=skp3-1;
+	var midn=qn<<1;
+	
+	var lztq=5*(skp3>>1)+1;
+	var upr3=[cur_xormap[lyn0+midn]<<dgtsft,cur_xormap[lyn0+qn]<<dgtsft,cur_xormap[lyn0+lztq]<<dgtsft];
+	
 	for(var i=0;i<skp3;i++)
 	{
 		buf[i*3]=upr3[0];
@@ -2170,11 +2114,64 @@ function mkmgsq3x(n)
 
 }
 
+var siam_fixrot=true;
+var siamcache={3:[7,0,5,	2,4,6,	3,8,1]};
+var siamrotidx=new Array(8);
+siamrotidx[0]=function(i,j){return siam_lztm2-i*siam_n+j;}
+siamrotidx[5]=function(i,j){return siam_lztm2-j*siam_n+i;}
+siamrotidx[1]=function(i,j){return i*siam_n+j;}
+siamrotidx[2]=function(i,j){return j*siam_n+i;}
+siamrotidx[3]=function(i,j){return siam_lztm-j*siam_n-i;}
+siamrotidx[4]=function(i,j){return siam_lztm-i*siam_n-j;}
+siamrotidx[6]=function(i,j){return i*siam_n+siam_lztn-j;}
+siamrotidx[7]=function(i,j){return j*siam_n+siam_lztn-i;}
+
+function simplesiam(n)
+{
+	if(n in siamcache){var ret= siamcache[n];
+	} else {
+	var allrg=n*n;
+	var ret = new Uint16Array(allrg);
+	ret.fill(0xffff);
+	var i=0;
+	if(!siam_fixrot){i=(Math.random()*8)<<0;}
+	var rotfunc=siamrotidx[i];
+	siam_n=n;
+	siam_lztn=n - 1;
+	siam_lztm=allrg-1;
+	siam_lztm2=siam_lztm-siam_lztn;
+	i=n>>1;
+	var j = siam_lztn;
+	for (var num = 0; num < allrg;) {
+	if (i == -1 && j == n) {
+		j = n - 2;
+		i = 0;
+	} else {
+
+		if (j == n){j = 0;}
+		if (i < 0){i = siam_lztn;}
+	}
+
+	if (ret[rotfunc(i,j)] != 0xffff) {
+		j -= 2;
+		i++;
+		continue;
+	} else {ret[rotfunc(i,j)] = num++;}
+
+	j++;i--;}
+	siamcache[n]=ret;}
+
+	mgsq_decoded=ret;
+	mgsq_encoded=[];
+	
+	return ret;
+}
+
 function mkmgsq_sigl(n,xortyp=-1,prebs=null)
 {
 	if((n%3)==0)
 	{
-		if(n==3){mgsq_decoded=[7,0,5,	2,4,6,	3,8,1]; return;}
+		if(n==3){return simplesiam(n); }
 
 		return mkmgsq3x(n);
 	}
@@ -2259,14 +2256,26 @@ function printmgsq_4Np2(src)
 	}
 	mgsq_tested=[cols_calc,rows_calc];
 	diagsum(src);
-	return ret.join('\n');
+	return ret.join(zlc);
 }
+
+var odd_base_maker=mkmgsq_sigl;	//simplesiam
 
 function mkmgsq_4Np2(n)
 {
+	function fill_mir(y1,x1,zzsft)
+	{
+		var vlu=ady+ ((lxv>>zzsft)&3) *mulp;
+		var ydx=(y0a+y1)*n+(x0a+x1);
+		ret[ydx]=vlu;
+		ret[lztm-ydx]=lztm-vlu;
+	}
+
+	function fill_nomir(y1,x1,zzsft) {ret[(y0a+y1)*n+(x0a+x1)]=ady+((lxv>>zzsft)&3)*mulp;}
+
 	var oddhfn=n>>1;
 	buildlx(n);
-	mkmgsq_sigl(oddhfn);
+	odd_base_maker(oddhfn);
 	oddbase=[mgsq_decoded,mgsq_encoded];
 	
 	var oddhf=mgsq_decoded;
@@ -2283,31 +2292,38 @@ function mkmgsq_4Np2(n)
 	mulp>>=2;
 	var oddhfhfn=(oddhfn>>1);
 
-	var lxstp=LUXmap_height-oddhfhfn-1;
-	var n0x2=n<<1;
+	var lxstp=1;
+	if(!siam_fixrot){lxstp=(Math.random()*8)<<0;}
+	var rotfunc=siamrotidx[lxstp];
+
+	siam_n=oddhfn;
+	siam_lztm=mulp-1;
+	siam_lztn=oddhfn-1;
+	siam_lztm2=siam_lztm-siam_lztn;
+	lxstp=LUXmap_height-oddhfhfn-1;
 
 	for(var y=0;y<oddhfn;y++)
 	{
 		var y0a=y<<1;
 		for(var x=0;x<oddhfhfn;x++)
 		{
-			var ady=oddhf[y*oddhfn+x];
+			var ady=oddhf[rotfunc(y,x)];
 			var x0a=x<<1;
 			var lxv=LUXmap[(x+lxstp)*LUXmap_width+y+lxstp];
-			for(var y1=0;y1<2;y1++) { for(var x1=0;x1<2;x1++) {
-				var cur_y=y0a+y1;
-				var cur_x=x0a+x1;
-				var vlu=ady+ ((lxv>>((3-y1*2-x1)<<1))&3) *mulp;
-				ret[cur_y*n+cur_x]=vlu;
-				ret[(lztn-cur_y)*n+(lztn-cur_x)]=lztm-vlu;
-			}}
+			fill_mir(0,0,6);
+			fill_mir(0,1,4);
+			fill_mir(1,0,2);
+			fill_mir(1,1,0);
+			
 		}
-		var ady=oddhf[y*oddhfn+oddhfhfn];
+		var ady=oddhf[rotfunc(y,oddhfhfn)];
 		var lxv=LUXmap[(oddhfhfn+lxstp)*LUXmap_width+y+lxstp];
 		var x0a=oddhfhfn<<1;
-		for(var y1=0;y1<2;y1++) { for(var x1=0;x1<2;x1++) {
-			ret[(y0a+y1)*n+(x0a+x1)]=ady+((lxv>>((3-y1*2-x1)<<1))&3)*mulp;
-		}}
+		fill_nomir(0,0,6);
+		fill_nomir(0,1,4);
+		fill_nomir(1,0,2);
+		fill_nomir(1,1,0);
+		
 	}
 
 	return printmgsq_4Np2(ret);
@@ -2354,6 +2370,8 @@ function gf2mad(ysle,xsle)
 
 function matmul(v1,v2,n=8)
 {
+	if((n&1)==1){return matmul_odd(v1,v2);}
+
 	var kw=(v1.length/n)>>0;
 	var ret =new Array(n*n);
 	for(var y=0;y<n;y++)
@@ -2781,6 +2799,7 @@ function afterhflv()
 }
 
 afterhflv();
+intstrliz=strliz0;
 
 const mgsQ = {
 	get test(){return mgsq_tested;},
@@ -2788,17 +2807,39 @@ const mgsQ = {
 	get dec() {return mgsq_decoded;},
 	get lx() {return testlx();},
 	get oddbs(){return oddbase;},
+	set oddmaker(v){
+		switch(v)
+		{
+			case 0:
+			odd_base_maker=mkmgsq_sigl;
+			return;
+			case 10:
+			siam_fixrot=false;
+			return;
+			case 11:
+			siam_fixrot=true;
+			return;
+		}
+		odd_base_maker=simplesiam;
+		return;
+	},
 	set st(v){
 		switch(v)
 		{
 			case 0:
 			strliz=strliz0b;
+			intstrliz=strliz0b;
 			return;
 			case 1:
 			strliz=strliz0;
+			intstrliz=strliz0;
 			return;
 			case 2:
 			strliz=strliz1;
+			return;
+			case 10:
+			strliz=strliz0c;
+			intstrliz=strliz0c;
 			return;
 		}
 	},
@@ -2818,6 +2859,7 @@ const mgsQ = {
 			}
 			return ret;
 			case 2:
+			strliz=intstrliz;
 			return mkmgsq_4Np2(n);
 			
 		}
