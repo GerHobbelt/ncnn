@@ -1939,7 +1939,11 @@ function diagsum(src=null,v=-1)
 	mgsq_tested[5]=rvdiag_good;
 }
 
-
+function chksum(ret,n)
+{
+	colrowsum(ret,n);
+	diagsum(ret,n);
+}
 
 function gf_odd_mad(ysle,xsle)
 {
@@ -1989,7 +1993,7 @@ function extractfirstcolrow(src)
 		rows[print_moddiv+d]=src[d].toString(16);
 		cols[d]=src[print_moddiv*d].toString(16);
 	}
-	return '[0'+cols.join(',0x')+'],[0x'+rows.join(',0x')+']';
+	return '([0'+cols.join(',0x')+'],[0x'+rows.join(',0x')+'],'+print_moddiv+')';
 
 }
 
@@ -2027,16 +2031,23 @@ switch(x3use) {
 
 }
 
-function mgsq3xFirstRow(n,buf)
+function mgsq3xFirstRow(n,buf,ispure3)
 {
 	
 	var lztn=n-1;
 	var lyn0=n*lztn;
 	var skp3=(n/3)>>0;
-	var qn=skp3-1;
-	var midn=qn<<1;
+	if(ispure3)
+	{
+		var qn=n>>2;
+		var midn=lztn>>1;
+		var lztq=lztn-qn;
+	} else {
 	
-	var lztq=5*(skp3>>1)+1;
+		var qn=skp3-1;
+		var midn=qn<<1;
+		var lztq=5*(skp3>>1)+1;
+	}
 	var upr3=[cur_xormap[lyn0+midn]<<dgtsft,cur_xormap[lyn0+qn]<<dgtsft,cur_xormap[lyn0+lztq]<<dgtsft];
 	
 	for(var i=0;i<skp3;i++)
@@ -2088,7 +2099,7 @@ function mkmgsq3x(n)
 	cur_xormap = x3_xorchat(cot3,tstn);
 	var allrg=n*n;
 	var ret=setupdgtsft(odd_clamp4bit(allrg,0));
-	mgsq3xFirstRow(n,ret);
+	mgsq3xFirstRow(n,ret,tstn==1);
 	print_moddiv=n;
 	cur_moddiv=n;
 	for(var d=0;d<n;d++)
@@ -2110,7 +2121,14 @@ function mkmgsq3x(n)
 	}
 
 	mgsq_encoded=ret;
-	return printmgsq_odd2dgt(ret);
+	switch(extype)
+	{
+		case 1:
+		return printmgsq_odd2dgt(ret);
+		case 2:
+		return extractfirstcolrow(ret);
+	}
+	return ret;
 
 }
 
@@ -2370,7 +2388,7 @@ function gf2mad(ysle,xsle)
 
 function matmul(v1,v2,n=8)
 {
-	if((n&1)==1){return matmul_odd(v1,v2);}
+	if((n&1)==1){return matmul_odd(v1,v2,n);}
 
 	var kw=(v1.length/n)>>0;
 	var ret =new Array(n*n);
@@ -2394,8 +2412,7 @@ function matmul(v1,v2,n=8)
 	switch(extype)
 	{
 		case 1:
-		colrowsum(ret,n);
-		diagsum(ret,n);
+		chksum(ret,n);
 		return printmgsq_by4(ret);
 	}
 
@@ -2807,6 +2824,7 @@ const mgsQ = {
 	get dec() {return mgsq_decoded;},
 	get lx() {return testlx();},
 	get oddbs(){return oddbase;},
+	set xcha(v){printsq_deg45(xcha[v],2); return;},
 	set oddmaker(v){
 		switch(v)
 		{
@@ -2853,8 +2871,7 @@ const mgsQ = {
 			switch(extype)
 			{
 				case 1:
-				colrowsum(ret,n);
-				diagsum(ret,n);
+				chksum(ret,n);
 				return printmgsq_by4(ret);
 			}
 			return ret;
