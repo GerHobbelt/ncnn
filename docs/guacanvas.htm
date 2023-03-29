@@ -1262,6 +1262,43 @@ function printmgsq_deg45(src,print_type=1)
 
 }
 
+function sqgcanv(ll)
+{
+	var sft=5;
+	
+	if(ll>2048){sft=0;}
+	else if(ll>1024){sft=1;}
+	else if(ll>512){sft=2}
+	else if(ll>256){sft=3}
+	else if(ll>128){sft=4;}
+	prvcvh=ll<<sft;
+	canv.width = prvcvh;
+	canv.height = prvcvh;
+	ctx.clearRect(0, 0, prvcvh,prvcvh);
+	return sft;
+}
+
+function mgsqgraph(src=null)
+{
+	if(!src){src=mgsq_decoded;}
+	var vl=src.length;
+	var sft=sqgcanv(vl);
+
+	var prvx=0;
+	var prvy=prvcvh-(src[0]<<sft);
+	for(var i=1;i<vl;i++)
+	{
+		ctx.beginPath();
+		ctx.moveTo(prvx, prvy);
+		prvx=i<<sft;
+		prvy=prvcvh-(src[i]<<sft);
+		ctx.lineTo(prvx, prvy);
+		ctx.stroke();
+	}
+
+
+}
+
 function fracstar(arcc=7,bssz=500)
 {
 	function cirk(rr,x,y)
@@ -1374,6 +1411,7 @@ function printmgsq_by4(src)
 		}
 		return ret.join('----------\n');
 	} else {
+		mgsq_decoded=src;
 		var bsft=is2n(srg);
 		if(bsft<0){return printmgsq_by4f(src);}
 		bsft>>=1;
@@ -1630,10 +1668,10 @@ function buildlx(n)
 
 function odd_clamp4bit(allrg,sft=1)
 {
-	allrg<<=sft;
-	if(allrg<257){return [4,new Uint8Array(allrg)];}
-	else if(allrg<65537){return [8,new Uint16Array(allrg)];}
-	return [16,new Uint32Array(allrg)];
+	var kallrg = allrg<<sft;
+	if(allrg<257){return [4,new Uint8Array(kallrg)];}
+	else if(allrg<65537){return [8,new Uint16Array(kallrg)];}
+	return [16,new Uint32Array(kallrg)];
 }
 
 
@@ -1845,8 +1883,10 @@ function printencmgsq()
 var strliz_odd2dgt=strliz_odd2dgt0;
 function printmgsq_odd2dgt(src)
 {
-	mgsq_decoded=odd_clamp4bit(print_moddiv*print_moddiv,0);
+	var zcl=print_moddiv*print_moddiv;
+	mgsq_decoded=odd_clamp4bit(zcl,0);
 	mgsq_decoded=mgsq_decoded[1];
+	mgsq_shimap=new Array(zcl);
 	var ret=new Array(print_moddiv);
 	var cols_calc=new Array(print_moddiv);
 	var rows_calc=new Array(print_moddiv);
@@ -1865,6 +1905,7 @@ function printmgsq_odd2dgt(src)
 			cols_calc[x]+=cvv;
 			rows_calc[y]+=cvv;
 			mgsq_decoded[ydx]=cvv;
+			mgsq_shimap[ydx]=cur_xormap[cvv];
 			rowz[x]=strliz(cvv);
 		}
 		ret[y]=rowz.join(' ');
@@ -1937,6 +1978,24 @@ function diagsum(src=null,v=-1)
 	}
 	mgsq_tested[4]=diag_good;
 	mgsq_tested[5]=rvdiag_good;
+}
+
+function revsub(src=null)
+{
+	if(!src){src=mgsq_decoded;}
+	var allrg=src.length;
+	var dicadd=new Array(allrg);
+	var subb=new Array(allrg);
+	for(var i=0;i<allrg;i++)
+	{
+		dicadd[src[i]]=i;
+	}
+	for(var i=0;i<allrg;i++)
+	{
+		subb[i]=dicadd[i]-src[i];
+		dicadd[i]+=src[i];
+	}
+	return [dicadd,subb]
 }
 
 function chksum(ret,n)
@@ -2086,6 +2145,25 @@ function setupdgtsft(ret)
 	return ret[1];
 }
 
+function allodd_xorchat(n)
+{
+	if((n%3)==0)
+	{
+		var cot3=1;
+		var tstn=n/3;
+		for(var i=0;i<32;i++)
+		{
+			if(tstn%3!=0){break;}
+			cot3++;
+			tstn/=3;
+		}
+		cur_xormap = x3_xorchat(cot3,tstn);
+		return setupdgtsft(odd_clamp4bit(n*n,0));
+	}
+	return odd_xorchart(n);
+
+}
+
 function mkmgsq3x(n)
 {
 	var cot3=1;
@@ -2144,6 +2222,36 @@ siamrotidx[4]=function(i,j){return siam_lztm-i*siam_n-j;}
 siamrotidx[6]=function(i,j){return i*siam_n+siam_lztn-j;}
 siamrotidx[7]=function(i,j){return j*siam_n+siam_lztn-i;}
 
+function mgsq2enc(src,buf)
+{
+	var zcl=src.length;
+	mgsq_shimap=new Array(zcl);
+	for(var i=0;i<zcl;i++)
+	{
+		var v=src[i];
+		mgsq_shimap[i]=cur_xormap[v];
+		var dwn=v%print_moddiv;
+		var upr=(v-dwn)/print_moddiv;
+		buf[i]=(upr<<dgtsft)|dwn;
+	}
+	return buf;
+}
+
+function odd_shi(src=null)
+{
+	if(!src){src=mgsq_encoded;}
+	var zcl=src.length;
+	var ret=new Array(zcl)
+	for(var i=0;i<zcl;i++)
+	{
+		var v=src[i];
+		var upr=((v>>dgtsft)&bmsk)*print_moddiv;
+		var dwn=(v&bmsk);
+	}
+
+
+}
+
 function simplesiam(n)
 {
 	if(n in siamcache){var ret= siamcache[n];
@@ -2151,7 +2259,7 @@ function simplesiam(n)
 	var allrg=n*n;
 	var ret = new Uint16Array(allrg);
 	ret.fill(0xffff);
-	var i=0;
+	var i=4;	//4vert
 	if(!siam_fixrot){i=(Math.random()*8)<<0;}
 	var rotfunc=siamrotidx[i];
 	siam_n=n;
@@ -2182,6 +2290,14 @@ function simplesiam(n)
 	mgsq_decoded=ret;
 	mgsq_encoded=[];
 	
+	switch(extype)
+	{
+		case 3:
+		print_moddiv=n;
+		mgsq_encoded=mgsq2enc(ret,allodd_xorchat(n));
+		break;
+	}
+
 	return ret;
 }
 
@@ -2247,7 +2363,7 @@ function printmgsq_4Np2(src)
 		return strliz(vv);
 	}
 
-	
+	mgsq_decoded=src;
 	var ret=[];
 	var cols_calc=new Array(print_moddiv);
 	var rows_calc=new Array(print_moddiv);
@@ -2854,6 +2970,9 @@ const mgsQ = {
 			return;
 			case 2:
 			strliz=strliz1;
+			return;
+			case 3:
+			strliz=strliz2;
 			return;
 			case 10:
 			strliz=strliz0c;
