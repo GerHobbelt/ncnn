@@ -435,7 +435,7 @@ var bsta=10;
 
 function ismgsqUpper(v)
 {
-	var x=mgsq_lut[v];
+	var x=mgsq_decoded[v];
 	var y=x>>hflv;
 	x=x&bmsk;
 	if(x>=y){return true;}
@@ -937,7 +937,7 @@ function mkmgsq_even()
 			retsq[rvidx]=rvidx;
 		}
 	}
-	mgsq_lut=retsq;
+	mgsq_decoded=retsq;
 	return retsq;
 }
 
@@ -959,7 +959,7 @@ function hfrev(v)
 function mkmgsq_even_alt()
 {
 	mgsq=uintsqarr();
-	mgsq_lut=uintsqarr();
+	mgsq_decoded=uintsqarr();
 	var sqrg=1<<hflv;
 	var colz=new Array(sqrg);
 	var ylen=sqrg>>1;
@@ -995,13 +995,13 @@ function mkmgsq_even_alt()
 			var ydx=y0a+x;
 			var ydv=(cur_upr<<hflv)+subr;
 			mgsq[ydx]=ydv
-			mgsq_lut[ydv]=ydx;
+			mgsq_decoded[ydv]=ydx;
 
 			ydx=(x<<hflv)+y;
 			ydv=(subr<<hflv)+cur_upr;
 
 			mgsq[ydx]=ydv
-			mgsq_lut[ydv]=ydx;
+			mgsq_decoded[ydv]=ydx;
 		}
 	}
 	
@@ -1045,6 +1045,7 @@ function mkmgsq_odd(level)
 
 function mkmgsq(level)
 {
+	print_moddiv=1<<level;
 	if((level&1)==1){return mkmgsq_odd(level);}
 	hflv=(level>>1);
 	return mkmgsq_even();
@@ -1065,6 +1066,7 @@ function uintsqarr_wh(wh)
 
 function mkmgsq_4x(wh)
 {
+	print_moddiv=wh;
 	var retsq=uintsqarr_wh(wh);
 	var lztidx=allrg-1;
 	for(var y=0;y<wh;y++)
@@ -2299,6 +2301,63 @@ siamrotidx[4]=function(i,j){return siam_lztm-i*siam_n-j;}
 siamrotidx[6]=function(i,j){return i*siam_n+siam_lztn-j;}
 siamrotidx[7]=function(i,j){return j*siam_n+siam_lztn-i;}
 
+function evodrot()
+{
+	var wh=print_moddiv;
+	var typ4=wh&3;
+	var arng=new Array(wh);
+	var myd=wh>>1;
+	var pmyd=myd;
+	if((typ4&1)==1)
+	{
+		arng[myd]=myd;
+		pmyd=myd+1;
+		var evarr=new Array(wh-1);
+		for(var i=0;i<myd;i++)
+		{
+			evarr[i]=i;
+			evarr[i+myd]=i+pmyd;
+		}
+		for(var i=0;i<myd;i++)
+		{
+			var ix2=i<<1;
+			arng[i]=evarr[ix2+1];
+			arng[pmyd+i]=evarr[ix2];
+		}
+	} else {
+
+		for(var i=0;i<myd;i++)
+		{
+			var ix2=i<<1;
+			arng[i]=ix2+1;
+			arng[pmyd+i]=ix2;
+		}
+	}
+	var buf=new Array(wh*wh);
+	for(var y=0;y<wh;y++)
+	{
+		var y0a=y*wh;
+		var y0a_dst=arng[y]*wh;
+		for(var x=0;x<wh;x++)
+		{
+			buf[y0a_dst+arng[x]]=mgsq_decoded[y0a+x];
+		}
+	}
+	mgsq_decoded=buf;
+	
+	switch(typ4)
+	{
+		case 0:
+		chksum(buf,wh);
+		return printmgsq_by4f(buf);
+		case 2:
+		return printmgsq_4Np2(buf);
+	}
+
+
+	return buf;
+
+}
 
 
 function inneroutidx(n)
@@ -2381,7 +2440,7 @@ function lxinout()
 	var rotmap=inneroutidx(print_moddiv);
 	var ret=new Array(ll);
 	for(var i=0;i<ll;i++){
-		ret[rotmap[i]]=mgsq_decoded[i];
+		ret[i]=mgsq_decoded[rotmap[i]];
 	}
 	mgsq_decoded=ret;
 	return printmgsq_4Np2(ret);
