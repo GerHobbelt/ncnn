@@ -2300,6 +2300,94 @@ siamrotidx[6]=function(i,j){return i*siam_n+siam_lztn-j;}
 siamrotidx[7]=function(i,j){return j*siam_n+siam_lztn-i;}
 
 
+
+function inneroutidx(n)
+{
+	var allrg=n*n;
+	var ret=new Array(allrg);
+	var hfn=n>>1;
+	var hfnm1=hfn-1;
+	var c_hfnp1=hfn+1;
+	var nm1=n-1;
+	switch(n&3)
+	{
+		case 2:
+
+
+		//for(var i=0;i<allrg;i++){ret[tmp[i]]=i;} return ret;
+
+		
+		var ydx=0;
+		var np1=n+1;
+		var toSouth_idx=n*c_hfnp1;
+		var toSouth_v=(allrg>>1)+1;
+		
+
+		var NWs_idx=hfnm1*n;
+		var NWs_v=1;
+		var NWw_idx=hfnm1;
+		var NWw_v=n;
+
+
+		var SWw_v=(allrg>>1);
+		var SWw_idx=c_hfnp1*n+hfnm1;
+		var SWn_v=allrg-n+1;
+		var SWn_idx=n*hfn;
+		
+		ret[NWs_idx+hfnm1]=0;
+		ret[NWs_idx+hfnm1+1]=nm1;
+		ret[SWw_v+hfnm1]=SWn_v-1;
+		ret[SWw_v+hfnm1+1]=allrg-1;
+
+		for(var y=0;y<hfnm1;y++)
+		{
+			for(var x=0;x<hfnm1;x++)
+			{
+			ret[ydx]=np1;
+			ret[ydx+c_hfnp1]=np1+hfnm1;
+
+			ret[toSouth_idx]=toSouth_v;
+			ret[toSouth_idx+c_hfnp1]=toSouth_v+hfnm1;
+
+			ydx++;	np1++;	toSouth_idx++;	toSouth_v++;
+			}
+			ydx+=c_hfnp1;	np1+=c_hfnp1;	toSouth_idx+=c_hfnp1;	toSouth_v+=c_hfnp1;
+
+			ret[NWs_idx]=NWs_v;
+			ret[NWw_idx]=NWw_v;
+			ret[NWs_idx+c_hfnp1]=NWs_v+hfnm1;
+			ret[NWw_idx+1]=NWw_v+nm1;
+
+			ret[SWn_idx]=SWn_v;
+			ret[SWw_idx]=SWw_v;
+			ret[SWn_idx+c_hfnp1]=SWn_v+hfnm1;
+			ret[SWw_idx+1]=SWw_v+nm1;
+			
+
+			NWs_idx++;	NWs_v++;	NWw_idx+=n;	NWw_v+=n;
+			SWn_idx++;	SWn_v++;	SWw_idx+=n;	SWw_v+=n;
+			
+
+		}
+		
+
+		return ret;
+	}
+}
+
+function lxinout()
+{
+	var ll=mgsq_decoded.length;
+	var rotmap=inneroutidx(print_moddiv);
+	var ret=new Array(ll);
+	for(var i=0;i<ll;i++){
+		ret[rotmap[i]]=mgsq_decoded[i];
+	}
+	mgsq_decoded=ret;
+	return printmgsq_4Np2(ret);
+
+}
+
 function mgsq2enc(src,buf)
 {
 	var zcl=src.length;
