@@ -3,7 +3,11 @@ canvas {
 margin:20px;
 -webkit-transform: matrix(1.2,0,0,1.2,0,0);
 }
-</style></body><script>
+</style>
+<svg height='0' width='0'><g id='lspe' fill='#f002'>
+
+</g></svg>
+</body><script>
 var lv=6;
 
 
@@ -14,14 +18,20 @@ const LUXele=[
 ];
 const ztab='\t';
 const zlc='\n';
+const svgNS='http://www.w3.org/2000/svg';
 var cur_lx_size=0;
 
 var bitbuf = new Uint8Array(32);
 var hflv=lv>>1;
 
+var lspe=null;
+
 var canv_alpha=document.createElement('canvas');
 var ctx_alpha=canv_alpha.getContext('2d');
+canv_alpha.width=0;
+canv_alpha.height=0;
 document.body.appendChild(canv_alpha);
+
 
 var canv=document.createElement('canvas');
 var ctx=canv.getContext('2d');
@@ -86,6 +96,64 @@ shinames[4]=[
 '','せ┎活','き┎活','┎活',
 'せ',	'┎活','き',	''
 ];
+
+function b_lspe()
+{
+	if(!lspe){lspe=document.getElementById('lspe');
+	svgbase=lspe.parentElement;}
+
+}
+
+function svghead(str)
+{
+	return '<svg xmlns="http://www.w3.org/2000/svg"'+str.substring(4);
+}
+
+var svgsft=4;
+
+function fourkoner()
+{
+	b_lspe();
+	var wh=print_moddiv<<svgsft;
+	svgbase.setAttribute('width', wh);
+	svgbase.setAttribute('height', wh);
+	var allrg=print_moddiv*print_moddiv;
+	var idxar=new Array(allrg);
+	for(var y=0;y<print_moddiv;y++)
+	{
+		var y0a=y*print_moddiv;
+		for(var x=0;x<print_moddiv;x++)
+		{
+			idxar[mgsq_decoded[y0a+x]]=[y,x];
+		}
+	}
+	var dsta=0;
+	var fourskp=allrg>>2;
+	if((print_moddiv&1)==1){dsta=1;}
+
+	for(var i=dsta;i<fourskp;i++)
+	{
+		var pa = document.createElementNS(svgNS, 'path');
+		
+		var dstr=[];
+		var wkk=i;
+		for(var k=0;k<4;k++)
+		{
+			var korr=idxar[wkk];
+			dstr.push('L');
+			dstr.push(korr[1]<<svgsft);
+			dstr.push(korr[0]<<svgsft);
+			wkk+=fourskp;
+		}
+		dstr[0]='M';
+		dstr.push('z');
+		pa.setAttribute('d', dstr.join(' '));
+		lspe.appendChild(pa);
+	}
+
+	return svghead(	svgbase.outerHTML.replaceAll('></path>','/>\n')	);
+
+}
 
 function odd2upmiddown()
 {
@@ -191,8 +259,64 @@ function getshi(v)
 	}
 }
 
+function cbnoddshi_enc(upr,dwn){return (upr<<dgtsft)|dwn;}
+
+function cbnoddshi_dec(upr,dwn){return upr*print_moddiv+dwn;}
+
+var cbnoddshi=cbnoddshi_enc;
+
+function odd_getshi_enc(v)
+{
+	var upr=(v>>dgtsft)&bmsk;
+	var dwn=v&bmsk;
+	var xxupr=cur_xormap[upr*print_moddiv+dwn];
+	var xxdwn=print_moddiv-1-dwn;	//upr;
+	//xxupr>((print_moddiv>>1)-1)
+	return cbnoddshi(xxupr,xxdwn);
+
+}
+
+function odd_getshi_dec(v)
+{
+	
+	var dwn=v%print_moddiv;
+	var xxupr=cur_xormap[v];
+	var xxdwn=print_moddiv-1-dwn;	//((v-dwn)/print_moddiv)>>0;
+	
+	return cbnoddshi(xxupr,xxdwn);
+
+}
 
 
+
+function odd2shi(src=null)
+{
+	var dycfunc=odd_getshi_dec;
+	if(src){
+		print_moddiv=Math.sqrt(src.length)>>0;
+		odd_xorchart(print_moddiv);
+	} else {
+		src=mgsq_encoded;dycfunc=odd_getshi_enc;
+		if(!src){src=mgsq_decoded;dycfunc=odd_getshi_dec;
+		print_moddiv=Math.sqrt(src.length)>>0;
+		odd_xorchart(print_moddiv);
+		}
+	}
+
+	var allrg=print_moddiv*print_moddiv;
+	var ret=new Array(allrg);
+	for(var i=0;i<allrg;i++)
+	{
+		ret[i]=dycfunc(src[i]);
+	}
+	switch(extype)
+	{
+		case 1:
+		return printsimp(ret);
+	}
+	return ret;
+
+}
 
 
 var fontrgb=[[0xff,0,0],[0xff,0,0xff],[0,0,0xff]];
@@ -232,7 +356,7 @@ function shistrxor(y,x)
 {
 	var shisig=y^x;
 	
-	var tal=x;
+	var tal=x;	//x
 	if(shisig<hfhflvrg){
 		
 		if(is111(shisig)){tal=y;}
@@ -961,6 +1085,7 @@ function mkmgsq_even_alt()
 	mgsq=uintsqarr();
 	mgsq_decoded=uintsqarr();
 	var sqrg=1<<hflv;
+	print_moddiv=sqrg;
 	var colz=new Array(sqrg);
 	var ylen=sqrg>>1;
 	var lztidx=sqrg-1;
@@ -1045,7 +1170,7 @@ function mkmgsq_odd(level)
 
 function mkmgsq(level)
 {
-	print_moddiv=1<<level;
+	print_moddiv=1<<(level>>1);
 	if((level&1)==1){return mkmgsq_odd(level);}
 	hflv=(level>>1);
 	return mkmgsq_even();
@@ -1874,6 +1999,25 @@ function odd_xorchart(oddn,xortyp=-1)
 
 }
 
+function oddshiupr(n)
+{
+	var mydn=n>>1;
+	var lztn=n-1;
+	var ret=odd_xorchart(n);
+	for(var y=0;y<n;y++)
+	{
+		var y0a=y*n;
+		for(var x=0;x<n;x++)	//x=upr
+		{
+			var ydx=y0a+x;
+			var shi=cur_xormap[ydx];
+			ret[ydx]=lztn-y;
+		}
+	}
+	printsq_deg45(ret,2);
+
+}
+
 function MyXor_odd(v1,v2)
 {
 	var v1upr=(v1>>dgtsft)&bmsk;
@@ -2462,7 +2606,7 @@ function mgsq2enc(src,buf)
 	return buf;
 }
 
-function printoddshi(src=null)
+function printsimp(src=null)
 {
 	if(!src){src=mgsq_shimap;}
 	var zcl=src.length;
@@ -2471,7 +2615,7 @@ function printoddshi(src=null)
 		var rty=[];
 		for(var i=0;i<zcl;i++)
 		{
-			rty.push(printoddshi(src[i]));
+			rty.push(printsimp(src[i]));
 			rty.push('\n-----------\n')
 		}
 		return rty.join('');
@@ -2585,7 +2729,7 @@ function simplesiam(n)
 	siamcache[n]=ret;}
 
 	mgsq_decoded=ret;
-	mgsq_encoded=[];
+	mgsq_encoded=null;
 	
 	switch(extype)
 	{
@@ -2633,7 +2777,7 @@ function siamsigldf(n)
 		dwn[i]=v[1];
 	}
 	siam_sigl=[upr,dwn,n];
-	return printoddshi(siam_sigl);
+	return printsimp(siam_sigl);
 
 }
 
@@ -2841,6 +2985,7 @@ function gf2mad(ysle,xsle)
 
 function matmul(v1,v2,n=8)
 {
+	print_moddiv=n;
 	if((n&1)==1){return matmul_odd(v1,v2,n);}
 
 	var kw=(v1.length/n)>>0;
@@ -3277,7 +3422,7 @@ const mgsQ = {
 	get dec() {return mgsq_decoded;},
 	get lx() {return testlx();},
 	get oddbs(){return oddbase;},
-	get shi(){return printoddshi();},
+	get shi(){return printsimp();},
 	set xcha(v){printsq_deg45(xcha[v],2); return;},
 	set oddmaker(v){
 		switch(v)
