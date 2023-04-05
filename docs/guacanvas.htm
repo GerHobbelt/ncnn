@@ -287,6 +287,54 @@ function odd_getshi_dec(v)
 
 }
 
+function rvput(ret,z,ydx,v)
+{
+	ret[ydx]=v;
+	ret[z-ydx]=z-v;
+
+}
+
+function bb6(buf)
+{
+	var ret=new Array(36);
+	var z=35;
+	for(var i=0;i<2;i++)
+	{
+		rvput(ret,z,i,buf[i]);
+		rvput(ret,z,6+i,buf[5+i]);
+		rvput(ret,z,4+i,buf[3+i]);
+		rvput(ret,z,10+i,buf[8+i]);
+		var ix5=i*5;
+		var ix6=i*6;
+		rvput(ret,z,3+ix6,buf[2+ix5]);
+		
+		rvput(ret,z,2+ix6,105-buf[ix5]-buf[1+ix5]-buf[2+ix5]-buf[3+ix5]-buf[4+ix5]);
+	}
+	
+	var tmp=ret[26];
+	ret[26]=ret[27];
+	ret[27]=tmp;
+	
+	rvput(ret,z,12, 2*z - 2*buf[5] - buf[6] + (4*buf[2] + 5*(buf[3] + buf[4])-7*(buf[1]+buf[0]))/6	);
+	rvput(ret,z,13, 2*z  - buf[6] - buf[7] - buf[9] - (buf[0] + buf[1] + buf[4]+2*buf[2]-5*buf[3])/6	);
+
+	rvput(ret,z,14,  -z+ buf[9] + (buf[5] + buf[6])  - (7*buf[3] -5*(buf[0] + buf[1]) +2*buf[2] + buf[4])/6	);
+	rvput(ret,z,15,  z - buf[4] -2*(buf[2] +buf[3])  +(7*(buf[5] + buf[6]+ buf[9])   +2*buf[7] + buf[8])/6	);	
+
+	rvput(ret,z,16, 2*z  - buf[7] - buf[8] - buf[9] - (buf[0] + buf[3] + buf[4]+2*buf[2]-5*buf[1])/6	);
+	rvput(ret,z,17, 2*z  - buf[5] - buf[6] - buf[9] + (4*buf[2] + 5*buf[3]  - 7*buf[1] -buf[0]- buf[4])/6	);
+
+	tztany(ret);
+	return ret;
+}
+
+function tztany(src)
+{
+	print_moddiv=Math.sqrt(src.length)>>0;
+	mgsq_decoded=src;
+	chksum(src,print_moddiv);
+
+}
 
 
 function odd2shi(src=null)
@@ -2137,19 +2185,43 @@ function colrowsum(src,v)
 {
 	var cols_calc=new Array(v);
 	var rows_calc=new Array(v);
+	var cols_2dgt=new Array(v);
+	var rows_2dgt=new Array(v);
 	cols_calc.fill(0);
 	rows_calc.fill(0);
+	
 	for(var y=0;y<v;y++)
 	{
+		cols_2dgt[y]=[0,0];
+		rows_2dgt[y]=[0,0];
+	}
+
+	for(var y=0;y<v;y++)
+	{
+		
 		var y0a=y*v;
 		for(var x=0;x<v;x++)
 		{
 			var cvv=src[y0a+x];
 			cols_calc[x]+=cvv;
 			rows_calc[y]+=cvv;
+			
+			var dwn=cvv%v;
+			var upr=(cvv-dwn)/v;
+			cols_2dgt[x][0]+=upr;
+			cols_2dgt[x][1]+=dwn;
+			rows_2dgt[y][0]+=upr;
+			rows_2dgt[y][1]+=dwn;
+
 		}
 	}
-	mgsq_tested=[cols_calc,rows_calc];
+	for(var y=0;y<v;y++)
+	{
+		cols_2dgt[y]=cols_2dgt[y].join('_');
+		rows_2dgt[y]=rows_2dgt[y].join('_');
+	}
+
+	mgsq_tested=[cols_calc,rows_calc,null,null,null,null,cols_2dgt,rows_2dgt];
 }
 
 function diagsum(src=null,v=-1)
