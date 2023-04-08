@@ -8,10 +8,10 @@ margin:20px;
 
 </g></svg>
 </body><script>
-var lv=6;
+var lv=8;
 
 
-
+var ds_glo=2;
 const LUXele=[
 	[0x1b,0x2d,0x6c],
 	[0xe1,0xb1,0xe4]
@@ -400,6 +400,46 @@ function is111(v)
 }
 
 
+function shi2num(upr_shisig,dwn_gong)
+{
+	var neg=false;
+	if(dwn_gong<0){dwn_gong=(-dwn_gong)%hfrg; neg=true;}
+	var dwn=dwn_gong;
+	if(upr_shisig<hfhflvrg){
+		if(is111(upr_shisig)){dwn=(dwn_gong^upr_shisig)&bmsk;}
+	} else {
+		dwn=(~dwn_gong)&bmsk;
+	}
+	dwn=(((dwn^upr_shisig)&bmsk)<<hflv)|dwn;
+	if(neg){return -dwn;}
+	return dwn;
+
+}
+
+function slyzt(v)
+{
+	function ptvv(ydd)
+	{
+		var cvv=shi2num(v,ydd);
+		var neg=mgsq_decoded[cvv];
+		if(neg<0){sss+='-';}
+		if(cvv==v){sss+='v';}
+		sss+='['+cvv+']';
+	}
+
+	var ret=new Array(hfhflvrg);
+	var mxrg=bmsk;
+	for(var i=0;i<hfhflvrg;i++)
+	{
+		var rvi=mxrg-i;
+		var sss='>'+i+'>'+rvi+'\t';
+		ptvv(i);
+		ptvv(rvi);
+		ret[i]=sss;
+	}
+	return ret.join('\n');
+}
+
 function shistrxor(y,x)
 {
 	var shisig=y^x;
@@ -415,10 +455,120 @@ function shistrxor(y,x)
 
 }
 
+function shistrxor_byv(v)
+{
+	var x=v&bmsk;
+	var y=(v>>hflv)&bmsk;
+	var shisig=y^x;
+	
+	var tal=x;	//x¤U
+	if(shisig<hfhflvrg){
+		
+		if(is111(shisig)){tal=y;}
+	} else {
+		var tal=(~tal)&bmsk;
+	}
+	return (shisig<<c_hflv)	+tal	;
+
+}
+
+function immul(a,b)
+{
+	var v=a*b;
+	if(Math.abs(v)==4){v*=-0.25;}
+	return v;
+}
+
+function imdest(srcar,m)
+{
+	var scl=srcar.length;
+	var dstl=1;
+	for(var d=0;d<m;d++){dstl*=scl;}
+	var ret=new Array(dstl);
+
+	for(var y=0;y<scl;y++)
+	{
+	var sy=srcar[y];
+	var idxy=y*scl;
+	for(var x=0;x<scl;x++){
+
+		ret[idxy+x]=immul(srcar[x],sy);
+	}
+	}
+	m-=2;
+	dstl=scl*scl;
+	for(var i=0;i<m;i++)
+	{
+		for(var y=0;y<dstl;y++)
+		{
+			var yv=ret[y];
+			for(var x=0;x<scl;x++)
+			{
+				ret[x*dstl+y]=immul(yv,srcar[x]);
+			}
+		}
+		dstl*=scl;
+	}
+	return ret;
+}
+
+function imnemap(v)
+{
+	var yas=imdest([1,2],v);
+	var xas=imdest([1,-2],v);
+	var wh=1<<v;
+	bmsk=wh-1;
+	hflv=v;
+	c_hflv=clamp4bit(hflv);
+	hfhflvrg=1<<(hflv-1);
+	var ret=new Array(wh*wh);
+	for(var y=0;y<wh;y++)
+	{
+		var yv=yas[y];
+		var yidx=y<<v;
+		for(var x=0;x<wh;x++)
+		{
+			var vtt=immul(yv,xas[x]);
+			var putt=1;
+			if(vtt<0){putt=-1;}
+			var idxcc=yidx+x;
+			ret[idxcc]=shistrxor_byv(idxcc)*putt;
+		}
+	}
+	//var strlizbak=strliz;
+	//strliz=strliz_none;
+	ret=printmgsq_by4(ret);
+	//strliz=strlizbak;
+	return ret;
+
+}
+
+function imnemap_mgsq_decoded()
+{
+	var yas=imdest([1,2],hflv);
+	var xas=imdest([1,-2],hflv);
+
+
+	for(var y=0;y<hfrg;y++)
+	{
+		var yv=yas[y];
+		var yidx=y<<hflv;
+		for(var x=0;x<hfrg;x++)
+		{
+			var vtt=immul(yv,xas[x]);
+			if(vtt<0){mgsq_decoded[yidx+x]*=-1;}
+			
+			
+		}
+	}
+
+}
+
 function setupcbmsk()
 {
 	hfhflvrg=1<<(hflv-1);
-	bmsk=(1<<hflv)-1;
+	hfrg=1<<hflv;
+	bmsk=hfrg-1;
 	c_hflv=clamp4bit(hflv);
 	if( c_hflv == hflv )
 	{
@@ -433,11 +583,11 @@ function uintsqarr()
 {
 	allrg=1<<(hflv<<1);
 	if(hflv<5){
-		return new Uint8Array(allrg);
+		return new Int16Array(allrg);
 	} else if(hflv<9){
-		return new Uint16Array(allrg);
+		return new Int32Array(allrg);
 	}
-	return new Uint32Array(allrg);
+	return new Int32Array(allrg);
 	
 }
 
@@ -458,7 +608,7 @@ function gen_shi()
 {
 	setupcbmsk();
 	
-	var hfrg=1<<hflv;
+	
 	
 
 	var ret=uintsqarr();
@@ -607,16 +757,20 @@ var bsta=10;
 
 function ismgsqUpper(v)
 {
+	var rz=0;
 	var x=mgsq_decoded[v];
+	if(x<0){x=-x;rz=2;}
 	var y=x>>hflv;
 	x=x&bmsk;
-	if(x>=y){return true;}
-	return false;
+	if(x>=y){return rz+1;}
+	return rz;
 }
 
 function drawmgsqUpper(y,v)
 {
-	if(ismgsqUpper(v)){ctx.drawImage(numbs, 0, 18, 5, 5, 8,y, 5, 5);}
+	var uprsig=ismgsqUpper(v);
+	if((uprsig&1)!=0){ctx.drawImage(numbs, 0, 18, 5, 5, 8,y, 5, 5);}
+	if((uprsig&2)!=0){ctx.drawImage(numbs, 5, 18, 5, 5, 8,y, 5, 5);}
 }
 
 function putblak(poz){ctx.drawImage(imggrdb, 1, 1+bsta+poz*20, 18, 18);}
@@ -742,7 +896,7 @@ function draw(v)
 			
 		}
 	}
-	
+	ctx.drawImage(numbs, 10, 18, 5, 5, 8, (cvh/2)+2, 5, 5);
 	var msna=drawtxt(v,0);
 	drawmgsqUpper(bsta+7,v);
 	if (rev!=v){
@@ -828,6 +982,125 @@ function draw_linked_sepline()
 	imgpool.appendChild(img);
 }
 
+var lv2bs_y1={2:new Int8Array([-1,-1,
+	-1,1,
+	-1,1,
+	-1,-1])};
+
+function mirgen2value(width,src=null)
+{
+	if(!src){src=lv2bs_y1[width];}
+	var bslen=src.length/width;
+	var ret=new Array(bslen+1);
+	for(var y=0;y<bslen;y++)
+	{
+		var v=0;
+		var y0a=y*width;
+		for(var x=0;x<width;x++)
+		{
+			if(src[y0a+x]>0){v+=(1<<x);}
+		}
+		ret[y+1]=v;
+
+	}
+	return ret;
+}
+
+function mirgen_y1()
+{
+	var prvbs=null;
+	var prvbslen=0;
+	for(var k=2;k<=hflv;k++)
+	{
+		if(k in lv2bs_y1){prvbs=lv2bs_y1[k];prvbslen=prvbs.length/k;}
+		else {
+			var yskp=prvbslen*k;
+			var hfyskp=yskp>>1;
+			var prv_ysft=k-1;
+			
+			var hfprv=prvbslen>>1;
+			var prv_yskp=prv_ysft*hfprv;
+
+			prvbslen=prvbslen<<1;
+			var cur_ret=new Int8Array(k*prvbslen);
+			for(var y=0;y<hfprv;y++){
+			var ysft0=y*k;
+			var ysft1=ysft0+hfyskp;
+			var ysft2=ysft0+yskp;
+			var ysft3=ysft2+hfyskp;
+
+			var prv_ysft0=prv_ysft*y;
+			var prv_ysft1=prv_ysft0+prv_yskp;
+			var bsupr=0;
+			var bsdwn=0;
+			for(var x =1;x<k;x++)
+			{
+				bsupr=prvbs[prv_ysft0+x-1];
+				bsdwn=prvbs[prv_ysft1+x-1];
+				cur_ret[ysft0+x]=bsupr;
+				cur_ret[ysft3+x]=bsupr*-1;
+				cur_ret[ysft2+x]=bsdwn;
+				cur_ret[ysft1+x]=bsdwn*-1;
+				
+			}
+			//var bsupr=cur_ret[ysft0+prv_ysft];
+			//var bsdwn=cur_ret[ysft2+prv_ysft];
+			cur_ret[ysft0]=bsupr;
+			cur_ret[ysft2]=bsupr;
+			cur_ret[ysft1]=bsdwn;
+			cur_ret[ysft3]=bsdwn;
+			}
+
+			lv2bs_y1[k]=cur_ret;
+			prvbs=cur_ret;
+		}
+
+	}
+	return mirgen2value(hflv,prvbs);
+
+}
+
+function idxgen0()
+{
+
+	var ret=new Array(hfrg+1);
+	var rtidx=1;
+	for(var i=0;i<hfrg;i+=2){ret[rtidx]=i;rtidx++;}
+	for(var i=1;i<hfrg;i+=2){ret[rtidx]=i;rtidx++;}
+	return ret;
+}
+
+function idxgen1(sft=1)
+{
+
+	var ret=new Array(hfrg+1);
+	var skp=(hfhflvrg)>>(sft-1);
+	var xgrp=2<<(sft-1);
+	var ygrp=hfhflvrg>>(2*sft-1);
+	var rtidx=1;
+	for(var y=0;y<ygrp;y++)
+	{
+		for(var x=0;x<xgrp;x++)
+		{
+			var cvv=y+skp*x;
+			ret[rtidx]=cvv;
+			ret[rtidx+1]=cvv+ygrp;
+			rtidx+=2;
+		}
+	}
+	return ret;
+	
+}
+
+var idxgen=idxgen0;
+
+function draw_shi02461357(ydx)
+{
+	var ydxl=ydx.length;
+	var s=ydx[0];
+	for(var i=1;i<ydxl;i++){draw(shi2num(s,ydx[i]));}
+	
+}
 
 
 
@@ -850,8 +1123,8 @@ arlnk();
 
 function refine2(seq)
 {
-	var sqrg=1<<hflv;
-	Gualink_ordered=new Array(sqrg);
+
+	Gualink_ordered=new Array(hfrg);
 	var sql=seq.length;
 	for(var i=0;i<sql;i++)
 	{
@@ -948,12 +1221,11 @@ function arlnk()
 
 function draw_linked_af1()
 {
-	var sqrg=1<<hflv;
-	Gualink_ordered=new Array(sqrg);
+	Gualink_ordered=new Array(hfrg);
 
 	Gualink_pool[	Gualink_mvidx[2]	].setidx(0);
 	draw_linked_sepline();
-	sqrg>>=2;
+	var sqrg=hfrg>>2;
 	linked_count=0;
 	for(var y=0;y<4;y++)
 	{
@@ -1132,9 +1404,9 @@ function mkmgsq_even_alt()
 {
 	mgsq=uintsqarr();
 	mgsq_decoded=uintsqarr();
-	var sqrg=1<<hflv;
-	print_moddiv=sqrg;
-	var colz=new Array(sqrg);
+
+	print_moddiv=hfrg;
+	var colz=new Array(hfrg);
 	var ylen=sqrg>>1;
 	var lztidx=sqrg-1;
 
@@ -1158,7 +1430,7 @@ function mkmgsq_even_alt()
 		if(((y^(y>>1))&1) != 0){x_rev=true;};
 
 		var upr=colz[gtidx];
-		for(var x=y;x<sqrg;x++)
+		for(var x=y;x<hfrg;x++)
 		{
 			var cur_upr=upr;
 			if(((x^(x>>1))&1)!=0){cur_upr=lztidx-upr;}
@@ -1177,6 +1449,7 @@ function mkmgsq_even_alt()
 			mgsq_decoded[ydv]=ydx;
 		}
 	}
+	imnemap_mgsq_decoded();
 	
 }
 
@@ -3325,7 +3598,7 @@ spelogic[5]=dummylogic;
 
 function mgsqtext()
 {
-	var hfrg=(1<<hflv);
+	
 	for(var y=0;y<hfrg;y++)
 	{
 		var y0a=y<<hflv;
@@ -3407,7 +3680,7 @@ function map012()
 	//mgsq=mkmgsq_even();
 	setupshi1();
 
-	var hfrg=(1<<hflv);
+	
 	var wh_each=hflv+2;
 	var wh_canv=wh_each*hfrg;
 	grpgap=wh_canv<<2;
@@ -3440,7 +3713,7 @@ function map01()
 	}
 	//mgsq=mkmgsq_even();
 	setupshi1();
-	var hfrg=(1<<hflv);
+	
 	grpgap=1+hflv*12;
 	if(grpgap<37){grpgap=37;}
 	var canvwhg=hfrg*grpgap
@@ -3479,10 +3752,13 @@ function map01()
 
 function afterhflv()
 {
-	mgsq=mkmgsq_even();
-	bmsk=(1<<hflv)-1;
+	hfrg=1<<hflv;
+	bmsk=hfrg-1;
 	lvmax=(1<<lv)-1;
+	hfhflvrg=1<<(hflv-1);
 	is_hflvodd=((hflv&1) == 1);
+	mgsq=mkmgsq_even();
+	imnemap_mgsq_decoded();
 }
 
 afterhflv();
@@ -3569,6 +3845,15 @@ set hflv(v){
 	afterhflv();},
 set d(v){draw(v);},
 set dl(v){draw_linked(v);},
+
+set dsgen(v){
+	var ydx=idxgen();
+	ydx[0]=v;
+	draw_shi02461357(ydx);
+},
+set ds(v){draw(shi2num(ds_glo,v));},
+set dsl(v){draw_shi02461357(v);},
+
 set rfn(v){refine();},
 set rf2(v){refine2(v);},
 set sqa(v){drawsqa(v);},
