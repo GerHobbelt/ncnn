@@ -388,6 +388,170 @@ function dra2(v,yoff,firstshi)
 	dra3(v,yoff,xoff,27);
 }
 
+function avgxy0(xy0,xy1)
+{
+	return (xy0*3+xy1)/4;
+}
+
+var avgxy=avgxy0;
+
+function polyhf(sides)
+{
+	gridwh=1<<(deg45gridsft-1);
+	var hfside=sides>>1;
+	var rot=Math.PI/sides;
+	var radius=gridwh/(Math.cos(hfside*rot)*Math.tan(rot));
+	prvcvh=gridwh+(radius<<1);
+	canv.width = prvcvh;
+	canv.height = prvcvh;
+	ctx.clearRect(0, 0, prvcvh, prvcvh);
+	ctx.strokeStyle = '#ffff00';
+	ctx.lineWidth = 0.5;
+	var gibmov=gridwh>>2;
+	rot*=2;
+	
+	
+	var sidex2=sides<<1;
+	var pointz=new Array(sidex2);	//yx
+	for(var i=0;i<sides;i++)
+	{
+		var ix2=i<<1;
+		var yy=radius*(1-Math.cos(rot*i));
+		var xx=radius*(1+Math.sin(rot*i));
+		pointz[ix2]=yy;
+		ix2+=1;
+		pointz[ix2]=xx;
+
+	}
+
+	for(var stapo=0;stapo<sides;stapo++)
+	{
+		var y0=pointz[stapo*2];
+		var x0=pointz[stapo*2+1];
+		
+		for(var i=stapo+1;i<sides;i++)
+		{
+			
+			
+			
+			var y1=pointz[i*2];
+			var x1=pointz[i*2+1];
+
+			ctx.beginPath();
+			ctx.moveTo(avgxy(x0,x1)+gibmov,avgxy(y0,y1)+gibmov);
+			ctx.lineTo(avgxy(x1,x0)+gibmov,avgxy(y1,y0)+gibmov);
+			ctx.stroke();
+		}
+	}
+
+	return pointz;
+
+
+}
+
+function putnumtext(y,x,v)
+{
+	var fystr=v.toFixed(0);
+	var zhu=fystr.length;
+	var ststa=0;
+	var zhusb=zhu-ststa;
+	if(zhusb==1){zhusb=1.5;}
+	var rw=gridwh/zhusb;
+
+	var xsft=x;
+	for(var i=ststa;i<zhu;i++)
+	{
+		ctx.drawImage(numbs, (fystr.charCodeAt(i)-0x30)*9, 0, 9, 9, xsft, y, rw, 9);
+		xsft+=rw;
+	}
+			
+}
+
+function polyxorchat(n,pz=1)
+{
+
+	
+	var buf=odd_xorchart(n);
+	var poidx=buf.subarray(0, n);
+	var rvpoidx=buf.subarray(n, 1+n*2);
+	
+	var walkcur=0;
+	if(pz<0){
+		pz=(-pz)%n;
+		
+		var xmaprdx=pz*n;
+		for(var i=0;i<n;i++)
+		{
+			poidx[walkcur]=i;
+			rvpoidx[i]=walkcur;
+			walkcur=cur_xormap[xmaprdx+walkcur];
+		}
+		
+
+	} else {
+		pz=(pz+1)%n;
+		for(var i=0;i<n;i++)
+		{
+			poidx[walkcur]=i;
+			rvpoidx[i]=walkcur;
+			walkcur+=pz;
+			if(walkcur>=n){walkcur=walkcur%n;}
+		}
+		
+	}
+	rvpoidx[n]=rvpoidx[0];
+	var pointz=polyhf(n);
+	var gibmov=gridwh>>2;
+	ctx.strokeStyle = '#ffccff';
+	ctx.lineWidth = 0.7;
+	
+	for(var i=0;i<n;i++)
+	{
+
+		var pyy=rvpoidx[i]<<1;
+		var y0=pointz[pyy];
+		var x0=pointz[pyy+1];
+		pyy=rvpoidx[i+1]<<1;
+		
+		var y1=pointz[pyy];
+		var x1=pointz[pyy+1];
+
+		ctx.beginPath();
+		ctx.moveTo(x0+gibmov,y0+gibmov);
+		ctx.lineTo(x1+gibmov,y1+gibmov);
+		ctx.stroke();
+
+		var ix2=i<<1;
+		pyy=poidx[i];
+		putnumtext(pointz[ix2],pointz[ix2+1],cur_xormap[pyy*n+pyy]);
+		
+		
+	}
+
+	
+	for(var stapo=0;stapo<n;stapo++)
+	{
+		var y0=pointz[stapo*2];
+		var x0=pointz[stapo*2+1];
+		var v0=poidx[stapo];
+		for(var i=stapo+1;i<n;i++)
+		{
+			
+			var y1=pointz[i*2];
+			var x1=pointz[i*2+1];
+			var v1=poidx[i];
+			
+			putnumtext((y0+y1)/2,(x0+x1)/2,cur_xormap[v0*n+v1]);
+			
+		}
+	}
+	
+
+	
+
+}
+
+
 function clamp4bit(v)
 {
 	return (((v-1)>>2)+1)<<2;
@@ -982,10 +1146,10 @@ function draw_linked_sepline()
 	imgpool.appendChild(img);
 }
 
-var lv2bs_y1={2:new Int8Array([-1,-1,
-	-1,1,
-	-1,1,
-	-1,-1])};
+var lv2bs_y1={2:new Uint8Array([0,0,
+	0,0xff,
+	0,0xff,
+	0,0])};
 
 function mirgen2value(width,src=null)
 {
@@ -1006,6 +1170,26 @@ function mirgen2value(width,src=null)
 	return ret;
 }
 
+function fillgenmir_y1(cur_ret,ysft,bsupr,bsdwn)
+{
+	cur_ret[ysft[0]]=bsupr;
+	cur_ret[ysft[2]]=bsupr;
+	cur_ret[ysft[1]]=bsdwn;
+	cur_ret[ysft[3]]=bsdwn;
+
+}
+
+function fillgenmir_y2(cur_ret,ysft,bsupr,bsdwn)
+{
+	cur_ret[ysft[0]]=bsupr;
+	cur_ret[ysft[2]]=bsupr;
+	cur_ret[ysft[1]]=bsupr;
+	cur_ret[ysft[3]]=bsupr;
+
+}
+
+var fillgenmir=fillgenmir_y1;
+
 function mirgen_y1()
 {
 	var prvbs=null;
@@ -1022,7 +1206,7 @@ function mirgen_y1()
 			var prv_yskp=prv_ysft*hfprv;
 
 			prvbslen=prvbslen<<1;
-			var cur_ret=new Int8Array(k*prvbslen);
+			var cur_ret=new Uint8Array(k*prvbslen);
 			for(var y=0;y<hfprv;y++){
 			var ysft0=y*k;
 			var ysft1=ysft0+hfyskp;
@@ -1038,17 +1222,14 @@ function mirgen_y1()
 				bsupr=prvbs[prv_ysft0+x-1];
 				bsdwn=prvbs[prv_ysft1+x-1];
 				cur_ret[ysft0+x]=bsupr;
-				cur_ret[ysft3+x]=bsupr*-1;
+				cur_ret[ysft3+x]=~bsupr;
 				cur_ret[ysft2+x]=bsdwn;
-				cur_ret[ysft1+x]=bsdwn*-1;
+				cur_ret[ysft1+x]=~bsdwn;
 				
 			}
 			//var bsupr=cur_ret[ysft0+prv_ysft];
 			//var bsdwn=cur_ret[ysft2+prv_ysft];
-			cur_ret[ysft0]=bsupr;
-			cur_ret[ysft2]=bsupr;
-			cur_ret[ysft1]=bsdwn;
-			cur_ret[ysft3]=bsdwn;
+			fillgenmir(cur_ret,[ysft0,ysft1,ysft2,ysft3],bsupr,bsdwn);
 			}
 
 			lv2bs_y1[k]=cur_ret;
@@ -1407,8 +1588,8 @@ function mkmgsq_even_alt()
 
 	print_moddiv=hfrg;
 	var colz=new Array(hfrg);
-	var ylen=sqrg>>1;
-	var lztidx=sqrg-1;
+	var ylen=hfrg>>1;
+	var lztidx=hfrg-1;
 
 	for(var vv=0;vv<ylen;vv++)
 	{
@@ -1422,7 +1603,7 @@ function mkmgsq_even_alt()
 		}
 		
 	}
-	for(var y=0;y<sqrg;y++)
+	for(var y=0;y<hfrg;y++)
 	{
 		var y0a=y<<hflv;
 		var gtidx=y;
@@ -1620,17 +1801,17 @@ function txt_deg45arr(src,cot)
 
 }
 
-var deg45gridsft=5; //=32px
+const deg45gridsft=5; //=32px
 
 function img_deg45arr(src,cot=1)
 {
 	var gridwh=1<<(deg45gridsft-1);
 	var xsftmid=gridwh>>1;
-	var canvw=r45syd<<deg45gridsft;
-	var canvh=canvw*cot;
-	canv.width = canvw;
+	prvcvh=r45syd<<deg45gridsft;
+	var canvh=prvcvh*cot;
+	canv.width = prvcvh;
 	canv.height = canvh;
-	ctx.clearRect(0, 0, canvw, canvh);
+	ctx.clearRect(0, 0, prvcvh, canvh);
 	var yh=r45syd*cot;
 	for(var y=0;y<yh;y++)
 	{
@@ -1678,11 +1859,11 @@ function img_deg45triang(src)
 
 	var r45syd=(Math.sqrt(8*srcl+1)-1)>>1;
 
-	var canvw=r45syd<<deg45gridsft;
+	prvcvh=r45syd<<deg45gridsft;
 	var canvh=canvw*cot;
-	canv.width = canvw;
+	canv.width = prvcvh;
 	canv.height = canvh;
-	ctx.clearRect(0, 0, canvw, canvh);
+	ctx.clearRect(0, 0, prvcvh, canvh);
 	var ybase=0;
 	for(var cc=0;cc<cot;cc++)
 	{
@@ -1721,7 +1902,7 @@ function img_deg45triang(src)
 			mvbs++;
 		}
 		initxsft-=gridwh;
-	} ybase+=canvw; }
+	} ybase+=prvcvh; }
 }
 
 function printsq_deg45(src,print_type=1)
@@ -2067,45 +2248,6 @@ var xcha={3:[
 
 
 var LUXmap=null;
-
-
-/*
-0x,0x,0x,0x,
-
-new Uint8Array([
-0x1b,0xb1,0xb1,0xb1,0xb1,			0x9c,			0x4e,0x4e,0x4e,0x4e,0x1b,	
-0xd8,	0x1b,0xb1,0xb1,0xb1,		0x9c,			0x4e,0x4e,0x4e,0x1b,	0x72,
-0xd8,	0xd8,	0x1b,0xb1,0xb1,	0x9c,		0x4e,0x4e,0x1b,	0x72,	0x27,
-0xd8,	0xd8,	0xd8,	0x1b,0xb1,	0x9c,		0x4e,0x1b,	0x72,	0x27,	0x27,
-0xd8,	0xd8,	0xd8,	0xd8,	0x1b,0x2d,0x6c,	0x72,	0x27,	0x27,	0x27,
-0xe1,	0xe1,	0xe1,	0xe1,	0xe1,0xb1,0xe4,	0xb4,	0xb4,	0xb4,	0xb4,
-]);
-
-const LUXmap_height=(1+Math.sqrt(1+(LUXmap.length<<3)))>>2;
-const LUXmap_width=(LUXmap_height<<1)-1;
-
-
-
-function buildLUXele()
-{
-	var kole=new Array(9);
-	kole[0]=LUXele.subarray(0, 12);
-	kole[1]=LUXele.subarray(12, 24);
-
-	var kx=2;
-	var ydx=24;
-	for(var i=0;i<7;i++)
-	{
-		kole[kx]=LUXele.subarray(ydx, ydx+4);
-		kx++;
-		ydx+=4;
-	}
-	LUXele=kole;
-
-}
-buildLUXele();
-*/
-
 
 
 
@@ -3682,12 +3824,12 @@ function map012()
 
 	
 	var wh_each=hflv+2;
-	var wh_canv=wh_each*hfrg;
-	grpgap=wh_canv<<2;
-	canv.width = wh_canv;
-	canv.height = wh_canv;
-	ctx.clearRect(0, 0, wh_canv, wh_canv);
-	var imgd = ctx.getImageData(0, 0, wh_canv, wh_canv);
+	prvcvh=wh_each*hfrg;
+	grpgap=prvcvh<<2;
+	canv.width = prvcvh;
+	canv.height = prvcvh;
+	ctx.clearRect(0, 0, prvcvh, prvcvh);
+	var imgd = ctx.getImageData(0, 0, prvcvh, prvcvh);
 	var gd=imgd.data;
 	for(var y=0;y<hfrg;y++)
 	{
@@ -3708,8 +3850,8 @@ function map01()
 {
 	function drawcrox(ofst)
 	{
-		ctx.fillRect(ofst, 0, 1, canvwh);	//vert
-		ctx.fillRect(0, ofst, canvwh, 1);
+		ctx.fillRect(ofst, 0, 1, prvcvh);	//vert
+		ctx.fillRect(0, ofst, prvcvh, 1);
 	}
 	//mgsq=mkmgsq_even();
 	setupshi1();
@@ -3717,7 +3859,7 @@ function map01()
 	grpgap=1+hflv*12;
 	if(grpgap<37){grpgap=37;}
 	var canvwhg=hfrg*grpgap
-	var canvwh=canvwhg-1;
+	prvcvh=canvwhg-1;
 
 	
 
@@ -3870,6 +4012,7 @@ if(v>1){map012();
 } else {map01();}
 
 },
+set poly(v){polyxorchat(v)},
 };
 
 </script></html>
