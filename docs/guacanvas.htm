@@ -3,8 +3,17 @@ canvas {
 margin:20px;
 -webkit-transform: matrix(1.2,0,0,1.2,0,0);
 }
+.sulii {
+	stroke: #f00;
+	stroke-width: 0.5;
+}
+
+.sulblue {
+	stroke: #00f;
+	stroke-width: 0.5;
+}
 </style>
-<svg height='0' width='0'><g id='lspe' fill='#f002'>
+<svg height='0' width='0'><def id='def1'></def><g id='lspe' fill='#f002'>
 
 </g></svg>
 </body><script>
@@ -97,9 +106,11 @@ shinames[4]=[
 '六世',	'二府魂','五世',	'四世'
 ];
 
+var svgdefspe=new Array(8);
 function b_lspe()
 {
 	if(!lspe){lspe=document.getElementById('lspe');
+	svgdefspe[0]=document.getElementById('def1');
 	svgbase=lspe.parentElement;}
 
 }
@@ -549,6 +560,239 @@ function polyxorchat(n,pz=1)
 
 	
 
+}
+
+const inner_cirk_rad=16.0;
+
+
+function calctdb_negfunc_botfirst(rta,rtb,count,countm1,rot)
+{
+	
+	var prvsmol=new Array(count);
+	prvsmol.fill(false);
+	rtb[0]=-inner_cirk_rad;
+	for(var i=1;i<count;i++)
+	{
+		var wm=rta[i]*rot;
+		if(wm>-0.2){prvsmol[i+1]=true;}
+		var tng=Math.tan(wm);
+		rta[i]=tng;
+		rtb[i]=inner_cirk_rad*Math.sqrt(tng*tng+1);
+	}
+	for(var i=1;i<count;i++){
+		if(rta[i]>=0){break;}
+		rtb[i]=-rtb[i];}
+	for(var i=countm1;i>0;i--){
+		if(rta[i]<=0){break;}
+		rtb[i]=-rtb[i];}
+
+}
+
+function calctdb_negfunc_topfirst(rta,rtb,count,countm1,rot)
+{
+	
+
+	rotcache=new Array(count);
+	rotcache[0]=0;
+	var prvsmol=new Array(count);
+	prvsmol.fill(false);
+	var lrgr=4*inner_cirk_rad;
+	rtb[0]=lrgr;
+	for(var i=1;i<count;i++)
+	{	
+		var wm=rta[i]*rot;
+		if(wm>-0.2){prvsmol[i+1]=true;}
+		rotcache[i]=-wm;
+		var tng=Math.tan(wm);
+		rta[i]=tng;
+		rtb[i]=lrgr*Math.sqrt(tng*tng+1);
+	}
+
+	for(var i=1;i<count;i++){
+		if(rta[i]<=0){continue;}
+		rtb[i]=-rtb[i];}
+	for(var i=countm1;i>0;i--){
+		if(rta[i]>=0){break;}
+		rtb[i]=-rtb[i];}
+}
+
+function calctdb(ar,sta,endo,neg=false)
+{
+	function slvlinear(icur,inxt)
+	{
+		var cur_a=rta[icur];
+		var cur_b=rtb[icur];
+		var solx=(rtb[inxt]-cur_b)/(cur_a-rta[inxt]);
+		rta[icur]=solx;
+		rtb[icur]=cur_a*solx+cur_b;
+	}
+	var ngfunc=calctdb_negfunc_botfirst;
+	
+	
+
+	var count=endo-sta;
+	var countm1=count-1;
+	var sum=0;
+	var rta=new Array(count);
+	var rot=0;
+	for(var i=sta+1;i<endo;i++){rta[rot]=sum;sum+=ar[i]; rot++;}
+	rta[countm1]=sum;
+	sum+=ar[sta];
+	
+	
+	rot=-2*Math.PI/sum;
+	if(neg)
+	{
+		ngfunc=calctdb_negfunc_topfirst;
+	} 
+	
+	var rtb=new Array(count);
+	
+	ngfunc(rta,rtb,count,countm1,rot);
+	
+	
+	
+	var lzt_a=rta[countm1];
+	var lzt_b=rtb[countm1];
+
+	slvlinear(countm1,0);
+	rot=rta[countm1];
+	rta[countm1]=lzt_a;
+	lzt_a=rot;
+	rot=rtb[countm1];
+	rtb[countm1]=lzt_b;
+	lzt_b=rot;
+
+	for(var i=0;i<countm1;i++)
+	{
+		slvlinear(i,i+1)
+		rta[i]-=lzt_a;
+		rtb[i]=-(rtb[i]-lzt_b);
+	}
+	rta[countm1]=0;
+	rtb[countm1]=0;
+	return [rta,rtb];
+
+}
+
+function jsstrshit(v)
+{
+	var st=v.toFixed(4);
+	if(st.endsWith('.0000')){st=st.slice(0, -5);}
+	if(st=='-0'){st='0';}
+	return st;
+}
+
+const extrior_mov=100;
+
+function poly_exterior_mgsq(src=null)
+{
+	if(!src){src=mgsq_decoded;}
+	else {print_moddiv=Math.sqrt(src.length)>>0;}
+	b_lspe();
+	svgbase.setAttribute('width', 500);
+	svgbase.setAttribute('height', 500);
+
+	var curdef=svgdefspe[0];
+	var allrg=print_moddiv*print_moddiv;
+	
+	var ycntr=new Array(print_moddiv);
+	//var subpoly=new Array(print_moddiv);
+	var kdx=0;
+	
+	var countm1=print_moddiv-1;
+	var countm2=countm1-1;
+	for(var y=0;y<allrg;y+=print_moddiv)
+	{
+		var rtx=calctdb(src,y,y+print_moddiv);
+		var rty=rtx[1];
+		rtx=rtx[0];
+		var grpp=document.createElementNS(svgNS, 'g');
+		grpp.setAttribute('id','row'+kdx);
+		var pa = document.createElementNS(svgNS, 'path');
+		
+		var dstr=[];
+		
+		for(var st=0;st<print_moddiv;st++)
+		{
+			var cx=rtx[st];
+			var cy=rty[st];
+			dstr.push('L');
+			var strcx=jsstrshit(cx);
+			var strcy=jsstrshit(cy);
+			dstr.push(strcx);
+			dstr.push(strcy);
+			if(st<countm2)
+			{
+				var nxx=rtx[st+1];
+				var nxy=rty[st+1];
+				var sctll = document.createElementNS(svgNS, 'line');
+				sctll.setAttribute('x1', strcx);
+				sctll.setAttribute('y1', strcy);
+				sctll.setAttribute('x2', jsstrshit((5*nxx-cx)/4));
+				sctll.setAttribute('y2', jsstrshit((5*nxy-cy)/4));
+				sctll.className.baseVal='sulii';
+				grpp.appendChild(sctll);
+			}
+		}
+		dstr[0]='M';
+		dstr.push('z');
+		pa.setAttribute('d', dstr.join(' '));
+		
+		grpp.appendChild(pa);
+		curdef.appendChild(grpp);
+
+		ycntr[kdx]=src[y];
+		kdx++;
+	}
+	var rtx=calctdb(ycntr,0,print_moddiv,true);
+	var rty=rtx[1];
+	rtx=rtx[0];
+
+	rtx.unshift(rtx[countm1]);
+	rty.unshift(rty[countm1]);
+
+	for(var st=0;st<print_moddiv;st++)
+	{
+		
+		var nxx=rtx[st+1]+extrior_mov;
+		var nxy=rty[st+1]+extrior_mov;
+		var cx=rtx[st]+extrior_mov;
+		var cy=rty[st]+extrior_mov;
+
+		var gpp = document.createElementNS(svgNS, 'use');
+		gpp.setAttribute('href', '#row'+st);
+		var mtxstr=mkrotmtx(rotcache[st],cx,cy);
+		gpp.setAttribute('transform', mtxstr);
+		lspe.appendChild(gpp);
+	
+
+		
+		var sctll = document.createElementNS(svgNS, 'line');
+		sctll.setAttribute('x1', jsstrshit((5*cx-nxx)/4));
+		sctll.setAttribute('y1', jsstrshit((5*cy-nxy)/4));
+		sctll.setAttribute('x2', jsstrshit((5*nxx-cx)/4));
+		sctll.setAttribute('y2', jsstrshit((5*nxy-cy)/4));
+		sctll.className.baseVal='sulblue';
+		lspe.appendChild(sctll);
+		
+	}
+	
+
+
+
+}
+
+function mkrotmtx(rrt,cx,cy)
+{
+	var dcc=Math.cos(rrt);
+	var dcs=Math.sin(rrt);
+	var dcc0=jsstrshit(dcc);
+	var dcs0=jsstrshit(dcs);
+
+
+	return 'matrix('+dcc0+' '+dcs0+' '+jsstrshit(-dcs)+' '+dcc0+' '+jsstrshit(cx)+' '+jsstrshit(cy)+')';
+	
 }
 
 
