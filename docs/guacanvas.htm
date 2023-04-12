@@ -564,27 +564,45 @@ function polyxorchat(n,pz=1)
 
 const inner_cirk_rad=16.0;
 
+function procprvsmol(rta,rtb,count,mvmul=1)
+{
+	var xsubmov=0;
+	for(var i=1;i<count;i++)
+	{
+		
+		if(xsubmov!=0)
+		{
+			rtb[i]-=rta[i]*xsubmov;
+		}
+		if((prvsmol[i]&2)!=0){xsubmov+=inner_cirk_rad*mvmul;}
+	}
+}
 
 function calctdb_negfunc_botfirst(rta,rtb,count,countm1,rot)
 {
-	
-	var prvsmol=new Array(count);
-	prvsmol.fill(false);
 	rtb[0]=-inner_cirk_rad;
 	for(var i=1;i<count;i++)
 	{
 		var wm=rta[i]*rot;
-		if(wm>-0.2){prvsmol[i+1]=true;}
-		var tng=Math.tan(wm);
+		
+		var tng=Math.tan(-wm);
 		rta[i]=tng;
 		rtb[i]=inner_cirk_rad*Math.sqrt(tng*tng+1);
 	}
 	for(var i=1;i<count;i++){
-		if(rta[i]>=0){break;}
-		rtb[i]=-rtb[i];}
-	for(var i=countm1;i>0;i--){
-		if(rta[i]<=0){break;}
-		rtb[i]=-rtb[i];}
+		if((prvsmol[i]&1)!=0){rtb[i]=-rtb[i];}
+	}
+	//debuglogeqbm(rta,rtb);
+	procprvsmol(rta,rtb,count);
+	//debuglogeqbm(rta,rtb);
+}
+
+function debuglogeqbm(rta,rtb)
+{
+	for(var i=0;i<6;i++)
+	{
+		console.log(rta[i].toFixed(5)+'x+'+rtb[i].toFixed(5));
+	}
 
 }
 
@@ -594,26 +612,23 @@ function calctdb_negfunc_topfirst(rta,rtb,count,countm1,rot)
 
 	rotcache=new Array(count);
 	rotcache[0]=0;
-	var prvsmol=new Array(count);
-	prvsmol.fill(false);
-	var lrgr=4*inner_cirk_rad;
+	var lrgr=5*inner_cirk_rad;
 	rtb[0]=lrgr;
 	for(var i=1;i<count;i++)
 	{	
 		var wm=rta[i]*rot;
-		if(wm>-0.2){prvsmol[i+1]=true;}
-		rotcache[i]=-wm;
-		var tng=Math.tan(wm);
+		
+		rotcache[i]=wm;
+		var tng=Math.tan(-wm);
 		rta[i]=tng;
 		rtb[i]=lrgr*Math.sqrt(tng*tng+1);
 	}
-
+	
 	for(var i=1;i<count;i++){
-		if(rta[i]<=0){continue;}
-		rtb[i]=-rtb[i];}
-	for(var i=countm1;i>0;i--){
-		if(rta[i]>=0){break;}
-		rtb[i]=-rtb[i];}
+		if((prvsmol[i]&1)==0){rtb[i]=-rtb[i];}
+	}
+	//debuglogeqbm(rta,rtb)
+	procprvsmol(rta,rtb,count,-3);
 }
 
 function calctdb(ar,sta,endo,neg=false)
@@ -635,12 +650,33 @@ function calctdb(ar,sta,endo,neg=false)
 	var sum=0;
 	var rta=new Array(count);
 	var rot=0;
-	for(var i=sta+1;i<endo;i++){rta[rot]=sum;sum+=ar[i]; rot++;}
+	prvsmol=new Array(count);
+	
+	for(var i=sta+1;i<endo;i++){
+		rta[rot]=sum;
+		var arv=ar[i];
+		prvsmol[rot]=arv;
+		sum+=arv;
+		rot++;
+	}
 	rta[countm1]=sum;
 	sum+=ar[sta];
+	var s1_4=sum>>2;
+	var s3_4=(sum*3)>>2;
+	var s1_16=sum>>3;
+	var prvsmol2=new Array(count);
+	prvsmol2.fill(0);
+	for(var i=1;i<count;i++)
+	{
+		var sig=1;
+		var rtav=rta[i];
+		if(rtav<s1_4 || rtav>s3_4){prvsmol2[i]|=1;}
+		
+		if(prvsmol[i]<s1_16){prvsmol2[i+1]|=2;}
+	}
+	prvsmol=prvsmol2;
 	
-	
-	rot=-2*Math.PI/sum;
+	rot=2*Math.PI/sum;
 	if(neg)
 	{
 		ngfunc=calctdb_negfunc_topfirst;
@@ -656,12 +692,16 @@ function calctdb(ar,sta,endo,neg=false)
 	var lzt_b=rtb[countm1];
 
 	slvlinear(countm1,0);
+
 	rot=rta[countm1];
 	rta[countm1]=lzt_a;
 	lzt_a=rot;
 	rot=rtb[countm1];
 	rtb[countm1]=lzt_b;
 	lzt_b=rot;
+	
+	
+	if(neg){var lzt_abak=lzt_a; var lzt_bbak=lzt_b; lzt_a=0;lzt_b=0; }
 
 	for(var i=0;i<countm1;i++)
 	{
@@ -669,8 +709,12 @@ function calctdb(ar,sta,endo,neg=false)
 		rta[i]-=lzt_a;
 		rtb[i]=-(rtb[i]-lzt_b);
 	}
+	if(neg){
+		rta[countm1]=lzt_abak;
+		rtb[countm1]=-lzt_bbak;
+	}else{
 	rta[countm1]=0;
-	rtb[countm1]=0;
+	rtb[countm1]=0;}
 	return [rta,rtb];
 
 }
@@ -683,21 +727,23 @@ function jsstrshit(v)
 	return st;
 }
 
-const extrior_mov=100;
+const extrior_wh=500;
 
 function poly_exterior_mgsq(src=null)
 {
 	if(!src){src=mgsq_decoded;}
 	else {print_moddiv=Math.sqrt(src.length)>>0;}
 	b_lspe();
-	svgbase.setAttribute('width', 500);
-	svgbase.setAttribute('height', 500);
+
+	var extrior_mov=extrior_wh>>1;
+	svgbase.setAttribute('width', extrior_wh);
+	svgbase.setAttribute('height', extrior_wh);
 
 	var curdef=svgdefspe[0];
 	var allrg=print_moddiv*print_moddiv;
 	
 	var ycntr=new Array(print_moddiv);
-	//var subpoly=new Array(print_moddiv);
+	
 	var kdx=0;
 	
 	var countm1=print_moddiv-1;
@@ -714,8 +760,10 @@ function poly_exterior_mgsq(src=null)
 		var dstr=[];
 		
 		for(var st=0;st<print_moddiv;st++)
-		{
+		{	
 			var cx=rtx[st];
+			if(isNaN(cx)){continue;}
+			
 			var cy=rty[st];
 			dstr.push('L');
 			var strcx=jsstrshit(cx);
@@ -724,8 +772,10 @@ function poly_exterior_mgsq(src=null)
 			dstr.push(strcy);
 			if(st<countm2)
 			{
-				var nxx=rtx[st+1];
-				var nxy=rty[st+1];
+				var nxidx=st+1;
+				var nxx=rtx[nxidx];
+				if(isNaN(nxx)){nxidx++;nxx=rtx[nxidx];}
+				var nxy=rty[nxidx];
 				var sctll = document.createElementNS(svgNS, 'line');
 				sctll.setAttribute('x1', strcx);
 				sctll.setAttribute('y1', strcy);
@@ -754,9 +804,11 @@ function poly_exterior_mgsq(src=null)
 
 	for(var st=0;st<print_moddiv;st++)
 	{
-		
-		var nxx=rtx[st+1]+extrior_mov;
-		var nxy=rty[st+1]+extrior_mov;
+		var nxidx=st+1;
+		var nxx=rtx[nxidx]
+		if(isNaN(nxx)){nxidx++;nxx=rtx[nxidx];}
+		nxx+=extrior_mov;
+		var nxy=rty[nxidx]+extrior_mov;
 		var cx=rtx[st]+extrior_mov;
 		var cy=rty[st]+extrior_mov;
 
