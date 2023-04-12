@@ -13,9 +13,13 @@ margin:20px;
 	stroke-width: 0.5;
 }
 </style>
-<svg height='0' width='0'><def id='def1'></def><g id='lspe' fill='#f002'>
+<svg height='0' width='0'><def id='def1'></def>
 
-</g></svg>
+<g id='lspe' fill='#f002'></g>
+<g id='lspe_green' fill='#4f02'></g>
+<g id='lspe_blue' fill='#00f2'></g>
+<g id='lspe_cya' fill='#0882'></g>
+</svg>
 </body><script>
 var lv=8;
 
@@ -106,18 +110,28 @@ shinames[4]=[
 '六世',	'二府魂','五世',	'四世'
 ];
 
-var svgdefspe=new Array(8);
-function b_lspe()
+var svgdefspe=new Array(16);
+function b_lspe(clear=false)
 {
 	if(!lspe){lspe=document.getElementById('lspe');
-	svgdefspe[0]=document.getElementById('def1');
+	svgdefspe[0]=lspe;
+	svgdefspe[1]=document.getElementById('lspe_green');
+	svgdefspe[2]=document.getElementById('lspe_blue');
+	svgdefspe[3]=document.getElementById('lspe_cya');
+	var df1=document.getElementById('def1');
+	svgdefspe[4]=df1;
+	svgdefspe[5]=df1;
 	svgbase=lspe.parentElement;}
+
+	if(clear){
+	svgdefspe[4]=svgdefspe[5];
+	for(var i=0;i<5;i++){svgdefspe[i].innerHTML = '';}}
 
 }
 
 function svghead(str)
 {
-	return '<svg xmlns="http://www.w3.org/2000/svg"'+str.substring(4);
+	return '<svg xmlns="http://www.w3.org/2000/svg"'+str.substring(4).replace('<def id="def1">','<link rel="stylesheet" href="suli.css" type="text/css"/><def id="def1">');
 }
 
 var svgsft=4;
@@ -564,7 +578,7 @@ function polyxorchat(n,pz=1)
 
 const inner_cirk_rad=16.0;
 
-function procprvsmol(rta,rtb,count,mvmul=1)
+function procprvsmol(rta,rtb,count,mvmul)
 {
 	var xsubmov=0;
 	for(var i=1;i<count;i++)
@@ -577,6 +591,9 @@ function procprvsmol(rta,rtb,count,mvmul=1)
 		if((prvsmol[i]&2)!=0){xsubmov+=inner_cirk_rad*mvmul;}
 	}
 }
+
+var sbpolyscl=0;	//1;
+var mjpolyscl=-2;
 
 function calctdb_negfunc_botfirst(rta,rtb,count,countm1,rot)
 {
@@ -593,7 +610,7 @@ function calctdb_negfunc_botfirst(rta,rtb,count,countm1,rot)
 		if((prvsmol[i]&1)!=0){rtb[i]=-rtb[i];}
 	}
 	//debuglogeqbm(rta,rtb);
-	procprvsmol(rta,rtb,count);
+	procprvsmol(rta,rtb,count,sbpolyscl);
 	//debuglogeqbm(rta,rtb);
 }
 
@@ -628,10 +645,10 @@ function calctdb_negfunc_topfirst(rta,rtb,count,countm1,rot)
 		if((prvsmol[i]&1)==0){rtb[i]=-rtb[i];}
 	}
 	//debuglogeqbm(rta,rtb)
-	procprvsmol(rta,rtb,count,-3);
+	procprvsmol(rta,rtb,count,mjpolyscl);
 }
 
-function calctdb(ar,sta,endo,neg=false)
+function calctdb(ar,sta,endo,rotsta,neg=false)
 {
 	function slvlinear(icur,inxt)
 	{
@@ -652,15 +669,15 @@ function calctdb(ar,sta,endo,neg=false)
 	var rot=0;
 	prvsmol=new Array(count);
 	
-	for(var i=sta+1;i<endo;i++){
+	for(var i=1;i<count;i++){
 		rta[rot]=sum;
-		var arv=ar[i];
+		var arv=ar[sta+((i+rotsta)%count)];
 		prvsmol[rot]=arv;
 		sum+=arv;
 		rot++;
 	}
 	rta[countm1]=sum;
-	sum+=ar[sta];
+	sum+=ar[sta+((rotsta)%count)];
 	var s1_4=sum>>2;
 	var s3_4=(sum*3)>>2;
 	var s1_16=sum>>3;
@@ -729,17 +746,19 @@ function jsstrshit(v)
 
 const extrior_wh=500;
 
-function poly_exterior_mgsq(src=null)
+
+
+function poly_exterior_mgsq(rotsta=0,src=null)
 {
 	if(!src){src=mgsq_decoded;}
 	else {print_moddiv=Math.sqrt(src.length)>>0;}
-	b_lspe();
-
+	b_lspe(true);
+	var sftrotsta=rotsta%print_moddiv;
 	var extrior_mov=extrior_wh>>1;
 	svgbase.setAttribute('width', extrior_wh);
 	svgbase.setAttribute('height', extrior_wh);
 
-	var curdef=svgdefspe[0];
+	var curdef=svgdefspe[4];
 	var allrg=print_moddiv*print_moddiv;
 	
 	var ycntr=new Array(print_moddiv);
@@ -750,7 +769,7 @@ function poly_exterior_mgsq(src=null)
 	var countm2=countm1-1;
 	for(var y=0;y<allrg;y+=print_moddiv)
 	{
-		var rtx=calctdb(src,y,y+print_moddiv);
+		var rtx=calctdb(src,y,y+print_moddiv,rotsta);
 		var rty=rtx[1];
 		rtx=rtx[0];
 		var grpp=document.createElementNS(svgNS, 'g');
@@ -761,8 +780,8 @@ function poly_exterior_mgsq(src=null)
 		
 		for(var st=0;st<print_moddiv;st++)
 		{	
-			var cx=rtx[st];
-			if(isNaN(cx)){continue;}
+			var cx=fixNaN(rtx,rty,st);
+			
 			
 			var cy=rty[st];
 			dstr.push('L');
@@ -773,8 +792,8 @@ function poly_exterior_mgsq(src=null)
 			if(st<countm2)
 			{
 				var nxidx=st+1;
-				var nxx=rtx[nxidx];
-				if(isNaN(nxx)){nxidx++;nxx=rtx[nxidx];}
+				var nxx=fixNaN(rtx,rty,nxidx);
+				
 				var nxy=rty[nxidx];
 				var sctll = document.createElementNS(svgNS, 'line');
 				sctll.setAttribute('x1', strcx);
@@ -792,10 +811,10 @@ function poly_exterior_mgsq(src=null)
 		grpp.appendChild(pa);
 		curdef.appendChild(grpp);
 
-		ycntr[kdx]=src[y];
+		ycntr[kdx]=src[y+sftrotsta];
 		kdx++;
 	}
-	var rtx=calctdb(ycntr,0,print_moddiv,true);
+	var rtx=calctdb(ycntr,0,print_moddiv,0,true);
 	var rty=rtx[1];
 	rtx=rtx[0];
 
@@ -805,11 +824,9 @@ function poly_exterior_mgsq(src=null)
 	for(var st=0;st<print_moddiv;st++)
 	{
 		var nxidx=st+1;
-		var nxx=rtx[nxidx]
-		if(isNaN(nxx)){nxidx++;nxx=rtx[nxidx];}
-		nxx+=extrior_mov;
+		var nxx=fixNaN(rtx,rty,nxidx)+extrior_mov;
 		var nxy=rty[nxidx]+extrior_mov;
-		var cx=rtx[st]+extrior_mov;
+		var cx=fixNaN(rtx,rty,st)+extrior_mov;
 		var cy=rty[st]+extrior_mov;
 
 		var gpp = document.createElementNS(svgNS, 'use');
@@ -831,7 +848,23 @@ function poly_exterior_mgsq(src=null)
 	}
 	
 
+	return svghead(	svgbase.outerHTML.replaceAll('></path>','/>\n').replaceAll('></use>','/>\n').replaceAll('></line>','/>\t')	);
 
+}
+
+function fixNaN(rtx,rty,idx)
+{
+	var cx=rtx[idx]
+	if(isNaN(cx)){
+		var idxprv=(print_moddiv+idx-1)%print_moddiv;
+		var idxnxt=(idx+1)%print_moddiv;
+		var goodcx=(rtx[idxprv]+rtx[idxnxt])/2;
+		rtx[idx]=goodcx;
+		rty[idx]=(rty[idxprv]+rty[idxnxt])/2;
+		return goodcx;
+
+	}
+	return cx;
 
 }
 
@@ -847,6 +880,160 @@ function mkrotmtx(rrt,cx,cy)
 	
 }
 
+const inscribed_r=80;
+
+function poly_inscribed_mgsq(rotsta=0,src=null)
+{
+	if(!src){src=mgsq_decoded;}
+	else {print_moddiv=Math.sqrt(src.length)>>0;}
+	b_lspe(true);
+	var gcntr=extrior_wh>>1;
+	svgbase.setAttribute('width', extrior_wh);
+	svgbase.setAttribute('height', extrior_wh);
+	
+
+	var sumx=0;
+	var ysumstp=new Array(print_moddiv);
+	for(var y=0;y<print_moddiv;y++)
+	{
+		var y0a=y*print_moddiv;
+		sumx=0;
+		var sumstp=new Array(print_moddiv);
+
+		
+		for(var x=0;x<print_moddiv;x++)
+		{
+			sumx+=src[y0a+((rotsta+x)%print_moddiv)];
+			sumstp[x]=sumx;
+		
+		}
+		ysumstp[y]=sumstp;
+	}
+	sumx=2*Math.PI/sumx;
+	var mydlen=3;
+	if((print_moddiv%5)==0)
+	{
+		svgdefspe[4]=svgdefspe[2];
+		mydlen=4;
+	}
+
+	var sumy=0;
+	var colormod=0;
+	for(var y=0;y<print_moddiv;y++)
+	{
+		var wrkarr=ysumstp[y];
+
+		
+		var curmyd=wrkarr[0]*sumx;
+		var curhfmyd=curmyd/2;
+		var cur_rad=2*inscribed_r*Math.cos(curhfmyd);
+		var cur3_2rot=sumy+curhfmyd;
+		var subzntry=cur_rad*Math.cos(cur3_2rot);
+		var subzntrx=cur_rad*Math.sin(cur3_2rot);
+		var subzntrrot=sumy-Math.PI;
+		
+		sumy+=curmyd;
+
+		
+		var zntrdstr='M '+jsstrshit(gcntr+subzntrx)+' '+jsstrshit(gcntr-subzntry)+' ';
+		
+		var prv_y=inscribed_r*Math.cos(subzntrrot)+subzntry;
+		var prv_x=inscribed_r*Math.sin(subzntrrot)+subzntrx;
+		var lzt_y=jsstrshit(gcntr-prv_y);
+		var lzt_x=jsstrshit(gcntr+prv_x);
+		prv_y=lzt_y;
+		prv_x=lzt_x;
+		for(var x=0;x<print_moddiv;x++)
+		{
+			var currot=subzntrrot+wrkarr[x]*sumx;
+			var cur_y=inscribed_r*Math.cos(currot)+subzntry;
+			var cur_x=inscribed_r*Math.sin(currot)+subzntrx;
+			cur_y=jsstrshit(gcntr-cur_y);
+			cur_x=jsstrshit(gcntr+cur_x);
+
+			var pa = document.createElementNS(svgNS, 'path');
+			pa.setAttribute('d', zntrdstr+'L '+prv_x+' '+prv_y+' L '+cur_x+' '+cur_y+' z');
+			svgdefspe[colormod].appendChild(pa);
+			prv_y=cur_y;
+			prv_x=cur_x;
+			colormod++;
+			if(colormod>mydlen){colormod=0;}
+		}
+		
+		
+		var pa = document.createElementNS(svgNS, 'path');
+		pa.setAttribute('d', zntrdstr+'L '+prv_x+' '+prv_y+' L '+lzt_x+' '+lzt_y+' z');
+				
+		svgdefspe[colormod].appendChild(pa);
+		var sctll = document.createElementNS(svgNS, 'line');
+		sctll.setAttribute('x1', gcntr);
+		sctll.setAttribute('y1', gcntr);
+		sctll.setAttribute('x2', lzt_x);
+		sctll.setAttribute('y2', lzt_y);
+		sctll.className.baseVal='sulii';
+		lspe.appendChild(sctll);
+	}
+	
+	return svghead(	svgbase.outerHTML.replaceAll('></path>','/>\n').replaceAll('></line>','/>\t')	);
+	
+
+}
+
+function t_mgsq(src=null)
+{
+	if(!src){src=mgsq_decoded;}
+	else {print_moddiv=Math.sqrt(src.length)>>0;}
+
+	for(var y=0;y<print_moddiv;y++)
+	{
+		var y0a=y*print_moddiv;
+		for(var x=y+1;x<print_moddiv;x++)
+		{
+			var idx1=y0a+x;
+			var tmp=src[idx1];
+			var idx2=x*print_moddiv+y;
+			src[idx1]=src[idx2];
+			src[idx2]=tmp;
+		}
+	}
+
+	mgsq_decoded=src;
+}
+
+function dist2x(src=null,skiptype=0)
+{
+	if(!src){src=mgsq_decoded;}
+	else {print_moddiv=Math.sqrt(src.length)>>0;}
+	var ret=new Array(print_moddiv*print_moddiv);
+	switch(print_moddiv)
+	{
+		case 3:
+		for(var y=0;y<3;y++)
+		{
+			var y0a=y*3;
+			ret[y0a]=src[y0a+1]+src[y0a+2]-src[y0a];
+			ret[y0a+1]=src[y0a]+src[y0a+2]-src[y0a+1];
+			ret[y0a+2]=src[y0a+1]+src[y0a]-src[y0a+2];
+		}
+		break;
+		case 5:
+		break;
+		case 6:
+		for(var y=0;y<6;y++)
+		{
+			var y0a=y*6;
+			for(var x=0;x<6;x++)
+			{
+				ret[y0a+x]=src[y0a+((x+1)%6)]+src[y0a+((x+5)%6)]-src[y0a+((x+3)%6)];
+			}
+		}
+	
+		break;
+
+	}
+	mgsq_decoded=ret;
+	return ret;
+}
 
 function clamp4bit(v)
 {
