@@ -1,0 +1,23 @@
+<script src="skutil.js"></script><script src="spine-player41.js"></script>
+<link rel="stylesheet" href="spine-player.css">
+
+<div id="player" style="width: 800px; height: 40px;"></div>
+
+<script>
+var fnaz=	'PetEvent1013_Lv2';	//'p1011';		//
+// Creates a  new spine player with embedded data
+new spine.SpinePlayer("player", {
+		skelUrl: "my/"+fnaz+".skel",
+		atlasUrl: "my/"+fnaz+".atlas",
+
+		//animation: "star1",		//18="star1"
+		premultipliedAlpha: true,
+		backgroundColor: "#cccccc",
+		viewport: {
+			debugRender: true,
+			
+		},
+		drawMeshHull:true,
+		//debug:{hulls: true},
+	});
+</script>
