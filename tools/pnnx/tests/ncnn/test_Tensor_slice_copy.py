@@ -1,6 +1,6 @@
 # Tencent is pleased to support the open source community by making ncnn available.
 #
-# Copyright (C) 2022 THL A29 Limited, a Tencent company. All rights reserved.
+# Copyright (C) 2023 THL A29 Limited, a Tencent company. All rights reserved.
 #
 # Licensed under the BSD 3-Clause License (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
@@ -21,44 +21,46 @@ class Model(nn.Module):
         super(Model, self).__init__()
 
     def forward(self, x, y, z, w):
-        x0, x1, x2 = torch.tensor_split(x, (12, 13))
-        y0, y1 = torch.tensor_split(y, (1,), dim=0)
-        y2, y3, y4 = torch.tensor_split(y, 3, dim=1)
-        z0, z1 = torch.tensor_split(z, (3,), dim=0)
-        z2, z3 = torch.tensor_split(z, (1,), dim=1)
-        z4, z5, z6 = torch.tensor_split(z, 3, dim=2)
-        w0, w1, w2 = torch.tensor_split(w, (2, 4), dim=0)
-        w3, w4 = torch.tensor_split(w, (2,), dim=1)
-        w5, w6, w7 = torch.tensor_split(w, (1, 5), dim=2)
-        w8, w9, wa, wb, wc = torch.tensor_split(w, (1, 3, 7, 17), dim=3)
-        return x0, x1, x2, y0, y1, y2, y3, y4, z0, z1, z2, z3, z4, z5, z6, w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, wa, wb, wc
+        x = x.clone()
+        y = y.clone()
+        z = z.clone()
+        w = w.clone()
+        x[2:10,...] += 1
+        x[...,1] = x[...,-1] * 3
+        x[:,:,3,:2].clamp_(0, 0.5)
+        x[:,:,3,:2] = x[:,:,3,:2].exp_()
+        x[:,:,:,:] = x[:,:,:,:] / 2
+        y[...,1:2,-5:-1] = y[...,4:5,1:5] - 11
+        z[:1] = z[-1:] * z[3:4]
+        w[100:] = w[4:24] + 23
+        return x, y, z, w
 
 def test():
     net = Model()
     net.eval()
 
     torch.manual_seed(0)
-    x = torch.rand(100)
-    y = torch.rand(3, 15)
-    z = torch.rand(5, 9, 3)
-    w = torch.rand(6, 13, 6, 22)
+    x = torch.rand(18, 15, 19, 20)
+    y = torch.rand(15, 19, 20)
+    z = torch.rand(19, 20)
+    w = torch.rand(120)
 
     a = net(x, y, z, w)
 
     # export torchscript
     mod = torch.jit.trace(net, (x, y, z, w))
-    mod.save("test_torch_tensor_split.pt")
+    mod.save("test_Tensor_slice_copy.pt")
 
     # torchscript to pnnx
     import os
-    os.system("../../src/pnnx test_torch_tensor_split.pt inputshape=[100],[3,15],[5,9,3],[6,13,6,22]")
+    os.system("../../src/pnnx test_Tensor_slice_copy.pt inputshape=[18,15,19,20],[15,19,20],[19,20],[120]")
 
     # ncnn inference
-    import test_torch_tensor_split_ncnn
-    b = test_torch_tensor_split_ncnn.test_inference()
+    import test_Tensor_slice_copy_ncnn
+    b = test_Tensor_slice_copy_ncnn.test_inference()
 
     for a0, b0 in zip(a, b):
-        if not torch.equal(a0, b0):
+        if not torch.allclose(a0, b0, 1e-4, 1e-4):
             return False
     return True
 
