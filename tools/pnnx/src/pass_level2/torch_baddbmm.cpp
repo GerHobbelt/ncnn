@@ -12,38 +12,33 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#ifndef LAYER_MULTIHEADATTENTION_ARM_H
-#define LAYER_MULTIHEADATTENTION_ARM_H
+#include "pass_level2.h"
 
-#include "multiheadattention.h"
+namespace pnnx {
 
-namespace ncnn {
-
-class MultiHeadAttention_arm : virtual public MultiHeadAttention
+class torch_baddbmm : public GraphRewriterPass
 {
 public:
-    MultiHeadAttention_arm();
+    const char* match_pattern_graph() const
+    {
+        return R"PNNXIR(7767517
+7 6
+pnnx.Input              input_0     0 1 input
+pnnx.Input              input_1     0 1 batch1
+pnnx.Input              input_2     0 1 batch2
+pnnx.Input              input_3     0 1 beta
+pnnx.Input              input_4     0 1 alpha
+aten::baddbmm           op_0        5 1 input batch1 batch2 beta alpha out
+pnnx.Output             output      1 0 out
+)PNNXIR";
+    }
 
-    virtual int create_pipeline(const Option& opt);
-    virtual int destroy_pipeline(const Option& opt);
-
-    virtual int forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const;
-
-public:
-    Layer* cvtfp16_to_fp32;
-    Layer* cvtfp32_to_fp16;
-
-    Layer* q_gemm;
-    Layer* k_gemm;
-    Layer* v_gemm;
-    Layer* o_gemm;
-
-    Layer* qk_gemm;
-    Layer* qkv_gemm;
-
-    Layer* qk_softmax;
+    const char* type_str() const
+    {
+        return "torch.baddbmm";
+    }
 };
 
-} // namespace ncnn
+REGISTER_GLOBAL_PNNX_GRAPH_REWRITER_PASS(torch_baddbmm, 20)
 
-#endif // LAYER_MULTIHEADATTENTION_ARM_H
+} // namespace pnnx
