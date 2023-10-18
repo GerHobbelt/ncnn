@@ -12,30 +12,27 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#ifndef LAYER_DECONVOLUTION_X86_H
-#define LAYER_DECONVOLUTION_X86_H
+#ifndef LAYER_MATMUL_X86_H
+#define LAYER_MATMUL_X86_H
 
-#include "deconvolution.h"
+#include "matmul.h"
 
 namespace ncnn {
 
-class Deconvolution_x86 : virtual public Deconvolution
+class MatMul_x86 : virtual public MatMul
 {
 public:
-    Deconvolution_x86();
+    MatMul_x86();
 
     virtual int create_pipeline(const Option& opt);
     virtual int destroy_pipeline(const Option& opt);
 
-    virtual int forward(const Mat& bottom_blob, Mat& top_blob, const Option& opt) const;
+    virtual int forward(const std::vector<Mat>& bottom_blobs, std::vector<Mat>& top_blobs, const Option& opt) const;
 
 public:
-    Layer* activation;
     Layer* gemm;
-
-    Mat weight_data_tm;
 };
 
 } // namespace ncnn
 
-#endif // LAYER_DECONVOLUTION_X86_H
+#endif // LAYER_MATMUL_X86_H
