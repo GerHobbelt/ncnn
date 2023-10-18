@@ -1,6 +1,6 @@
 // Tencent is pleased to support the open source community by making ncnn available.
 //
-// Copyright (C) 2023 THL A29 Limited, a Tencent company. All rights reserved.
+// Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
 //
 // Licensed under the BSD 3-Clause License (the "License"); you may not use this file except
 // in compliance with the License. You may obtain a copy of the License at
@@ -30,9 +30,9 @@ layout (constant_id = shape_constant_id_offset + 4) const int cstep = 0;
 
 #if NCNN_image_shader
 layout (binding = 0) uniform unfp sampler3D bottom_blob_3d;
-layout (binding = 1, imfmtc4) writeonly uniform unfp image3D top_blob_3d;
+layout (binding = 1, imfmtc1) writeonly uniform unfp image3D top_blob_3d;
 #else
-layout (binding = 0) buffer bottom_top_blob { sfpvec4 bottom_top_blob_data[]; };
+layout (binding = 0) buffer bottom_top_blob { sfp bottom_top_blob_data[]; };
 #endif
 
 layout (push_constant) uniform parameter
@@ -44,6 +44,21 @@ layout (push_constant) uniform parameter
     int cstep;
 } p;
 
+float erf(float x)
+{
+    float a1 =  0.254829592f;
+    float a2 = -0.284496736f;
+    float a3 =  1.421413741f;
+    float a4 = -1.453152027f;
+    float a5 =  1.061405429f;
+    float p  =  0.3275911f;
+    float s = sign(x);
+    float x_abs = abs(x);
+    float t = 1.0f/(1.0f + p*x_abs);
+    float y = 1.0f - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-x_abs*x_abs);
+    return s * y;
+}
+
 void main()
 {
     int gx = int(gl_GlobalInvocationID.x);
@@ -54,24 +69,18 @@ void main()
         return;
 
 #if NCNN_image_shader
-    afpvec4 v = image3d_ld4(bottom_blob_3d, ivec3(gx, gy, gz));
+    afp v = image3d_ld1(bottom_blob_3d, ivec3(gx, gy, gz));
 #else
     const int gi = gz * psc(cstep) + gy * psc(w) + gx;
 
-    afpvec4 v = buffer_ld4(bottom_top_blob_data, gi);
+    afp v = buffer_ld1(bottom_top_blob_data, gi);
 #endif
 
-    // y = 0.5x * (1 + tanh(sqrt(2/Pi) * (x + 0.044715x^3)))
-
-#if NCNN_moltenvk
-    v = 0.5f * v * (1.0f + afpvec4(tanh(vec4(0.79788452f * (v + 0.044715f * v * v * v)))));
-#else
-    v = 0.5f * v * (1.0f + tanh(0.79788452f * (v + 0.044715f * v * v * v)));
-#endif
+    v = erf(v);
 
 #if NCNN_image_shader
-    image3d_st4(top_blob_3d, ivec3(gx, gy, gz), v);
+    image3d_st1(top_blob_3d, ivec3(gx, gy, gz), v);
 #else
-    buffer_st4(bottom_top_blob_data, gi, v);
+    buffer_st1(bottom_top_blob_data, gi, v);
 #endif
 }

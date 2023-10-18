@@ -1,6 +1,6 @@
 // Tencent is pleased to support the open source community by making ncnn available.
 //
-// Copyright (C) 2023 THL A29 Limited, a Tencent company. All rights reserved.
+// Copyright (C) 2019 THL A29 Limited, a Tencent company. All rights reserved.
 //
 // Licensed under the BSD 3-Clause License (the "License"); you may not use this file except
 // in compliance with the License. You may obtain a copy of the License at
@@ -44,6 +44,21 @@ layout (push_constant) uniform parameter
     int cstep;
 } p;
 
+afpvec4 erf(afpvec4 x)
+{
+    afpvec4 a1 = afpvec4(0.254829592f);
+    afpvec4 a2 = afpvec4(-0.284496736f);
+    afpvec4 a3 = afpvec4(1.421413741f);
+    afpvec4 a4 = afpvec4(-1.453152027f);
+    afpvec4 a5 = afpvec4(1.061405429f);
+    afpvec4 p = afpvec4(0.3275911f);
+    afpvec4 s = sign(x);
+    afpvec4 x_abs = abs(x);
+    afpvec4 t = 1.0f / (1.0f + p * x_abs);
+    afpvec4 y = 1.0f - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * exp(-x_abs * x_abs);
+    return s * y;
+}
+
 void main()
 {
     int gx = int(gl_GlobalInvocationID.x);
@@ -61,13 +76,7 @@ void main()
     afpvec4 v = buffer_ld4(bottom_top_blob_data, gi);
 #endif
 
-    // y = 0.5x * (1 + tanh(sqrt(2/Pi) * (x + 0.044715x^3)))
-
-#if NCNN_moltenvk
-    v = 0.5f * v * (1.0f + afpvec4(tanh(vec4(0.79788452f * (v + 0.044715f * v * v * v)))));
-#else
-    v = 0.5f * v * (1.0f + tanh(0.79788452f * (v + 0.044715f * v * v * v)));
-#endif
+    v = erf(v);
 
 #if NCNN_image_shader
     image3d_st4(top_blob_3d, ivec3(gx, gy, gz), v);
