@@ -273,6 +273,7 @@ jobs:
         -DNCNN_BUILD_TOOLS=OFF \
         -DNCNN_BUILD_EXAMPLES=OFF \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -350,6 +351,7 @@ jobs:
         -DNCNN_BUILD_TOOLS=OFF \
         -DNCNN_BUILD_EXAMPLES=OFF \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -501,6 +503,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -570,6 +573,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -732,6 +736,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -810,6 +815,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -992,6 +998,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1070,6 +1077,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1252,6 +1260,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1401,6 +1410,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1550,6 +1560,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1628,6 +1639,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1810,6 +1822,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1888,6 +1901,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -2059,6 +2073,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -2199,6 +2214,7 @@ jobs:
         -DOpenMP_libomp_LIBRARY="libomp.a" \
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
+        -DNCNN_OPENMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
