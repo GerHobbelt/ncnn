@@ -213,7 +213,9 @@ public:
     // return 0 if success
     // type = 0, default
     // type = 1, do not convert fp16/bf16 or / and packing
-    int extract(const char* blob_name, Mat& feat, int type = 0);
+    int extract(const char* blob_name, Mat& feat, int type);
+    
+    int extract(const char* blob_name, Mat& feat);
 #endif // NCNN_STRING
 
     // set input by blob index
@@ -224,7 +226,9 @@ public:
     // return 0 if success
     // type = 0, default
     // type = 1, do not convert fp16/bf16 or / and packing
-    int extract(int blob_index, Mat& feat, int type = 0);
+    int extract(int blob_index, Mat& feat, int type);
+
+    int extract(int blob_index, Mat& feat);
 
 #if NCNN_VULKAN
 #if NCNN_STRING

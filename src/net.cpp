@@ -2532,6 +2532,11 @@ int Extractor::input(const char* blob_name, const Mat& in)
     return input(blob_index, in);
 }
 
+int Extractor::extract(const char* blob_name, Mat& feat)
+{
+        return extract(blob_name, feat, 0);
+}
+
 int Extractor::extract(const char* blob_name, Mat& feat, int type)
 {
     int blob_index = d->net->find_blob_index_by_name(blob_name);
@@ -2559,6 +2564,11 @@ int Extractor::input(int blob_index, const Mat& in)
     d->blob_mats[blob_index] = in;
 
     return 0;
+}
+
+int Extractor::extract(int blob_index, Mat& feat)
+{
+    return extract(blob_index, feat, 0);   
 }
 
 int Extractor::extract(int blob_index, Mat& feat, int type)
