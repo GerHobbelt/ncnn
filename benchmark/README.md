@@ -1717,6 +1717,60 @@ cooling_down = 1
           FastestDet  min =    7.79  max =   11.14  avg =    9.03
 
 ```
+### Raspberry Pi 5 Broadcom BCM2712, VideoCore VII Graphics (Vulkan 1.2)
+```
+fan@raspberrypi:~/ncnn/benchmark $ ../build/benchmark/benchncnn 10 $(nproc) 0 0
+[0 V3D 7.1.7]  queueC=0[1]  queueG=0[1]  queueT=0[1]
+[0 V3D 7.1.7]  bugsbn1=0  bugbilz=0  bugcopc=0  bugihfa=0
+[0 V3D 7.1.7]  fp16-p/s/a=1/1/0  int8-p/s/a=1/1/0
+[0 V3D 7.1.7]  subgroup=16  basic/vote/ballot/shuffle=1/0/0/0
+[0 V3D 7.1.7]  fp16-matrix-16_8_8/16_8_16/16_16_16=0/0/0
+[1 llvmpipe (LLVM 15.0.6, 128 bits)]  queueC=0[1]  queueG=0[1]  queueT=0[1]
+[1 llvmpipe (LLVM 15.0.6, 128 bits)]  bugsbn1=0  bugbilz=0  bugcopc=0  bugihfa=0
+[1 llvmpipe (LLVM 15.0.6, 128 bits)]  fp16-p/s/a=1/1/1  int8-p/s/a=1/1/1
+[1 llvmpipe (LLVM 15.0.6, 128 bits)]  subgroup=4  basic/vote/ballot/shuffle=1/1/1/1
+[1 llvmpipe (LLVM 15.0.6, 128 bits)]  fp16-matrix-16_8_8/16_8_16/16_16_16=0/0/0
+loop_count = 10
+num_threads = 4
+powersave = 0
+gpu_device = 0
+cooling_down = 1
+          squeezenet  min =  120.75  max =  121.31  avg =  120.94
+     squeezenet_int8  min =    9.57  max =   24.49  avg =   11.23
+           mobilenet  min =  160.32  max =  160.75  avg =  160.53
+      mobilenet_int8  min =   11.29  max =   11.47  avg =   11.37
+        mobilenet_v2  min =  121.05  max =  121.93  avg =  121.46
+        mobilenet_v3  min =  117.90  max =  119.20  avg =  118.48
+          shufflenet  min =   70.82  max =   71.55  avg =   71.04
+       shufflenet_v2  min =   97.74  max =   98.58  avg =   98.00
+             mnasnet  min =  118.21  max =  118.76  avg =  118.44
+     proxylessnasnet  min =  124.28  max =  124.92  avg =  124.52
+     efficientnet_b0  min =  187.48  max =  188.38  avg =  187.93
+   efficientnetv2_b0  min =  270.11  max =  280.80  avg =  272.26
+        regnety_400m  min =  142.14  max =  143.25  avg =  142.66
+           blazeface  min =   31.97  max =   32.41  avg =   32.17
+           googlenet  min =  346.30  max =  347.47  avg =  346.81
+      googlenet_int8  min =   30.77  max =   32.26  avg =   31.52
+            resnet18  min =  346.96  max =  347.50  avg =  347.26
+       resnet18_int8  min =   19.95  max =   20.95  avg =   20.48
+             alexnet  min =  181.57  max =  182.03  avg =  181.75
+               vgg16  min = 1776.00  max = 1776.66  avg = 1776.40
+          vgg16_int8  min =  134.10  max =  141.76  avg =  136.32
+            resnet50  min =  841.90  max =  842.50  avg =  842.16
+       resnet50_int8  min =   54.29  max =   55.22  avg =   54.54
+      squeezenet_ssd  min =  461.71  max =  468.09  avg =  466.97
+ squeezenet_ssd_int8  min =   38.05  max =   39.00  avg =   38.58
+       mobilenet_ssd  min =  379.50  max =  381.66  avg =  380.14
+  mobilenet_ssd_int8  min =   29.91  max =   30.77  avg =   30.13
+      mobilenet_yolo  min =  753.61  max =  755.06  avg =  753.97
+  mobilenetv2_yolov3  min =  382.18  max =  389.90  avg =  386.97
+         yolov4-tiny  min =  673.87  max =  674.71  avg =  674.07
+           nanodet_m  min =  206.55  max =  210.48  avg =  209.69
+    yolo-fastest-1.1  min =  109.98  max =  111.18  avg =  110.45
+      yolo-fastestv2  min =   86.07  max =   87.16  avg =   86.51
+  vision_transformer  min = 20594.51  max = 20601.53  avg = 20596.59
+          FastestDet  min =   90.25  max =   91.00  avg =   90.64
+```
 ### Raspberry Pi Zero 2 W Broadcom BCM2710A1, Cortex-A53 (ARMv8) (1.0GHz x 4)
 
 ```
