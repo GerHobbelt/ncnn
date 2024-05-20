@@ -1,6 +1,6 @@
 # Tencent is pleased to support the open source community by making ncnn available.
 #
-# Copyright (C) 2023 THL A29 Limited, a Tencent company. All rights reserved.
+# Copyright (C) 2024 THL A29 Limited, a Tencent company. All rights reserved.
 #
 # Licensed under the BSD 3-Clause License (the "License"); you may not use this file except
 # in compliance with the License. You may obtain a copy of the License at
@@ -20,39 +20,34 @@ class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
 
-    def forward(self, x, y, z, w):
-        x = x.clone()
-        z = z.clone()
-        x = x.index_put(indices=[torch.tensor([10,2])], values=y, accumulate=False)
-        z.index_put_(indices=[torch.tensor([1,0,0]), torch.tensor([3,2,1])], values=w, accumulate=True)
-
-        x[torch.tensor([1], dtype=torch.int64)] = torch.tensor(45).float()
-        x[torch.tensor([], dtype=torch.int64)] = torch.tensor(233).float()
-        return x, z
+    def forward(self, x, y, z):
+        x = torch.masked_select(x, x > 0.5)
+        y = torch.masked_select(y, y > 0.3)
+        z = torch.masked_select(z, z > 0.1)
+        return x, y, z
 
 def test():
     net = Model()
     net.eval()
 
     torch.manual_seed(0)
-    x = torch.rand(12)
-    y = torch.rand(2)
-    z = torch.rand(6,9)
-    w = torch.rand(3)
+    x = torch.rand(1, 3, 16)
+    y = torch.rand(1, 5, 9, 11)
+    z = torch.rand(14, 8, 5, 9, 10)
 
-    a = net(x, y, z, w)
+    a = net(x, y, z)
 
     # export torchscript
-    mod = torch.jit.trace(net, (x, y, z, w))
-    mod.save("test_Tensor_index_put.pt")
+    mod = torch.jit.trace(net, (x, y, z))
+    mod.save("test_torch_masked_select.pt")
 
     # torchscript to pnnx
     import os
-    os.system("../src/pnnx test_Tensor_index_put.pt inputshape=[12],[2],[6,9],[3]")
+    os.system("../src/pnnx test_torch_masked_select.pt inputshape=[1,3,16],[1,5,9,11],[14,8,5,9,10]")
 
     # pnnx inference
-    import test_Tensor_index_put_pnnx
-    b = test_Tensor_index_put_pnnx.test_inference()
+    import test_torch_masked_select_pnnx
+    b = test_torch_masked_select_pnnx.test_inference()
 
     for a0, b0 in zip(a, b):
         if not torch.equal(a0, b0):
