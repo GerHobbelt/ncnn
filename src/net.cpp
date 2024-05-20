@@ -126,6 +126,9 @@ static Option get_masked_option(const Option& opt, int featmask)
     opt1.use_sgemm_convolution = opt1.use_sgemm_convolution && !(featmask & (1 << 5));
     opt1.use_winograd_convolution = opt1.use_winograd_convolution && !(featmask & (1 << 6));
 
+    if (featmask & (1 << 7))
+        opt1.num_threads = 1;
+
     return opt1;
 }
 
@@ -145,6 +148,8 @@ int NetPrivate::upload_model()
     }
 
     Option opt_upload = opt;
+    opt_upload.blob_allocator = 0;
+    opt_upload.workspace_allocator = 0;
     opt_upload.blob_vkallocator = weight_vkallocator;
     opt_upload.workspace_vkallocator = weight_vkallocator;
     opt_upload.staging_vkallocator = weight_staging_vkallocator;
@@ -1377,9 +1382,15 @@ int Net::load_param(const DataReader& dr)
         SCAN_VALUE("%d", top_count)
 
         Layer* layer = create_overwrite_builtin_layer(layer_type);
+#if NCNN_VULKAN
+        if (!layer && opt.use_vulkan_compute && d->vkdev)
+        {
+            layer = create_layer_vulkan(layer_type);
+        }
+#endif // NCNN_VULKAN
         if (!layer)
         {
-            layer = create_layer(layer_type);
+            layer = create_layer_cpu(layer_type);
         }
         if (!layer)
         {
@@ -1402,7 +1413,6 @@ int Net::load_param(const DataReader& dr)
         //         NCNN_LOGE("new layer %d %s", i, layer_name);
 
         layer->bottoms.resize(bottom_count);
-
         for (int j = 0; j < bottom_count; j++)
         {
             char bottom_name[256];
@@ -1446,18 +1456,14 @@ int Net::load_param(const DataReader& dr)
             blob_index++;
         }
 
+        int layer_support_vulkan = layer->support_vulkan;
+
         // layer specific params
         int pdlr = pd.load_param(dr);
         if (pdlr != 0)
         {
-            NCNN_LOGE("ParamDict load_param %d %s failed", i, layer->name.c_str());
+            NCNN_LOGE("ParamDict load_param %d %s failed", i, layer_name);
             continue;
-        }
-
-        if (layer->support_int8_storage)
-        {
-            // no int8 gpu support yet
-            opt.use_vulkan_compute = false;
         }
 
         // pull out top shape hints
@@ -1506,8 +1512,60 @@ int Net::load_param(const DataReader& dr)
         int lr = layer->load_param(pd);
         if (lr != 0)
         {
-            NCNN_LOGE("layer load_param %d %s failed", i, layer->name.c_str());
+            NCNN_LOGE("layer load_param %d %s failed", i, layer_name);
             continue;
+        }
+
+        if (layer->support_int8_storage)
+        {
+            // no int8 gpu support yet
+            opt.use_vulkan_compute = false;
+        }
+
+        Option opt1 = get_masked_option(opt, layer->featmask);
+#if NCNN_VULKAN
+        if (opt1.use_vulkan_compute)
+        {
+            if (!layer->support_image_storage) opt1.use_image_storage = false;
+        }
+#endif // NCNN_VULKAN
+
+        if (layer_support_vulkan && (!layer->support_vulkan || !opt1.use_vulkan_compute))
+        {
+            // vulkan layer cannot handle these param, recreate cpu layer
+            Layer* layer_cpu = create_overwrite_builtin_layer(layer_type);
+            if (!layer_cpu)
+            {
+                layer_cpu = create_layer_cpu(layer_type);
+            }
+            if (!layer_cpu)
+            {
+                layer_cpu = create_custom_layer(layer_type);
+            }
+            if (!layer_cpu)
+            {
+                NCNN_LOGE("layer %s not exists or registered", layer_type);
+                clear();
+                return -1;
+            }
+
+            layer_cpu->type = layer->type;
+            layer_cpu->name = layer->name;
+            layer_cpu->bottoms = layer->bottoms;
+            layer_cpu->tops = layer->tops;
+            layer_cpu->bottom_shapes = layer->bottom_shapes;
+            layer_cpu->top_shapes = layer->top_shapes;
+            layer_cpu->featmask = layer->featmask;
+
+            int lr = layer_cpu->load_param(pd);
+            if (lr != 0)
+            {
+                NCNN_LOGE("layer load_param %d %s failed", i, layer_name);
+                continue;
+            }
+
+            delete layer;
+            layer = layer_cpu;
         }
 
         d->layers[i] = layer;
@@ -1611,9 +1669,15 @@ int Net::load_param_bin(const DataReader& dr)
         READ_VALUE(top_count)
 
         Layer* layer = create_overwrite_builtin_layer(typeindex);
+#if NCNN_VULKAN
+        if (!layer && opt.use_vulkan_compute && d->vkdev)
+        {
+            layer = create_layer_vulkan(typeindex);
+        }
+#endif // NCNN_VULKAN
         if (!layer)
         {
-            layer = create_layer(typeindex);
+            layer = create_layer_cpu(typeindex);
         }
         if (!layer)
         {
@@ -1665,22 +1729,14 @@ int Net::load_param_bin(const DataReader& dr)
             layer->tops[j] = top_blob_index;
         }
 
+        int layer_support_vulkan = layer->support_vulkan;
+
         // layer specific params
         int pdlr = pd.load_param_bin(dr);
         if (pdlr != 0)
         {
-#if NCNN_STRING
-            NCNN_LOGE("ParamDict load_param %d %s failed", i, layer->name.c_str());
-#else
-            NCNN_LOGE("ParamDict load_param %d failed", i);
-#endif
+            NCNN_LOGE("ParamDict load_param_bin %d failed", i);
             continue;
-        }
-
-        if (layer->support_int8_storage)
-        {
-            // no int8 gpu support yet
-            opt.use_vulkan_compute = false;
         }
 
         // pull out top blob shape hints
@@ -1729,12 +1785,59 @@ int Net::load_param_bin(const DataReader& dr)
         int lr = layer->load_param(pd);
         if (lr != 0)
         {
-#if NCNN_STRING
-            NCNN_LOGE("layer load_param %d %s failed", i, layer->name.c_str());
-#else
             NCNN_LOGE("layer load_param %d failed", i);
-#endif
             continue;
+        }
+
+        if (layer->support_int8_storage)
+        {
+            // no int8 gpu support yet
+            opt.use_vulkan_compute = false;
+        }
+
+        Option opt1 = get_masked_option(opt, layer->featmask);
+#if NCNN_VULKAN
+        if (opt1.use_vulkan_compute)
+        {
+            if (!layer->support_image_storage) opt1.use_image_storage = false;
+        }
+#endif // NCNN_VULKAN
+
+        if (layer_support_vulkan && (!layer->support_vulkan || !opt1.use_vulkan_compute))
+        {
+            // vulkan layer cannot handle these param, recreate cpu layer
+            Layer* layer_cpu = create_overwrite_builtin_layer(typeindex);
+            if (!layer_cpu)
+            {
+                layer_cpu = create_layer_cpu(typeindex);
+            }
+            if (!layer_cpu)
+            {
+                int custom_index = typeindex & ~LayerType::CustomBit;
+                layer_cpu = create_custom_layer(custom_index);
+            }
+            if (!layer_cpu)
+            {
+                NCNN_LOGE("layer %d not exists or registered", typeindex);
+                clear();
+                return -1;
+            }
+
+            layer_cpu->bottoms = layer->bottoms;
+            layer_cpu->tops = layer->tops;
+            layer_cpu->bottom_shapes = layer->bottom_shapes;
+            layer_cpu->top_shapes = layer->top_shapes;
+            layer_cpu->featmask = layer->featmask;
+
+            int lr = layer_cpu->load_param(pd);
+            if (lr != 0)
+            {
+                NCNN_LOGE("layer load_param %d failed", i);
+                continue;
+            }
+
+            delete layer;
+            layer = layer_cpu;
         }
 
         d->layers[i] = layer;
@@ -1796,24 +1899,7 @@ int Net::load_model(const DataReader& dr)
             break;
         }
 
-        if (layer->support_int8_storage)
-        {
-            // no int8 gpu support yet
-            opt.use_vulkan_compute = false;
-        }
-
         Option opt1 = get_masked_option(opt, layer->featmask);
-#if NCNN_VULKAN
-        if (opt1.use_vulkan_compute)
-        {
-            if (!layer->support_image_storage) opt1.use_image_storage = false;
-        }
-        else
-        {
-            layer->vkdev = 0;
-            layer->support_vulkan = false;
-        }
-#endif // NCNN_VULKAN
 
         int cret = layer->create_pipeline(opt1);
         if (cret != 0)
@@ -2378,7 +2464,8 @@ void Extractor::set_light_mode(bool enable)
 
 void Extractor::set_num_threads(int num_threads)
 {
-    d->opt.num_threads = num_threads;
+    NCNN_LOGE("ex.set_num_threads() is no-op, please set net.opt.num_threads=N before net.load_param()");
+    NCNN_LOGE("If you want to use single thread for only some layer, see https://github.com/Tencent/ncnn/wiki/layer-feat-mask");
 }
 
 void Extractor::set_blob_allocator(Allocator* allocator)
@@ -2394,14 +2481,8 @@ void Extractor::set_workspace_allocator(Allocator* allocator)
 #if NCNN_VULKAN
 void Extractor::set_vulkan_compute(bool enable)
 {
-    if (d->net->d->opt.use_vulkan_compute)
-    {
-        d->opt.use_vulkan_compute = enable;
-    }
-    else
-    {
-        NCNN_LOGE("set_vulkan_compute failed, network use_vulkan_compute disabled");
-    }
+    NCNN_LOGE("ex.set_vulkan_compute() is no-op, please set net.opt.use_vulkan_compute=true/false before net.load_param()");
+    NCNN_LOGE("If you want to disable vulkan for only some layer, see https://github.com/Tencent/ncnn/wiki/layer-feat-mask");
 }
 
 void Extractor::set_blob_vkallocator(VkAllocator* allocator)
