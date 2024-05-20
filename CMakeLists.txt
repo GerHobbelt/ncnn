@@ -80,20 +80,20 @@ option(NCNN_INT8 "int8 inference" ON)
 option(NCNN_BF16 "bf16 inference" ON)
 option(NCNN_FORCE_INLINE "force inline some function" ON)
 
-if(ANDROID OR IOS OR NCNN_SIMPLESTL OR CMAKE_CROSSCOMPILING)
+if(ANDROID OR IOS OR NCNN_SIMPLESTL)
     option(NCNN_DISABLE_RTTI "disable rtti" ON)
+    option(NCNN_DISABLE_EXCEPTION "disable exception" ON)
+else()
+    option(NCNN_DISABLE_RTTI "disable rtti" OFF)
+    option(NCNN_DISABLE_EXCEPTION "disable exception" OFF)
+endif()
+
+if(ANDROID OR IOS OR NCNN_SIMPLESTL OR CMAKE_CROSSCOMPILING)
     option(NCNN_BUILD_TOOLS "build tools" OFF)
     option(NCNN_BUILD_EXAMPLES "build examples" OFF)
 else()
-    option(NCNN_DISABLE_RTTI "disable rtti" OFF)
     option(NCNN_BUILD_TOOLS "build tools" ON)
     option(NCNN_BUILD_EXAMPLES "build examples" ON)
-endif()
-
-if(ANDROID OR IOS OR NCNN_SIMPLESTL)
-    option(NCNN_DISABLE_EXCEPTION "disable exception" ON)
-else()
-    option(NCNN_DISABLE_EXCEPTION "disable exception" OFF)
 endif()
 
 if(NCNN_SHARED_LIB)
@@ -149,7 +149,7 @@ endif()
 if((IOS AND CMAKE_OSX_ARCHITECTURES MATCHES "arm")
     OR (APPLE AND CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
     OR (CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm|aarch64)")
-    OR (CMAKE_CXX_COMPILER_ARCHITECTURE_ID MATCHES "ARM64")
+    OR (CMAKE_CXX_COMPILER_ARCHITECTURE_ID MATCHES "(ARMV7|ARM64)")
     OR ((CMAKE_CXX_COMPILER_ID MATCHES "MSVC" OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_SIMULATE_ID MATCHES "MSVC" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT MATCHES "MSVC")) AND (${CMAKE_GENERATOR_PLATFORM} MATCHES "^(arm|arm64)")))
     set(NCNN_TARGET_ARCH arm)
 
@@ -183,35 +183,35 @@ if((IOS AND CMAKE_OSX_ARCHITECTURES MATCHES "arm")
             set(CMAKE_REQUIRED_FLAGS "/arch:armv8.0")
             check_cxx_source_compiles("#include <arm_neon.h>\nint main() { float32x4_t _a; float16x4_t _s = vcvt_f16_f32(_a); return 0; }" NCNN_COMPILER_SUPPORT_ARM_VFPV4)
 
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.2")
-            # check_cxx_source_compiles("#include <arm_neon.h>\nint main() { float16x8_t _s, _a, _b; _s = vfmaq_f16(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM82_FP16)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.2")
-            # check_cxx_source_compiles("#include <arm_neon.h>\nint main() { int32x4_t _s; int8x16_t _a, _b; _s = vdotq_s32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM82_DOTPROD)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.2")
-            # check_cxx_source_compiles("#include <arm_neon.h>\nint main() { float32x4_t _s; float16x8_t _a, _b; _s = vfmlalq_low_f16(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM82_FP16FML)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.4")
-            # check_cxx_source_compiles("#include <arm_neon.h>\nint main() { float32x4_t _s; bfloat16x8_t _a, _b; _s = vcvt_f32_bf16(vcvt_bf16_f32(vbfmmlaq_f32(_s, _a, _b))); return 0; }" NCNN_COMPILER_SUPPORT_ARM84_BF16)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.4")
-            # check_cxx_source_compiles("#include <arm_neon.h>\nint main() { int32x4_t _s; int8x16_t _a, _b; _s = vmmlaq_s32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM84_I8MM)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
-            # check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svfloat16_t _s, _a, _b; svbool_t bp; _s = svmla_f16_z(bp, _s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVE)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
-            # check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svint16_t _s; svint8_t _a, _b; _s = svmlslb_s16(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVE2)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
-            # check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svfloat32_t _s; svbfloat16_t _a, _b; _s = svbfmmla_f32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVEBF16)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
-            # check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svint32_t _s; svint8_t _a, _b; _s = svmmla_s32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVEI8MM)
-            #
-            # set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
-            # check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svfloat32_t _s, _a, _b; _s = svmmla_f32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVEF32MM)
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.2")
+            check_cxx_source_compiles("#include <arm_neon.h>\nint main() { float16x8_t _s, _a, _b; _s = vfmaq_f16(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM82_FP16)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.2")
+            check_cxx_source_compiles("#include <arm_neon.h>\nint main() { int32x4_t _s; int8x16_t _a, _b; _s = vdotq_s32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM82_DOTPROD)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.2")
+            check_cxx_source_compiles("#include <arm_neon.h>\nint main() { float32x4_t _s; float16x8_t _a, _b; _s = vfmlalq_low_f16(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM82_FP16FML)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.4")
+            check_cxx_source_compiles("#include <arm_neon.h>\nint main() { float32x4_t _s; bfloat16x8_t _a, _b; _s = vcvt_f32_bf16(vcvt_bf16_f32(vbfmmlaq_f32(_s, _a, _b))); return 0; }" NCNN_COMPILER_SUPPORT_ARM84_BF16)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.4")
+            check_cxx_source_compiles("#include <arm_neon.h>\nint main() { int32x4_t _s; int8x16_t _a, _b; _s = vmmlaq_s32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM84_I8MM)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
+            check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svfloat16_t _s, _a, _b; svbool_t bp; _s = svmla_f16_z(bp, _s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVE)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
+            check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svint16_t _s; svint8_t _a, _b; _s = svmlslb_s16(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVE2)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
+            check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svfloat32_t _s; svbfloat16_t _a, _b; _s = svbfmmla_f32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVEBF16)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
+            check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svint32_t _s; svint8_t _a, _b; _s = svmmla_s32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVEI8MM)
+
+            set(CMAKE_REQUIRED_FLAGS "/arch:armv8.6")
+            check_cxx_source_compiles("#include <arm_sve.h>\nint main() { svfloat32_t _s, _a, _b; _s = svmmla_f32(_s, _a, _b); return 0; }" NCNN_COMPILER_SUPPORT_ARM86_SVEF32MM)
 
             unset(CMAKE_REQUIRED_FLAGS)
         else()
