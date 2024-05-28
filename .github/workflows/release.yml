@@ -274,6 +274,7 @@ jobs:
         -DNCNN_BUILD_EXAMPLES=OFF \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -352,6 +353,7 @@ jobs:
         -DNCNN_BUILD_EXAMPLES=OFF \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -504,6 +506,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -574,6 +577,7 @@ jobs:
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -737,6 +741,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -816,6 +821,7 @@ jobs:
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -999,6 +1005,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1078,6 +1085,7 @@ jobs:
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1261,6 +1269,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1411,6 +1420,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1561,6 +1571,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1640,6 +1651,7 @@ jobs:
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1823,6 +1835,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -1902,6 +1915,7 @@ jobs:
         -DNCNN_VULKAN=ON \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -2074,6 +2088,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
@@ -2215,6 +2230,7 @@ jobs:
         -DNCNN_VERSION_STRING="${{ needs.setup.outputs.VERSION }}" \
         -DNCNN_BUILD_BENCHMARK=OFF \
         -DNCNN_OPENMP=OFF \
+        -DNCNN_SIMPLEOMP=OFF \
 
     steps:
     - uses: actions/checkout@v4
