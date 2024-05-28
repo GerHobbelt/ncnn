@@ -2534,7 +2534,7 @@ int Extractor::input(const char* blob_name, const Mat& in)
 
 int Extractor::extract(const char* blob_name, Mat& feat)
 {
-        return extract(blob_name, feat, 0);
+    return extract(blob_name, feat, 0);
 }
 
 int Extractor::extract(const char* blob_name, Mat& feat, int type)
@@ -2568,7 +2568,7 @@ int Extractor::input(int blob_index, const Mat& in)
 
 int Extractor::extract(int blob_index, Mat& feat)
 {
-    return extract(blob_index, feat, 0);   
+    return extract(blob_index, feat, 0);
 }
 
 int Extractor::extract(int blob_index, Mat& feat, int type)

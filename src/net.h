@@ -214,7 +214,7 @@ public:
     // type = 0, default
     // type = 1, do not convert fp16/bf16 or / and packing
     int extract(const char* blob_name, Mat& feat, int type);
-    
+
     int extract(const char* blob_name, Mat& feat);
 #endif // NCNN_STRING
 
