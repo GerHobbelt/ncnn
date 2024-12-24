@@ -1,0 +1,19 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 5.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "derpl", "derpl.csproj", "{286D087B-AE1E-4663-9EC9-5BEB59EE31BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "worker", "worker.csproj", "{14C86D19-A9DE-4D08-8D16-44E054998415}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{286D087B-AE1E-4663-9EC9-5BEB59EE31BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{286D087B-AE1E-4663-9EC9-5BEB59EE31BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14C86D19-A9DE-4D08-8D16-44E054998415}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14C86D19-A9DE-4D08-8D16-44E054998415}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
